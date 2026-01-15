@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Expo
+.expo/
+.expo-shared/
+dist/
+web-build/
+
+# Native
+ios/
+android/
+
+# Build outputs
+*.tsbuildinfo
+
+# Environment
+.env
+.env.*
+
+# Config files
+*.config.js
+metro.config.js
+babel.config.js

@@ -1,0 +1,26 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "TEAM_ID.com.wizardstech.goalgpt",
+        "paths": [
+          "/match/*",
+          "/bot/*",
+          "/team/*",
+          "/league/*",
+          "/predictions",
+          "/store",
+          "/profile",
+          "/home",
+          "/matches"
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": [
+      "TEAM_ID.com.wizardstech.goalgpt"
+    ]
+  }
+}

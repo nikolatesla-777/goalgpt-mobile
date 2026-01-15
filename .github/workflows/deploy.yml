@@ -1,0 +1,127 @@
+name: Deploy to App Stores
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Platform to deploy'
+        required: true
+        type: choice
+        options:
+          - ios
+          - android
+          - all
+      environment:
+        description: 'Deployment environment'
+        required: true
+        type: choice
+        options:
+          - production
+          - beta
+
+jobs:
+  deploy-ios:
+    name: Deploy to TestFlight/App Store
+    runs-on: ubuntu-latest
+    if: inputs.platform == 'ios' || inputs.platform == 'all'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build iOS app
+        run: |
+          echo "Building iOS app for ${{ inputs.environment }}"
+          echo "Command: eas build --profile production --platform ios --non-interactive"
+        # Uncomment when EAS is configured:
+        # run: eas build --profile production --platform ios --non-interactive
+
+      - name: Submit to App Store
+        if: inputs.environment == 'production'
+        run: |
+          echo "Submitting to App Store"
+          echo "Command: eas submit --platform ios --latest"
+        # Uncomment when EAS is configured:
+        # run: eas submit --platform ios --latest
+
+      - name: Submit to TestFlight
+        if: inputs.environment == 'beta'
+        run: |
+          echo "Submitting to TestFlight"
+          echo "Command: eas submit --platform ios --latest"
+        # Uncomment when EAS is configured:
+        # run: eas submit --platform ios --latest
+
+  deploy-android:
+    name: Deploy to Play Console
+    runs-on: ubuntu-latest
+    if: inputs.platform == 'android' || inputs.platform == 'all'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Android app
+        run: |
+          echo "Building Android app for ${{ inputs.environment }}"
+          echo "Command: eas build --profile production --platform android --non-interactive"
+        # Uncomment when EAS is configured:
+        # run: eas build --profile production --platform android --non-interactive
+
+      - name: Submit to Play Store
+        if: inputs.environment == 'production'
+        run: |
+          echo "Submitting to Play Store (production track)"
+          echo "Command: eas submit --platform android --latest --track production"
+        # Uncomment when EAS is configured:
+        # run: eas submit --platform android --latest --track production
+
+      - name: Submit to Internal Testing
+        if: inputs.environment == 'beta'
+        run: |
+          echo "Submitting to Play Console (internal testing)"
+          echo "Command: eas submit --platform android --latest --track internal"
+        # Uncomment when EAS is configured:
+        # run: eas submit --platform android --latest --track internal
+
+  notify:
+    name: Notify Deployment
+    runs-on: ubuntu-latest
+    needs: [deploy-ios, deploy-android]
+    if: always()
+
+    steps:
+      - name: Send notification
+        run: |
+          echo "Deployment completed for ${{ inputs.platform }} to ${{ inputs.environment }}"
+          # Add Slack/Discord/Email notification here

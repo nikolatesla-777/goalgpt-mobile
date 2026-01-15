@@ -1,0 +1,18 @@
+{
+  "development": {
+    "apiKey": "AIzaSyBIy5sq0NhAP8L1-ltY6CriQxufOaqSs2g",
+    "authDomain": "santibet-715ef.firebaseapp.com",
+    "projectId": "santibet-715ef",
+    "storageBucket": "santibet-715ef.firebasestorage.app",
+    "messagingSenderId": "481690202462",
+    "appId": "1:481690202462:ios:92b3c50f79740d6267dfcf"
+  },
+  "production": {
+    "apiKey": "AIzaSyBIy5sq0NhAP8L1-ltY6CriQxufOaqSs2g",
+    "authDomain": "santibet-715ef.firebaseapp.com",
+    "projectId": "santibet-715ef",
+    "storageBucket": "santibet-715ef.firebasestorage.app",
+    "messagingSenderId": "481690202462",
+    "appId": "1:481690202462:ios:92b3c50f79740d6267dfcf"
+  }
+}

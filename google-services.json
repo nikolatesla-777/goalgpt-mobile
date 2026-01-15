@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "481690202462",
+    "project_id": "santibet-715ef",
+    "storage_bucket": "santibet-715ef.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:481690202462:android:5d931cc81c00208a67dfcf",
+        "android_client_info": {
+          "package_name": "com.wizardstech.goalgpt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "481690202462-sl9laifuu0piaqgk35dofo2rkf2rp779.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wizardstech.goalgpt",
+            "certificate_hash": "2ae0f040f4341a3c51b6da4472b618b5c55bfc44"
+          }
+        },
+        {
+          "client_id": "481690202462-hmc6nsn2f1b5iic3bnncjn3sijiq77ml.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEoCIWSRaVa3EcrCdzzDmDlViCVNdHeyQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "481690202462-1p3fke4aj0ti9o5dogr4rs0scto3fpp4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "481690202462-v66g0mfiejmt94cm4et1r9bccq6j12pq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.wizardstech.goalgpt",
+                "app_store_id": "6738357597"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
