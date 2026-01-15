@@ -47,7 +47,7 @@ export default function RegisterScreen() {
 
   const openTerms = async () => {
     try {
-      await Linking.openURL('https://goalgpt.com/terms');
+      await Linking.openURL('https://nikolatesla-777.github.io/goalgpt-mobile/legal/terms.html');
     } catch (error) {
       Alert.alert('Error', 'Unable to open Terms of Service');
     }
@@ -55,7 +55,7 @@ export default function RegisterScreen() {
 
   const openPrivacy = async () => {
     try {
-      await Linking.openURL('https://goalgpt.com/privacy');
+      await Linking.openURL('https://nikolatesla-777.github.io/goalgpt-mobile/legal/privacy.html');
     } catch (error) {
       Alert.alert('Error', 'Unable to open Privacy Policy');
     }

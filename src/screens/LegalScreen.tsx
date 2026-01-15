@@ -19,9 +19,9 @@ import { spacing, typography } from '../constants/tokens';
 // ============================================================================
 
 const LEGAL_URLS = {
-  privacy: 'https://goalgpt.com/privacy',
-  terms: 'https://goalgpt.com/terms',
-  eula: 'https://goalgpt.com/eula',
+  privacy: 'https://nikolatesla-777.github.io/goalgpt-mobile/legal/privacy.html',
+  terms: 'https://nikolatesla-777.github.io/goalgpt-mobile/legal/terms.html',
+  eula: 'https://nikolatesla-777.github.io/goalgpt-mobile/legal/eula.html',
 };
 
 // ============================================================================
