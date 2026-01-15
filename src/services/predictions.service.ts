@@ -164,15 +164,15 @@ export async function getTopPredictions(limit: number = 10): Promise<PredictionI
         const isHighTier = p.tier === 'premium' || p.tier === 'vip';
 
         // Filter: High confidence (>= 75%)
-        const isHighConfidence = p.confidence && p.confidence >= 75;
+        const isHighConfidence = p.prediction.confidence && p.prediction.confidence >= 75;
 
         // Filter: Pending or won (not lost)
-        const isRelevant = p.result === 'pending' || p.result === 'win';
+        const isRelevant = p.prediction.result === 'pending' || p.prediction.result === 'win';
 
         return isHighTier && isHighConfidence && isRelevant;
       })
       // Sort by confidence (descending)
-      .sort((a, b) => (b.confidence || 0) - (a.confidence || 0))
+      .sort((a, b) => (b.prediction.confidence || 0) - (a.prediction.confidence || 0))
       // Limit results
       .slice(0, limit);
 
@@ -194,7 +194,7 @@ export async function getFreePredictions(limit: number = 5): Promise<PredictionI
     // Filter for free tier predictions
     const freePredictions = predictions
       .filter((p) => p.tier === 'free')
-      .sort((a, b) => (b.confidence || 0) - (a.confidence || 0))
+      .sort((a, b) => (b.prediction.confidence || 0) - (a.prediction.confidence || 0))
       .slice(0, limit);
 
     return freePredictions;

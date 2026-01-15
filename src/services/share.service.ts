@@ -180,7 +180,8 @@ class ShareService {
     playerName: string,
     teamName?: string
   ): Promise<ShareResult> {
-    const url = generateDeepLink('player', { id: playerId });
+    // Player deep links not yet implemented - use generic app link
+    const url = 'https://goalgpt.com';
 
     const teamText = teamName ? ` (${teamName})` : '';
     const message = `⚽ ${playerName}${teamText}\n\nCheck out ${playerName}'s stats on GoalGPT!`;

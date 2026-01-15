@@ -121,102 +121,110 @@ export const slow: WithTimingConfig = {
 
 /**
  * Fade In Animation
+ * Returns target opacity and duration for manual animation
  */
 export const fadeIn = (duration = animation.duration.normal) => {
-  return withTiming(1, {
+  return {
+    toValue: 1,
     duration,
     easing: Easing.out(Easing.ease),
-  });
+  };
 };
 
 /**
  * Fade Out Animation
+ * Returns target opacity and duration for manual animation
  */
 export const fadeOut = (duration = animation.duration.normal) => {
-  return withTiming(0, {
+  return {
+    toValue: 0,
     duration,
     easing: Easing.in(Easing.ease),
-  });
+  };
 };
 
 /**
  * Scale Up Animation (button press feedback)
+ * Returns target scale and config for manual animation
  */
 export const scaleUp = (toValue = 1, config: WithSpringConfig = springConfig) => {
-  return withSpring(toValue, config);
+  return { toValue, config };
 };
 
 /**
  * Scale Down Animation (button press feedback)
+ * Returns target scale and config for manual animation
  */
 export const scaleDown = (toValue = animation.scale.pressed, config: WithSpringConfig = springConfig) => {
-  return withSpring(toValue, config);
+  return { toValue, config };
 };
 
 /**
  * Pulse Animation (LIVE badges, notifications)
+ * Returns config for repeating scale animation
  */
 export const pulse = (duration = 2000) => {
-  return withRepeat(
-    withTiming(animation.scale.pulse, {
-      duration: duration / 2,
-      easing: Easing.inOut(Easing.ease),
-    }),
-    -1, // Infinite
-    true // Reverse
-  );
+  return {
+    toValue: animation.scale.pulse,
+    duration: duration / 2,
+    easing: Easing.inOut(Easing.ease),
+    repeat: -1,
+    reverse: true,
+  };
 };
 
 /**
  * Neon Glow Animation (text shadow radius)
+ * Returns config for repeating glow animation
  */
 export const neonGlow = (duration = 1500) => {
-  return withRepeat(
-    withTiming(16, {
-      duration: duration / 2,
-      easing: Easing.inOut(Easing.ease),
-    }),
-    -1, // Infinite
-    true // Reverse
-  );
+  return {
+    toValue: 16,
+    duration: duration / 2,
+    easing: Easing.inOut(Easing.ease),
+    repeat: -1,
+    reverse: true,
+  };
 };
 
 /**
  * Scanline Animation (terminal effect - Y position)
+ * Returns config for infinite vertical animation
  */
 export const scanline = (screenHeight: number, duration = 3000) => {
-  return withRepeat(
-    withTiming(screenHeight, {
-      duration,
-      easing: Easing.linear,
-    }),
-    -1, // Infinite
-    false // Don't reverse
-  );
+  return {
+    toValue: screenHeight,
+    duration,
+    easing: Easing.linear,
+    repeat: -1,
+    reverse: false,
+  };
 };
 
 /**
  * Shimmer Animation (skeleton loading - X position)
+ * Returns config for infinite horizontal animation
  */
 export const shimmer = (screenWidth: number, duration = 1500) => {
-  return withRepeat(
-    withTiming(screenWidth, {
-      duration,
-      easing: Easing.linear,
-    }),
-    -1, // Infinite
-    false // Don't reverse
-  );
+  return {
+    toValue: screenWidth,
+    duration,
+    easing: Easing.linear,
+    repeat: -1,
+    reverse: false,
+  };
 };
 
 /**
  * Bounce In Animation (success/celebration)
+ * Returns config for elastic bounce animation
  */
 export const bounceIn = (duration = 500) => {
-  return withTiming(1, {
+  return {
+    toValue: 1,
     duration,
     easing: Easing.elastic(1),
-  });
+  };
 };
 
 /**
@@ -227,12 +235,14 @@ export const shakeKeyframes = () => [0, -10, 10, -10, 10, 0];
 
 /**
  * Shake Animation with timing
+ * Returns config for shake animation
  */
 export const shake = (duration = 500) => {
-  return withTiming(0, {
+  return {
+    toValue: 0,
     duration,
     easing: Easing.linear,
-  });
+  };
 };
 
 // ============================================
@@ -241,40 +251,40 @@ export const shake = (duration = 500) => {
 
 /**
  * Button Press Animation
- * Returns scale and opacity values
+ * Returns scale and opacity config
  */
 export const buttonPress = () => {
   return {
-    scale: withSpring(animation.scale.pressed, quickSpring),
-    opacity: withTiming(animation.opacity.pressed, fast),
+    scale: { toValue: animation.scale.pressed, config: quickSpring },
+    opacity: { toValue: animation.opacity.pressed, ...fast },
   };
 };
 
 /**
  * Button Release Animation
- * Returns scale and opacity values
+ * Returns scale and opacity config
  */
 export const buttonRelease = () => {
   return {
-    scale: withSpring(1, quickSpring),
-    opacity: withTiming(1, fast),
+    scale: { toValue: 1, config: quickSpring },
+    opacity: { toValue: 1, ...fast },
   };
 };
 
 /**
  * Card Press Animation
- * Returns scale value
+ * Returns scale config
  */
 export const cardPress = () => {
-  return withSpring(animation.scale.pressedButton, quickSpring);
+  return { toValue: animation.scale.pressedButton, config: quickSpring };
 };
 
 /**
  * Card Release Animation
- * Returns scale value
+ * Returns scale config
  */
 export const cardRelease = () => {
-  return withSpring(1, quickSpring);
+  return { toValue: 1, config: quickSpring };
 };
 
 // ============================================
@@ -283,42 +293,54 @@ export const cardRelease = () => {
 
 /**
  * Slide From Right (navigation)
+ * Returns config for slide animation
  */
 export const slideFromRight = (screenWidth: number, duration = animation.duration.normal) => {
-  return withTiming(0, {
+  return {
+    toValue: 0,
+    fromValue: screenWidth,
     duration,
     easing: Easing.out(Easing.ease),
-  });
+  };
 };
 
 /**
  * Slide From Left
+ * Returns config for slide animation
  */
 export const slideFromLeft = (screenWidth: number, duration = animation.duration.normal) => {
-  return withTiming(0, {
+  return {
+    toValue: 0,
+    fromValue: -screenWidth,
     duration,
     easing: Easing.out(Easing.ease),
-  });
+  };
 };
 
 /**
  * Slide From Bottom (modal)
+ * Returns config for slide animation
  */
 export const slideFromBottom = (screenHeight: number, duration = animation.duration.normal) => {
-  return withTiming(0, {
+  return {
+    toValue: 0,
+    fromValue: screenHeight,
     duration,
     easing: Easing.out(Easing.ease),
-  });
+  };
 };
 
 /**
  * Slide To Bottom (modal dismiss)
+ * Returns config for slide animation
  */
 export const slideToBottom = (screenHeight: number, duration = animation.duration.normal) => {
-  return withTiming(screenHeight, {
+  return {
+    toValue: screenHeight,
+    fromValue: 0,
     duration,
     easing: Easing.in(Easing.ease),
-  });
+  };
 };
 
 // ============================================
@@ -327,19 +349,20 @@ export const slideToBottom = (screenHeight: number, duration = animation.duratio
 
 /**
  * Create delayed animation
+ * Returns config with delay
  */
-export const withDelay = (delayMs: number, animation: any) => {
-  'worklet';
-  return withTiming(animation, {
-    duration: delayMs,
-  });
+export const withDelay = (delayMs: number, animationConfig: any) => {
+  return {
+    ...animationConfig,
+    delay: delayMs,
+  };
 };
 
 /**
  * Create sequence of animations
+ * Returns array of animation configs
  */
 export const withSequence = (...animations: any[]) => {
-  'worklet';
   return animations;
 };
 
