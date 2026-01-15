@@ -1,372 +1,309 @@
 # Terms of Service for GoalGPT
 
-**Effective Date:** January 13, 2026
-**Last Updated:** January 13, 2026
+**Effective Date**: January 15, 2025
+**Last Updated**: January 15, 2025
 
 ---
 
-## 1. Agreement to Terms
+## Introduction
 
-By accessing or using GoalGPT ("the App"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, do not use the App.
+Welcome to GoalGPT! These Terms of Service ("Terms") govern your use of the GoalGPT mobile application ("App," "Service," "we," "us," or "our").
 
-These Terms constitute a legally binding agreement between you and Wizards Tech ("Company," "we," "our," or "us").
-
----
-
-## 2. Eligibility
-
-### 2.1 Age Requirement
-You must be at least 13 years old to use GoalGPT. By using the App, you represent that you are at least 13 years old.
-
-### 2.2 Parental Consent
-If you are between 13 and 18 years old, you must have parental or guardian consent to use the App.
-
-### 2.3 Account Accuracy
-You must provide accurate, current, and complete information during registration and keep your account information updated.
+By accessing or using the App, you agree to be bound by these Terms. If you do not agree to these Terms, do not use the App.
 
 ---
 
-## 3. Account Registration
+## 1. Acceptance of Terms
 
-### 3.1 Creating an Account
-To access certain features, you must create an account using:
-- Email and password
-- Google Sign-In
-- Apple Sign-In
-- Phone authentication
-
-### 3.2 Account Security
-You are responsible for:
-- Maintaining the confidentiality of your password
-- All activities that occur under your account
-- Notifying us immediately of unauthorized access
-
-### 3.3 Account Termination
-We reserve the right to suspend or terminate your account if you violate these Terms.
+By creating an account or using the App, you confirm that:
+- You are at least 13 years old (or 16 in the EEA)
+- You have the legal capacity to enter into these Terms
+- You will comply with all applicable laws and regulations
+- All registration information you provide is accurate and current
 
 ---
 
-## 4. Use of the App
+## 2. Description of Service
 
-### 4.1 License Grant
-We grant you a limited, non-exclusive, non-transferable, revocable license to use the App for personal, non-commercial purposes.
-
-### 4.2 Permitted Uses
-You may use the App to:
-- View live match scores and statistics
-- Access AI predictions
-- Personalize your experience
-- Share content via provided sharing features
-
-### 4.3 Prohibited Uses
-You may NOT:
-- ❌ Violate any laws or regulations
-- ❌ Impersonate others or provide false information
-- ❌ Interfere with the App's functionality
-- ❌ Attempt to gain unauthorized access
-- ❌ Use automated systems (bots, scrapers)
-- ❌ Reverse engineer or decompile the App
-- ❌ Remove copyright or proprietary notices
-- ❌ Use the App for commercial purposes without permission
-- ❌ Distribute malware or harmful code
-- ❌ Harass, abuse, or harm other users
-- ❌ Collect user data without consent
-- ❌ Manipulate the gamification system
-- ❌ Create multiple accounts to abuse features
+GoalGPT provides:
+- Real-time football match scores and statistics
+- AI-powered match predictions from multiple bots
+- Match notifications and alerts
+- Bot leaderboards and performance tracking
+- User gamification features (XP, badges, streaks)
+- Community features (comments, favorites)
+- Premium subscription options
 
 ---
 
-## 5. Content and Intellectual Property
+## 3. Account Registration and Security
 
-### 5.1 Our Content
-All content in the App, including:
-- Text, graphics, logos, icons
-- Software and code
-- Match data and statistics
-- AI predictions and analysis
-- Design and layout
+### 3.1 Account Creation
+- You must provide accurate, complete, and current information
+- You are responsible for maintaining the security of your account
+- You must immediately notify us of any unauthorized access
+- You may not share your account with others
+- You may not create multiple accounts to circumvent restrictions
 
-...is owned by or licensed to us and protected by copyright, trademark, and other intellectual property laws.
-
-### 5.2 Match Data
-Match data is provided by TheSports API and is subject to their terms and conditions. We are not responsible for the accuracy or availability of third-party data.
-
-### 5.3 User Content
-By using the App, you grant us a worldwide, non-exclusive, royalty-free license to use, reproduce, modify, and display your content (predictions, comments) for the purpose of operating the App.
-
-### 5.4 Feedback
-Any feedback, suggestions, or ideas you provide become our property, and we may use them without compensation.
+### 3.2 Account Termination
+You may delete your account at any time through the App settings. We may suspend or terminate your account if you violate these Terms.
 
 ---
 
-## 6. AI Predictions
+## 4. User Content and Conduct
 
-### 6.1 No Guarantees
-AI predictions are for entertainment and informational purposes only. We make no guarantees about:
-- Accuracy of predictions
-- Match outcomes
-- Winning rates
+### 4.1 User Content
+You may post comments and interact with other users. By posting content, you grant us a worldwide, non-exclusive, royalty-free license to use, display, and distribute your content within the App.
 
-### 6.2 Not Betting Advice
-GoalGPT does NOT provide betting advice or encourage gambling. AI predictions should not be used as the sole basis for betting decisions.
+You retain ownership of your content, but you are responsible for ensuring you have the rights to post it.
 
-### 6.3 User Responsibility
-You are solely responsible for any decisions you make based on AI predictions.
+### 4.2 Prohibited Conduct
+You agree NOT to:
+- Post offensive, harmful, threatening, or illegal content
+- Harass, bully, or abuse other users
+- Impersonate others or misrepresent your affiliation
+- Spam or post repetitive content
+- Post content that violates intellectual property rights
+- Use automated tools (bots, scrapers) without permission
+- Attempt to hack, disrupt, or gain unauthorized access to the Service
+- Use the Service for gambling or illegal betting activities
+- Violate any applicable laws or regulations
 
----
-
-## 7. Gamification System
-
-### 7.1 Virtual Currency
-- **XP (Experience Points):** Earned through app usage, non-transferable
-- **Credits:** Virtual currency for premium features, non-refundable
-- **Levels:** Progress-based ranks, non-transferable
-
-### 7.2 No Real-World Value
-XP, credits, and levels have no real-world monetary value and cannot be exchanged for cash.
-
-### 7.3 Manipulation
-Attempting to manipulate the gamification system (e.g., using bots, exploits) will result in account suspension.
+### 4.3 Content Moderation
+We reserve the right to:
+- Remove any content that violates these Terms
+- Suspend or ban users who violate these Terms
+- Report illegal activity to law enforcement
 
 ---
 
-## 8. In-App Purchases
+## 5. Intellectual Property Rights
 
-### 8.1 Purchases
-You may purchase virtual goods or premium features through:
-- Apple App Store (iOS)
-- Google Play Store (Android)
+### 5.1 Our Rights
+The App, including all content, features, functionality, designs, logos, and trademarks, is owned by GoalGPT and is protected by intellectual property laws.
 
-### 8.2 Payment Processing
-All payments are processed by the respective app store. We do not handle payment information directly.
+You may not:
+- Copy, modify, or distribute the App or its content
+- Reverse engineer or decompile the App
+- Remove copyright or trademark notices
+- Use our trademarks without permission
 
-### 8.3 Refunds
-Refund requests are subject to the app store's refund policy:
-- **iOS:** [Apple Refund Policy](https://support.apple.com/en-us/HT204084)
-- **Android:** [Google Play Refund Policy](https://support.google.com/googleplay/answer/2479637)
-
-### 8.4 No Guarantees
-Purchases of credits or premium features do not guarantee specific outcomes or benefits beyond the features described.
+### 5.2 Your Rights
+Subject to these Terms, we grant you a limited, non-exclusive, non-transferable, revocable license to use the App for personal, non-commercial purposes.
 
 ---
 
-## 9. Push Notifications
+## 6. Subscriptions and Payments
 
-### 9.1 Consent
-By enabling push notifications, you consent to receive:
-- Match updates and goal notifications
-- AI prediction alerts
-- Account and system notifications
+### 6.1 Premium Subscriptions
+We offer optional premium subscriptions that provide:
+- Access to VIP bot predictions
+- Ad-free experience
+- Priority notifications
+- Exclusive badges and features
 
-### 9.2 Opting Out
-You can disable notifications at any time through:
-- Device settings
-- App settings
+### 6.2 Pricing and Payment
+- Subscription prices are displayed in the App
+- Payment is processed through Apple App Store or Google Play Store
+- Subscriptions auto-renew unless cancelled at least 24 hours before the renewal date
+- You can manage subscriptions in your device's account settings
+
+### 6.3 Refunds
+- Refunds are subject to Apple and Google policies
+- We do not directly process refunds; contact Apple or Google support
+- Refunds may be provided at our discretion for billing errors
+
+### 6.4 Changes to Pricing
+We may change subscription prices with 30 days' notice. Continued use after the price change constitutes acceptance.
+
+### 6.5 Cancellation
+You may cancel your subscription at any time. Cancellation takes effect at the end of the current billing period. No partial refunds for unused time.
+
+---
+
+## 7. Third-Party Services and Content
+
+### 7.1 Third-Party Services
+The App integrates with third-party services (Firebase, AdMob, etc.). Your use of these services is governed by their respective terms and privacy policies.
+
+### 7.2 Match Data
+Match data is provided by third-party sources. While we strive for accuracy, we do not guarantee the completeness, accuracy, or timeliness of match data.
+
+### 7.3 AI Predictions
+AI predictions are for informational and entertainment purposes only. They are not guarantees and should not be used for gambling or betting. We are not responsible for losses from reliance on predictions.
+
+### 7.4 Advertisements
+Free users may see advertisements from third parties. We are not responsible for the content of ads or issues arising from advertiser interactions.
+
+---
+
+## 8. Disclaimers and Limitation of Liability
+
+### 8.1 Disclaimer of Warranties
+THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO:
+- Warranties of merchantability or fitness for a particular purpose
+- Warranties of accuracy, reliability, or availability
+- Warranties that the Service will be uninterrupted or error-free
+
+### 8.2 Limitation of Liability
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, GOALGPT SHALL NOT BE LIABLE FOR:
+- Indirect, incidental, special, consequential, or punitive damages
+- Loss of profits, revenue, data, or use
+- Damages arising from your use or inability to use the Service
+- Damages arising from third-party content or services
+
+OUR TOTAL LIABILITY SHALL NOT EXCEED THE AMOUNT YOU PAID US IN THE PAST 12 MONTHS, OR $100 USD, WHICHEVER IS GREATER.
+
+### 8.3 Jurisdictional Limitations
+Some jurisdictions do not allow the exclusion or limitation of certain warranties or liabilities. In such jurisdictions, our liability is limited to the maximum extent permitted by law.
+
+---
+
+## 9. Indemnification
+
+You agree to indemnify, defend, and hold harmless GoalGPT, its officers, directors, employees, and agents from any claims, damages, losses, liabilities, and expenses (including legal fees) arising from:
+- Your use of the Service
+- Your violation of these Terms
+- Your violation of any third-party rights
+- Your User Content
 
 ---
 
 ## 10. Privacy
 
-Your privacy is important to us. Please review our [Privacy Policy](https://goalgpt.com/privacy) to understand how we collect, use, and protect your information.
+Your use of the Service is also governed by our Privacy Policy, which is incorporated into these Terms by reference. Please review our Privacy Policy at: https://goalgpt.com/privacy
 
 ---
 
-## 11. Third-Party Services
+## 11. Communications
 
-### 11.1 Third-Party Links
-The App may contain links to third-party websites or services. We are not responsible for:
-- Content on third-party sites
-- Privacy practices of third parties
-- Accuracy of third-party information
+### 11.1 Electronic Communications
+By using the Service, you consent to receive communications from us electronically (email, push notifications, in-app messages). You agree that all agreements, notices, and other communications satisfy any legal requirement that such communications be in writing.
 
-### 11.2 Third-Party Data
-Match data is provided by TheSports API. We are not responsible for errors or delays in third-party data.
-
-### 11.3 Authentication
-If you use Google or Apple Sign-In, you are subject to their respective terms:
-- [Google Terms of Service](https://policies.google.com/terms)
-- [Apple Terms of Service](https://www.apple.com/legal/internet-services/itunes/)
+### 11.2 Opting Out
+You can opt out of promotional communications but will still receive transactional communications related to your account.
 
 ---
 
-## 12. Disclaimers
+## 12. Changes to Terms
 
-### 12.1 "AS IS" Basis
-The App is provided "AS IS" and "AS AVAILABLE" without warranties of any kind, either express or implied, including:
-- Fitness for a particular purpose
-- Non-infringement
-- Uninterrupted or error-free operation
-- Accuracy of data
+We may modify these Terms at any time. We will notify you of material changes by:
+- Posting the updated Terms in the App
+- Sending an email notification
+- Displaying an in-app notice
 
-### 12.2 No Warranty
-We do not warrant that:
-- The App will meet your requirements
-- The App will be available at all times
-- Errors will be corrected
-- The App is free of viruses or harmful components
-
-### 12.3 Data Accuracy
-We strive for accuracy but do not guarantee that match data, statistics, or predictions are error-free.
+Your continued use after changes become effective constitutes acceptance. If you do not agree to the changes, you must stop using the Service and delete your account.
 
 ---
 
-## 13. Limitation of Liability
+## 13. Termination
 
-### 13.1 No Consequential Damages
-To the maximum extent permitted by law, we shall not be liable for:
-- Indirect, incidental, or consequential damages
-- Loss of profits, data, or goodwill
-- Service interruptions
-- Errors in data or predictions
+### 13.1 By You
+You may terminate your account at any time by deleting it through the App settings.
 
-### 13.2 Maximum Liability
-Our total liability to you for all claims shall not exceed the amount you paid us in the past 12 months, or $100 USD, whichever is greater.
+### 13.2 By Us
+We may suspend or terminate your access immediately, without notice, for:
+- Violation of these Terms
+- Fraudulent or illegal activity
+- Prolonged inactivity
+- Any reason at our sole discretion
 
-### 13.3 Basis of the Bargain
-These limitations are fundamental to our agreement and would not provide the App without them.
-
----
-
-## 14. Indemnification
-
-You agree to indemnify and hold harmless Wizards Tech, its officers, directors, employees, and agents from any claims, damages, or expenses (including legal fees) arising from:
-- Your use of the App
-- Your violation of these Terms
-- Your violation of any rights of others
-- Your content or conduct
-
----
-
-## 15. Termination
-
-### 15.1 Termination by You
-You may terminate your account at any time by:
-- Going to Profile → Settings → Delete Account
-- Contacting support@goalgpt.com
-
-### 15.2 Termination by Us
-We may suspend or terminate your account immediately if:
-- You violate these Terms
-- You engage in fraudulent activity
-- Required by law
-- We discontinue the App
-
-### 15.3 Effect of Termination
+### 13.3 Effect of Termination
 Upon termination:
-- Your license to use the App terminates
-- Your data will be deleted per our Privacy Policy
-- Purchases are non-refundable
-- Certain provisions survive (liability, indemnification)
+- Your right to use the Service ceases immediately
+- We may delete your account data (subject to our retention policies)
+- Provisions regarding intellectual property, disclaimers, and indemnification survive termination
 
 ---
 
-## 16. Modifications to Terms
+## 14. Dispute Resolution
 
-### 16.1 Right to Modify
-We reserve the right to modify these Terms at any time. We will notify you by:
-- Posting updated Terms in the App
-- Updating the "Last Updated" date
-- Sending an in-app notification for material changes
+### 14.1 Governing Law
+These Terms are governed by the laws of [Jurisdiction - TO BE SPECIFIED], without regard to conflict of law principles.
 
-### 16.2 Acceptance of Changes
-Your continued use after changes constitutes acceptance. If you do not agree, stop using the App.
+### 14.2 Arbitration Agreement (if applicable)
+Any disputes shall be resolved through binding arbitration in accordance with [Arbitration Rules - TO BE SPECIFIED], except where prohibited by law.
 
----
+You and GoalGPT agree to waive the right to a jury trial and to participate in class actions.
 
-## 17. Modifications to the App
+### 14.3 Exceptions to Arbitration
+Either party may seek injunctive relief in court for intellectual property infringement or unauthorized access to the Service.
 
-### 17.1 Right to Modify
-We may modify, suspend, or discontinue the App (or any part) at any time without notice.
-
-### 17.2 No Liability
-We are not liable for any modification, suspension, or discontinuation of the App.
+### 14.4 Informal Resolution
+Before initiating arbitration, you agree to attempt to resolve the dispute informally by contacting us at legal@goalgpt.com.
 
 ---
 
-## 18. Governing Law
+## 15. General Provisions
 
-### 18.1 Jurisdiction
-These Terms are governed by the laws of [Your Jurisdiction], without regard to conflict of law principles.
+### 15.1 Entire Agreement
+These Terms, together with our Privacy Policy, constitute the entire agreement between you and GoalGPT regarding the Service.
 
-### 18.2 Dispute Resolution
-Any disputes shall be resolved in the courts of [Your Jurisdiction].
+### 15.2 Severability
+If any provision of these Terms is found to be invalid or unenforceable, the remaining provisions remain in full force and effect.
 
-### 18.3 Arbitration (Optional)
-You agree to resolve disputes through binding arbitration (if applicable in your jurisdiction).
+### 15.3 Waiver
+Our failure to enforce any right or provision does not constitute a waiver of that right or provision.
 
----
+### 15.4 Assignment
+You may not assign or transfer these Terms. We may assign these Terms to any affiliate or in connection with a merger, acquisition, or sale of assets.
 
-## 19. General Provisions
+### 15.5 Force Majeure
+We are not liable for delays or failures due to circumstances beyond our reasonable control (natural disasters, pandemics, wars, strikes, government actions).
 
-### 19.1 Entire Agreement
-These Terms, together with our Privacy Policy, constitute the entire agreement between you and us.
+### 15.6 Export Controls
+You agree to comply with all export and re-export restrictions and regulations.
 
-### 19.2 Severability
-If any provision is found unenforceable, the remaining provisions remain in effect.
-
-### 19.3 Waiver
-Our failure to enforce any provision does not constitute a waiver.
-
-### 19.4 Assignment
-You may not assign these Terms. We may assign them without notice.
-
-### 19.5 Force Majeure
-We are not liable for delays or failures due to circumstances beyond our control (natural disasters, wars, etc.).
+### 15.7 App Store Terms
+Your use of the App is also subject to the terms of the Apple App Store or Google Play Store, as applicable.
 
 ---
 
-## 20. Contact Us
+## 16. Contact Us
 
-If you have questions about these Terms:
+If you have questions about these Terms, please contact us:
 
-**Email:** legal@goalgpt.com
-**Support:** support@goalgpt.com
-**Website:** https://goalgpt.com/terms
-**Mail:**
-Wizards Tech
-[Address]
-[City, State, ZIP]
-[Country]
+**Email**: legal@goalgpt.com
+**Support**: https://goalgpt.com/support
+**Website**: https://goalgpt.com/terms
 
----
-
-## 21. Acknowledgment
-
-By using GoalGPT, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.
+**Mailing Address**:
+GoalGPT Legal Team
+[Company Address - TO BE ADDED]
 
 ---
 
-## Appendix: Quick Reference
+## 17. Special Provisions
 
-### ✅ You CAN:
-- Use the App for personal enjoyment
-- View live scores and statistics
-- Access AI predictions
-- Share content via provided features
-- Delete your account anytime
+### 17.1 Apple App Store Users
+If you access the App through the Apple App Store, the following applies:
+- These Terms are between you and GoalGPT, not Apple
+- Apple is not responsible for the App or its content
+- Apple has no obligation to provide maintenance or support
+- Apple is not liable for any claims relating to the App
+- Apple is a third-party beneficiary of these Terms and may enforce them
 
-### ❌ You CANNOT:
-- Use bots or automated systems
-- Scrape or copy our data
-- Impersonate others
-- Manipulate the gamification system
-- Use for commercial purposes without permission
-
-### 🔒 We WILL:
-- Protect your privacy
-- Provide match data and predictions
-- Update the App with new features
-- Respond to support requests
-
-### ⚠️ We WILL NOT:
-- Guarantee prediction accuracy
-- Provide betting advice
-- Be liable for third-party data errors
-- Sell your personal information
+### 17.2 Google Play Store Users
+If you access the App through Google Play, you agree to the Google Play Terms of Service.
 
 ---
 
-**Last Updated:** January 13, 2026
-**Version:** 1.0
+## 18. Definitions
 
-© 2026 Wizards Tech. All rights reserved.
+- **"You," "User"**: The person using the App
+- **"We," "Us," "Our," "GoalGPT"**: The operator of the App
+- **"App," "Service"**: The GoalGPT mobile application
+- **"Content"**: Any text, images, or data posted by users or displayed in the App
+- **"Premium"**: Paid subscription features
+- **"Bot"**: AI prediction algorithm displayed in the App
+
+---
+
+**By using GoalGPT, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.**
+
+**Last Updated**: January 15, 2025
+**Version**: 1.0
+
+---
+
+*For questions or concerns, contact us at legal@goalgpt.com*
