@@ -6,9 +6,6 @@ import { useAuth } from '../context/AuthContext';
 import AuthStackNavigator from './AuthStackNavigator';
 import BottomTabNavigator from './BottomTabNavigator';
 
-// TEST: Design System Showcase
-import { DesignSystemShowcase } from '../screens/test/DesignSystemShowcase';
-
 export default function RootNavigator() {
   const { isLoading, isAuthenticated } = useAuth();
 
@@ -21,15 +18,8 @@ export default function RootNavigator() {
     );
   }
 
-  // TEMPORARY: Show Design System Showcase for Day 1 testing
-  return <DesignSystemShowcase />;
-
-  // TEMPORARY BYPASS: Show main app directly for testing
-  // TODO: Re-enable auth flow later
-  // return <BottomTabNavigator />;
-
   // Show Auth or Main based on authentication status
-  // return isAuthenticated ? <BottomTabNavigator /> : <AuthStackNavigator />;
+  return isAuthenticated ? <BottomTabNavigator /> : <AuthStackNavigator />;
 }
 
 const styles = StyleSheet.create({

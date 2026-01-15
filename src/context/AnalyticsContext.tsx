@@ -4,6 +4,7 @@
  */
 
 import React, { createContext, useContext, useEffect, useRef, ReactNode } from 'react';
+import { logger } from '../utils/logger';
 import { AppState, AppStateStatus } from 'react-native';
 import analyticsService from '../services/analytics.service';
 import { analyticsConfig, appInfo, deviceInfo } from '../config/analytics.config';
@@ -76,9 +77,9 @@ export const AnalyticsProvider: React.FC<AnalyticsProviderProps> = ({
     hasInitialized.current = true;
 
     if (analyticsConfig.debug) {
-      console.log('🎯 AnalyticsProvider initialized');
-      console.log('App Info:', appInfo);
-      console.log('Device Info:', deviceInfo);
+      logger.debug('AnalyticsProvider initialized');
+      logger.debug('App Info:', appInfo);
+      logger.debug('Device Info:', deviceInfo);
     }
 
     // Start analytics session
@@ -131,13 +132,13 @@ export const AnalyticsProvider: React.FC<AnalyticsProviderProps> = ({
         // App has come to the foreground
         analyticsService.trackEvent('app_foreground', {});
         if (analyticsConfig.debug) {
-          console.log('📱 App foregrounded');
+          logger.debug('App foregrounded');
         }
       } else if (appState.current === 'active' && nextAppState.match(/inactive|background/)) {
         // App has gone to the background
         analyticsService.trackEvent('app_background', {});
         if (analyticsConfig.debug) {
-          console.log('📱 App backgrounded');
+          logger.debug('App backgrounded');
         }
       }
 

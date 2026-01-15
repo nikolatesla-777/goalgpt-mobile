@@ -10,6 +10,7 @@ import websocketService, {
 } from '../services/websocket.service';
 import { useAuth } from './AuthContext';
 import { TokenStorage } from '../api/client';
+import { logger } from '../utils/logger';
 
 // ============================================================================
 // TYPES
@@ -77,14 +78,14 @@ export function WebSocketProvider({
       const token = await TokenStorage.getAccessToken();
 
       if (requireAuth && !token) {
-        console.log('⚠️ Cannot connect to WebSocket: no auth token');
+        logger.warn('Cannot connect to WebSocket: no auth token');
         return;
       }
 
       // Connect with token
       websocketService.connect(token || undefined);
     } catch (error) {
-      console.error('❌ Failed to connect to WebSocket:', error);
+      logger.error('Failed to connect to WebSocket', error);
     }
   }, [requireAuth]);
 
@@ -102,13 +103,13 @@ export function WebSocketProvider({
   useEffect(() => {
     // Auto-connect when authenticated (if enabled)
     if (autoConnect && isAuthenticated && user) {
-      console.log('🔌 Auto-connecting to WebSocket');
+      logger.debug('Auto-connecting to WebSocket');
       connect();
     }
 
     // Auto-disconnect when logged out
     if (!isAuthenticated) {
-      console.log('🔌 Disconnecting from WebSocket (logged out)');
+      logger.debug('Disconnecting from WebSocket (logged out)');
       disconnect();
     }
   }, [autoConnect, isAuthenticated, user, connect, disconnect]);

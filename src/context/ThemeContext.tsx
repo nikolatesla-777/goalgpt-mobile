@@ -5,6 +5,7 @@
  */
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { logger } from '../utils/logger';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Appearance } from 'react-native';
 import { theme, darkTheme, lightTheme, ThemeMode, Theme } from '../constants/theme';
@@ -77,7 +78,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         setThemeMode('system');
       }
     } catch (error) {
-      console.error('Failed to load theme preference:', error);
+      logger.error('Failed to load theme preference', error);
       setThemeMode('system');
     } finally {
       setIsReady(true);
@@ -92,7 +93,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     try {
       await AsyncStorage.setItem(THEME_STORAGE_KEY, mode);
     } catch (error) {
-      console.error('Failed to save theme preference:', error);
+      logger.error('Failed to save theme preference', error);
     }
   };
 
@@ -107,7 +108,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     const subscription = Appearance.addChangeListener(({ colorScheme }) => {
       // System theme changed, trigger re-render
       // The effectiveTheme will automatically update
-      console.log('System theme changed to:', colorScheme);
+      logger.debug('System theme changed to:', colorScheme);
     });
 
     return () => subscription.remove();

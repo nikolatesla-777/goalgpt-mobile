@@ -25,6 +25,7 @@ import {
   setUserLevel,
   setUserSubscriptionStatus,
 } from '../services/analytics.service';
+import { logger } from '../utils/logger';
 
 // ============================================================================
 // TYPES
@@ -128,7 +129,7 @@ export function AuthProvider({ children }: AuthProviderProps): React.ReactElemen
       try {
         initializeFirebase();
       } catch (firebaseError) {
-        console.warn('⚠️ Firebase init failed (non-fatal):', firebaseError);
+        logger.warn('Firebase initialization failed (non-fatal)', firebaseError);
       }
 
       // Check if tokens exist
@@ -170,7 +171,7 @@ export function AuthProvider({ children }: AuthProviderProps): React.ReactElemen
             );
           }
         } catch (analyticsError) {
-          console.warn('⚠️ Analytics setup failed (non-fatal):', analyticsError);
+          logger.warn('Analytics setup failed (non-fatal)', analyticsError);
         }
       }
 
@@ -187,7 +188,7 @@ export function AuthProvider({ children }: AuthProviderProps): React.ReactElemen
         refreshUserSilently();
       }
     } catch (error: any) {
-      console.error('❌ Auth initialization error:', error);
+      logger.error('Auth initialization error', error);
       setState((prev) => ({
         ...prev,
         isLoading: false,
@@ -256,9 +257,9 @@ export function AuthProvider({ children }: AuthProviderProps): React.ReactElemen
         error: null,
       }));
 
-      console.log('✅ Email Sign In successful:', response.data.user.email);
+      logger.info('Email sign in successful', response.data.user.email);
     } catch (error: any) {
-      console.error('❌ Email Sign In error:', error);
+      logger.error('Email sign in error', error);
       const errorMessage = error.response?.data?.message || error.message || 'Giriş yapılamadı';
       setState((prev) => ({
         ...prev,
@@ -325,9 +326,9 @@ export function AuthProvider({ children }: AuthProviderProps): React.ReactElemen
         error: null,
       }));
 
-      console.log('✅ Email Sign Up successful:', response.data.user.email);
+      logger.info('Email sign up successful', response.data.user.email);
     } catch (error: any) {
-      console.error('❌ Email Sign Up error:', error);
+      logger.error('Email sign up error', error);
       const errorMessage = error.response?.data?.message || error.message || 'Kayıt olunamadı';
       setState((prev) => ({
         ...prev,
@@ -389,9 +390,9 @@ export function AuthProvider({ children }: AuthProviderProps): React.ReactElemen
         error: null,
       }));
 
-      console.log('✅ Google Sign In successful:', result.user.email);
+      logger.info('Google sign in successful', result.user.email);
     } catch (error: any) {
-      console.error('❌ Google Sign In error:', error);
+      logger.error('Google sign in error', error);
       setState((prev) => ({
         ...prev,
         isLoading: false,
@@ -451,9 +452,9 @@ export function AuthProvider({ children }: AuthProviderProps): React.ReactElemen
         error: null,
       }));
 
-      console.log('✅ Apple Sign In successful:', result.user.email);
+      logger.info('Apple sign in successful', result.user.email);
     } catch (error: any) {
-      console.error('❌ Apple Sign In error:', error);
+      logger.error('Apple sign in error', error);
       setState((prev) => ({
         ...prev,
         isLoading: false,
@@ -526,9 +527,9 @@ export function AuthProvider({ children }: AuthProviderProps): React.ReactElemen
         error: null,
       }));
 
-      console.log('✅ Phone Sign In successful:', phone);
+      logger.info('Phone sign in successful', phone);
     } catch (error: any) {
-      console.error('❌ Phone Sign In error:', error);
+      logger.error('Phone sign in error', error);
       setState((prev) => ({
         ...prev,
         isLoading: false,
@@ -569,9 +570,9 @@ export function AuthProvider({ children }: AuthProviderProps): React.ReactElemen
         error: null,
       });
 
-      console.log('✅ Sign out successful');
+      logger.info('Sign out successful');
     } catch (error: any) {
-      console.error('❌ Sign out error:', error);
+      logger.error('Sign out error', error);
       setState((prev) => ({
         ...prev,
         isLoading: false,
@@ -621,9 +622,9 @@ export function AuthProvider({ children }: AuthProviderProps): React.ReactElemen
         error: null,
       }));
 
-      console.log('✅ User data refreshed');
+      logger.info('User data refreshed');
     } catch (error: any) {
-      console.error('❌ Refresh user error:', error);
+      logger.error('Refresh user error', error);
       setState((prev) => ({
         ...prev,
         isLoading: false,
@@ -665,9 +666,9 @@ export function AuthProvider({ children }: AuthProviderProps): React.ReactElemen
         user,
       }));
 
-      console.log('✅ User data refreshed silently');
+      logger.debug('User data refreshed silently');
     } catch (error: any) {
-      console.error('⚠️ Silent refresh failed:', error);
+      logger.warn('Silent refresh failed', error);
       // Don't throw error, this is a background operation
     }
   }
@@ -686,9 +687,9 @@ export function AuthProvider({ children }: AuthProviderProps): React.ReactElemen
         ...prev,
         hasCompletedOnboarding: true,
       }));
-      console.log('✅ Onboarding completed');
+      logger.info('Onboarding completed');
     } catch (error: any) {
-      console.error('❌ Complete onboarding error:', error);
+      logger.error('Complete onboarding error', error);
       throw error;
     }
   }
@@ -751,7 +752,7 @@ async function saveUserToCache(user: User): Promise<void> {
   try {
     await AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
   } catch (error) {
-    console.error('❌ Save user to cache error:', error);
+    logger.error('Save user to cache error', error);
   }
 }
 
@@ -763,7 +764,7 @@ async function loadUserFromCache(): Promise<User | null> {
     const userJson = await AsyncStorage.getItem(STORAGE_KEYS.USER);
     return userJson ? JSON.parse(userJson) : null;
   } catch (error) {
-    console.error('❌ Load user from cache error:', error);
+    logger.error('Load user from cache error', error);
     return null;
   }
 }
@@ -776,7 +777,7 @@ async function checkOnboardingStatus(): Promise<boolean> {
     const status = await AsyncStorage.getItem(STORAGE_KEYS.ONBOARDING_COMPLETED);
     return status === 'true';
   } catch (error) {
-    console.error('❌ Check onboarding status error:', error);
+    logger.error('Check onboarding status error', error);
     return false;
   }
 }

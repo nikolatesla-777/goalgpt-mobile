@@ -6,6 +6,7 @@
  */
 
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import { logger } from '../utils/logger';
 import type {
   FavoritesContextValue,
   FavoritesState,
@@ -62,13 +63,13 @@ export const FavoritesProvider: React.FC<FavoritesProviderProps> = ({ children }
         isLoading: false,
       });
 
-      console.log('✅ Favorites loaded:', {
+      logger.debug('Favorites loaded:', {
         matches: favorites.matches.length,
         predictions: favorites.predictions.length,
         teams: favorites.teams.length,
       });
     } catch (error) {
-      console.error('❌ Failed to load favorites:', error);
+      logger.error('Failed to load favorites', error);
       setState((prev) => ({ ...prev, isLoading: false }));
     }
   };
@@ -86,7 +87,7 @@ export const FavoritesProvider: React.FC<FavoritesProviderProps> = ({ children }
           matches: [newFavorite, ...prev.matches],
         }));
       } catch (error) {
-        console.error('❌ Failed to add match favorite:', error);
+        logger.error('Failed to add match favorite', error);
         throw error;
       }
     },
@@ -101,7 +102,7 @@ export const FavoritesProvider: React.FC<FavoritesProviderProps> = ({ children }
         matches: prev.matches.filter((m) => m.matchId !== matchId),
       }));
     } catch (error) {
-      console.error('❌ Failed to remove match favorite:', error);
+      logger.error('Failed to remove match favorite', error);
       throw error;
     }
   }, []);
@@ -143,7 +144,7 @@ export const FavoritesProvider: React.FC<FavoritesProviderProps> = ({ children }
           predictions: [newFavorite, ...prev.predictions],
         }));
       } catch (error) {
-        console.error('❌ Failed to add prediction favorite:', error);
+        logger.error('Failed to add prediction favorite', error);
         throw error;
       }
     },
