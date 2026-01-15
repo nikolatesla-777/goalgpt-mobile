@@ -8,7 +8,7 @@ module.exports = {
 
   // Transform files with ts-jest
   transformIgnorePatterns: [
-    'node_modules/(?!(react-native|@react-native|expo|@expo|@unimodules|unimodules|sentry-expo|@invertase|@react-native-google-signin|@tanstack/react-query|date-fns)/)',
+    'node_modules/(?!(react-native|@react-native|expo|@expo|expo-.*|@unimodules|unimodules|sentry-expo|@invertase|@react-native-google-signin|@tanstack/react-query|date-fns)/)',
   ],
 
   // Setup files
