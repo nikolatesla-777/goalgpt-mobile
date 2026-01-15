@@ -68,8 +68,6 @@ if (process.env.NODE_ENV === 'production') {
         ascii_only: true,
         beautify: false,
       },
-      // Compression passes for better results
-      passes: 2,
     },
   };
 }
