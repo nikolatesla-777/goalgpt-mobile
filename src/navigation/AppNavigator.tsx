@@ -43,6 +43,7 @@ const MatchDetailScreenContainer = lazy(() => import('../screens/MatchDetailScre
 const StoreScreen = lazy(() => import('../screens/StoreScreen').then(m => ({ default: m.StoreScreen })));
 const ProfileScreen = lazy(() => import('../screens/ProfileScreen').then(m => ({ default: m.ProfileScreen })));
 const BotDetailScreen = lazy(() => import('../screens/BotDetailScreen').then(m => ({ default: m.BotDetailScreen })));
+const LegalScreen = lazy(() => import('../screens/LegalScreen'));
 
 // Mock Data (for Bot Detail only - other screens use real API)
 import { mockPredictions } from '../services/mockData';
@@ -72,6 +73,7 @@ export type RootStackParamList = {
   MainTabs: undefined;
   MatchDetail: { matchId: string | number };
   BotDetail: { botId: number };
+  Legal: undefined;
 };
 
 export type MainTabsParamList = {
@@ -313,6 +315,13 @@ const MainTabsNavigator = () => {
               }}
               onNavigate={(section) => {
                 console.log('Navigate to:', section);
+                // Navigate to Legal screen when legal section is selected
+                if (section === 'legal') {
+                  const parent = navigation.getParent();
+                  if (parent) {
+                    parent.navigate('Legal');
+                  }
+                }
               }}
             />
           </Suspense>
@@ -398,6 +407,15 @@ const RootStackNavigator = () => {
             </Suspense>
           );
         }}
+      </Stack.Screen>
+
+      {/* Legal Screen */}
+      <Stack.Screen name="Legal">
+        {() => (
+          <Suspense fallback={<LoadingFallback />}>
+            <LegalScreen />
+          </Suspense>
+        )}
       </Stack.Screen>
     </Stack.Navigator>
   );

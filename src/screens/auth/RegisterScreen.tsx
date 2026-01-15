@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   Platform,
   Alert,
+  Linking,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -41,6 +42,22 @@ export default function RegisterScreen() {
       Alert.alert('Error', error.message || 'Apple sign up failed');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const openTerms = async () => {
+    try {
+      await Linking.openURL('https://goalgpt.com/terms');
+    } catch (error) {
+      Alert.alert('Error', 'Unable to open Terms of Service');
+    }
+  };
+
+  const openPrivacy = async () => {
+    try {
+      await Linking.openURL('https://goalgpt.com/privacy');
+    } catch (error) {
+      Alert.alert('Error', 'Unable to open Privacy Policy');
     }
   };
 
@@ -88,10 +105,19 @@ export default function RegisterScreen() {
         )}
 
         {/* Terms */}
-        <Text style={styles.terms}>
-          Kayıt olarak <Text style={styles.termsLink}>Kullanım Şartları</Text> ve{' '}
-          <Text style={styles.termsLink}>Gizlilik Politikası</Text>'nı kabul etmiş olursunuz.
-        </Text>
+        <View style={styles.termsContainer}>
+          <Text style={styles.terms}>
+            Kayıt olarak{' '}
+            <Text style={styles.termsLink} onPress={openTerms}>
+              Kullanım Şartları
+            </Text>
+            {' '}ve{' '}
+            <Text style={styles.termsLink} onPress={openPrivacy}>
+              Gizlilik Politikası
+            </Text>
+            'nı kabul etmiş olursunuz.
+          </Text>
+        </View>
       </View>
 
       {/* Footer */}
@@ -159,6 +185,9 @@ const styles = StyleSheet.create({
   loader: {
     marginTop: 24,
   },
+  termsContainer: {
+    marginTop: 16,
+  },
   terms: {
     color: '#B3B3B3',
     fontSize: 12,
@@ -168,6 +197,7 @@ const styles = StyleSheet.create({
   termsLink: {
     color: '#2196F3',
     textDecorationLine: 'underline',
+    fontWeight: '600',
   },
   footer: {
     flexDirection: 'row',

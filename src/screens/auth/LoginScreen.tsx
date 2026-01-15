@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   Platform,
   Alert,
+  Linking,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -41,6 +42,22 @@ export default function LoginScreen() {
       Alert.alert('Error', error.message || 'Apple sign in failed');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const openTerms = async () => {
+    try {
+      await Linking.openURL('https://goalgpt.com/terms');
+    } catch (error) {
+      Alert.alert('Error', 'Unable to open Terms of Service');
+    }
+  };
+
+  const openPrivacy = async () => {
+    try {
+      await Linking.openURL('https://goalgpt.com/privacy');
+    } catch (error) {
+      Alert.alert('Error', 'Unable to open Privacy Policy');
     }
   };
 
@@ -86,6 +103,21 @@ export default function LoginScreen() {
         {loading && (
           <ActivityIndicator size="large" color="#2196F3" style={styles.loader} />
         )}
+
+        {/* Terms */}
+        <View style={styles.termsContainer}>
+          <Text style={styles.terms}>
+            Devam ederek{' '}
+            <Text style={styles.termsLink} onPress={openTerms}>
+              Kullanım Şartları
+            </Text>
+            {' '}ve{' '}
+            <Text style={styles.termsLink} onPress={openPrivacy}>
+              Gizlilik Politikası
+            </Text>
+            'nı kabul etmiş olursunuz.
+          </Text>
+        </View>
       </View>
 
       {/* Footer */}
@@ -151,6 +183,20 @@ const styles = StyleSheet.create({
   },
   loader: {
     marginTop: 24,
+  },
+  termsContainer: {
+    marginTop: 16,
+  },
+  terms: {
+    color: '#B3B3B3',
+    fontSize: 12,
+    textAlign: 'center',
+    lineHeight: 18,
+  },
+  termsLink: {
+    color: '#2196F3',
+    textDecorationLine: 'underline',
+    fontWeight: '600',
   },
   footer: {
     flexDirection: 'row',

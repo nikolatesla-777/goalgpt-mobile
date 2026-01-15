@@ -277,6 +277,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       { icon: '🌍', label: 'Language', key: 'language' },
       { icon: '🎨', label: 'Theme', key: 'theme' },
       { icon: '🔒', label: 'Privacy', key: 'privacy' },
+      { icon: '⚖️', label: 'Legal & Privacy', key: 'legal' },
       { icon: '💬', label: 'Referrals', key: 'referrals' },
       { icon: 'ℹ️', label: 'About', key: 'about' },
     ];
