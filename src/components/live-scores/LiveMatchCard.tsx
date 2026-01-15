@@ -1,9 +1,11 @@
 /**
  * LiveMatchCard Component
  * Displays live match with real-time score updates
+ *
+ * Phase 11: Optimized with React.memo and useCallback
  */
 
-import React from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../../context/ThemeContext';
@@ -85,7 +87,7 @@ const getMinuteDisplay = (minute?: number, statusId?: number): string => {
 // COMPONENT
 // ============================================================================
 
-export const LiveMatchCard: React.FC<LiveMatchCardProps> = ({
+export const LiveMatchCard: React.FC<LiveMatchCardProps> = memo(({
   match,
   compact = false,
   showLeague = true,
@@ -93,9 +95,23 @@ export const LiveMatchCard: React.FC<LiveMatchCardProps> = ({
   const { theme } = useTheme();
   const router = useRouter();
 
-  const handlePress = () => {
+  // Memoize press handler to prevent re-renders
+  const handlePress = useCallback(() => {
     router.push(`/match/${match.id}`);
-  };
+  }, [match.id, router]);
+
+  // Memoize status text to avoid recalculation
+  const statusText = useMemo(() => getStatusText(match.statusId), [match.statusId]);
+  const minuteDisplay = useMemo(
+    () => getMinuteDisplay(match.minute, match.statusId),
+    [match.minute, match.statusId]
+  );
+
+  // Memoize indicators visibility
+  const hasIndicators = useMemo(
+    () => match.hasRedCard || match.hasPenalty || (match.recentEvents && match.recentEvents.length > 0),
+    [match.hasRedCard, match.hasPenalty, match.recentEvents]
+  );
 
   // ============================================================================
   // COMPACT VERSION
@@ -110,7 +126,7 @@ export const LiveMatchCard: React.FC<LiveMatchCardProps> = ({
             <View style={styles.compactLiveSection}>
               <View style={[styles.liveDot, { backgroundColor: theme.live.indicator }]} />
               <NeonText size="small" style={{ color: theme.live.text, fontWeight: '600' }}>
-                {getMinuteDisplay(match.minute, match.statusId)}
+                {minuteDisplay}
               </NeonText>
             </View>
 
@@ -200,10 +216,10 @@ export const LiveMatchCard: React.FC<LiveMatchCardProps> = ({
 
             <View style={styles.minuteSection}>
               <NeonText size="lg" color="primary" style={{ fontWeight: 'bold' }}>
-                {getMinuteDisplay(match.minute, match.statusId)}
+                {minuteDisplay}
               </NeonText>
               <NeonText size="small" style={{ color: theme.text.tertiary }}>
-                {getStatusText(match.statusId)}
+                {statusText}
               </NeonText>
             </View>
           </View>
@@ -248,9 +264,7 @@ export const LiveMatchCard: React.FC<LiveMatchCardProps> = ({
           </View>
 
           {/* Indicators */}
-          {(match.hasRedCard ||
-            match.hasPenalty ||
-            (match.recentEvents && match.recentEvents.length > 0)) && (
+          {hasIndicators && (
             <View style={styles.indicatorsSection}>
               {match.hasRedCard && (
                 <View style={[styles.indicator, { backgroundColor: theme.error.bg }]}>
@@ -279,7 +293,23 @@ export const LiveMatchCard: React.FC<LiveMatchCardProps> = ({
       </GlassCard>
     </TouchableOpacity>
   );
-};
+}, (prevProps, nextProps) => {
+  // Custom comparison function for memo
+  // Only re-render if these specific fields change
+  return (
+    prevProps.match.id === nextProps.match.id &&
+    prevProps.match.homeScore === nextProps.match.homeScore &&
+    prevProps.match.awayScore === nextProps.match.awayScore &&
+    prevProps.match.minute === nextProps.match.minute &&
+    prevProps.match.statusId === nextProps.match.statusId &&
+    prevProps.match.hasRedCard === nextProps.match.hasRedCard &&
+    prevProps.match.hasPenalty === nextProps.match.hasPenalty &&
+    prevProps.compact === nextProps.compact &&
+    prevProps.showLeague === nextProps.showLeague
+  );
+});
+
+LiveMatchCard.displayName = 'LiveMatchCard';
 
 // ============================================================================
 // STYLES

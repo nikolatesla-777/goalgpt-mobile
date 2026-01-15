@@ -3,9 +3,12 @@
  *
  * Main navigation structure
  * Bottom Tabs + Stack Navigation
+ *
+ * Phase 11: Optimized with code splitting and lazy loading
  */
 
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, lazy, Suspense } from 'react';
+import { ActivityIndicator, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -22,24 +25,37 @@ import { NavigationLoadingScreen } from '../components/NavigationLoadingScreen';
 import { useNavigationTracking } from '../hooks/useScreenTracking';
 import analyticsService from '../services/analytics.service';
 
-// Auth Screens
-import { SplashScreen } from '../screens/SplashScreen';
-import { OnboardingScreen } from '../screens/OnboardingScreen';
-import { LoginScreen } from '../screens/LoginScreen';
-import { RegisterScreen } from '../screens/RegisterScreen';
-import { TestLoginScreen } from '../screens/TestLoginScreen';
+// ============================================================================
+// LAZY LOADED SCREENS (Code Splitting)
+// ============================================================================
 
-// Main App Screens
-import { HomeScreen } from '../screens/HomeScreen';
-import { LiveMatchesScreen } from '../screens/LiveMatchesScreen';
-import PredictionsScreen from '../screens/predictions/PredictionsScreen';
-import { MatchDetailScreenContainer } from '../screens/MatchDetailScreenContainer';
-import { StoreScreen } from '../screens/StoreScreen';
-import { ProfileScreen } from '../screens/ProfileScreen';
-import { BotDetailScreen } from '../screens/BotDetailScreen';
+// Auth Screens - Lazy Loaded
+const SplashScreen = lazy(() => import('../screens/SplashScreen').then(m => ({ default: m.SplashScreen })));
+const OnboardingScreen = lazy(() => import('../screens/OnboardingScreen').then(m => ({ default: m.OnboardingScreen })));
+const LoginScreen = lazy(() => import('../screens/LoginScreen').then(m => ({ default: m.LoginScreen })));
+const RegisterScreen = lazy(() => import('../screens/RegisterScreen').then(m => ({ default: m.RegisterScreen })));
+
+// Main App Screens - Lazy Loaded
+const HomeScreen = lazy(() => import('../screens/HomeScreen').then(m => ({ default: m.HomeScreen })));
+const LiveMatchesScreen = lazy(() => import('../screens/LiveMatchesScreen').then(m => ({ default: m.LiveMatchesScreen })));
+const PredictionsScreen = lazy(() => import('../screens/predictions/PredictionsScreen'));
+const MatchDetailScreenContainer = lazy(() => import('../screens/MatchDetailScreenContainer').then(m => ({ default: m.MatchDetailScreenContainer })));
+const StoreScreen = lazy(() => import('../screens/StoreScreen').then(m => ({ default: m.StoreScreen })));
+const ProfileScreen = lazy(() => import('../screens/ProfileScreen').then(m => ({ default: m.ProfileScreen })));
+const BotDetailScreen = lazy(() => import('../screens/BotDetailScreen').then(m => ({ default: m.BotDetailScreen })));
 
 // Mock Data (for Bot Detail only - other screens use real API)
 import { mockPredictions } from '../services/mockData';
+
+// ============================================================================
+// LOADING FALLBACK COMPONENT
+// ============================================================================
+
+const LoadingFallback = () => (
+  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0A0E27' }}>
+    <ActivityIndicator size="large" color="#6C5CE7" />
+  </View>
+);
 
 // ============================================================================
 // TYPES
@@ -90,72 +106,80 @@ const AuthStackNavigator = () => {
       {/* Splash Screen */}
       <AuthStack.Screen name="Splash">
         {({ navigation }) => (
-          <SplashScreen
-            onComplete={() => {
-              // After splash, navigate to onboarding or login
-              if (showOnboarding) {
-                navigation.navigate('Onboarding');
-              } else {
-                navigation.navigate('Login');
-              }
-            }}
-          />
+          <Suspense fallback={<LoadingFallback />}>
+            <SplashScreen
+              onComplete={() => {
+                // After splash, navigate to onboarding or login
+                if (showOnboarding) {
+                  navigation.navigate('Onboarding');
+                } else {
+                  navigation.navigate('Login');
+                }
+              }}
+            />
+          </Suspense>
         )}
       </AuthStack.Screen>
 
       {/* Onboarding Screen */}
       <AuthStack.Screen name="Onboarding">
         {({ navigation }) => (
-          <OnboardingScreen
-            onComplete={() => {
-              setShowOnboarding(false);
-              navigation.navigate('Login');
-            }}
-            onSkip={() => {
-              setShowOnboarding(false);
-              navigation.navigate('Login');
-            }}
-          />
+          <Suspense fallback={<LoadingFallback />}>
+            <OnboardingScreen
+              onComplete={() => {
+                setShowOnboarding(false);
+                navigation.navigate('Login');
+              }}
+              onSkip={() => {
+                setShowOnboarding(false);
+                navigation.navigate('Login');
+              }}
+            />
+          </Suspense>
         )}
       </AuthStack.Screen>
 
       {/* Login Screen */}
       <AuthStack.Screen name="Login">
         {({ navigation }) => (
-          <LoginScreen
-            onLoginSuccess={() => {
-              // AuthContext will handle state update
-              console.log('Login successful');
-            }}
-            onNavigateToRegister={() => navigation.navigate('Register')}
-            onForgotPassword={() => {
-              console.log('Forgot password');
-              // In future: navigate to forgot password screen
-            }}
-            onSocialAuth={(provider) => {
-              console.log('Social auth:', provider);
-              // In future: implement social auth
-            }}
-            onBack={() => navigation.goBack()}
-          />
+          <Suspense fallback={<LoadingFallback />}>
+            <LoginScreen
+              onLoginSuccess={() => {
+                // AuthContext will handle state update
+                console.log('Login successful');
+              }}
+              onNavigateToRegister={() => navigation.navigate('Register')}
+              onForgotPassword={() => {
+                console.log('Forgot password');
+                // In future: navigate to forgot password screen
+              }}
+              onSocialAuth={(provider) => {
+                console.log('Social auth:', provider);
+                // In future: implement social auth
+              }}
+              onBack={() => navigation.goBack()}
+            />
+          </Suspense>
         )}
       </AuthStack.Screen>
 
       {/* Register Screen */}
       <AuthStack.Screen name="Register">
         {({ navigation }) => (
-          <RegisterScreen
-            onRegisterSuccess={() => {
-              // AuthContext will handle state update
-              console.log('Register successful');
-            }}
-            onNavigateToLogin={() => navigation.navigate('Login')}
-            onSocialAuth={(provider) => {
-              console.log('Social auth:', provider);
-              // In future: implement social auth
-            }}
-            onBack={() => navigation.goBack()}
-          />
+          <Suspense fallback={<LoadingFallback />}>
+            <RegisterScreen
+              onRegisterSuccess={() => {
+                // AuthContext will handle state update
+                console.log('Register successful');
+              }}
+              onNavigateToLogin={() => navigation.navigate('Login')}
+              onSocialAuth={(provider) => {
+                console.log('Social auth:', provider);
+                // In future: implement social auth
+              }}
+              onBack={() => navigation.goBack()}
+            />
+          </Suspense>
         )}
       </AuthStack.Screen>
     </AuthStack.Navigator>
@@ -177,111 +201,121 @@ const MainTabsNavigator = () => {
       {/* Home Tab */}
       <Tab.Screen name="Home">
         {({ navigation }) => (
-          <HomeScreen
-            onMatchPress={(matchId) => {
-              // Navigate to match detail (stack screen)
-              const parent = navigation.getParent();
-              if (parent) {
-                parent.navigate('MatchDetail', { matchId });
-              }
-            }}
-            onPredictionPress={(predictionId) => {
-              console.log('Prediction pressed:', predictionId);
-              // Navigate to predictions tab
-              navigation.navigate('Predictions');
-            }}
-            onSeeAllMatches={() => {
-              // Navigate to live matches tab
-              navigation.navigate('LiveMatches');
-            }}
-            onSeeAllPredictions={() => {
-              // Navigate to predictions tab
-              navigation.navigate('Predictions');
-            }}
-          />
+          <Suspense fallback={<LoadingFallback />}>
+            <HomeScreen
+              onMatchPress={(matchId) => {
+                // Navigate to match detail (stack screen)
+                const parent = navigation.getParent();
+                if (parent) {
+                  parent.navigate('MatchDetail', { matchId });
+                }
+              }}
+              onPredictionPress={(predictionId) => {
+                console.log('Prediction pressed:', predictionId);
+                // Navigate to predictions tab
+                navigation.navigate('Predictions');
+              }}
+              onSeeAllMatches={() => {
+                // Navigate to live matches tab
+                navigation.navigate('LiveMatches');
+              }}
+              onSeeAllPredictions={() => {
+                // Navigate to predictions tab
+                navigation.navigate('Predictions');
+              }}
+            />
+          </Suspense>
         )}
       </Tab.Screen>
 
       {/* Live Matches Tab */}
       <Tab.Screen name="LiveMatches">
         {({ navigation }) => (
-          <LiveMatchesScreen
-            onMatchPress={(matchId) => {
-              // Navigate to match detail (stack screen)
-              const parent = navigation.getParent();
-              if (parent) {
-                parent.navigate('MatchDetail', { matchId });
-              }
-            }}
-          />
+          <Suspense fallback={<LoadingFallback />}>
+            <LiveMatchesScreen
+              onMatchPress={(matchId) => {
+                // Navigate to match detail (stack screen)
+                const parent = navigation.getParent();
+                if (parent) {
+                  parent.navigate('MatchDetail', { matchId });
+                }
+              }}
+            />
+          </Suspense>
         )}
       </Tab.Screen>
 
       {/* Predictions Tab */}
       <Tab.Screen name="Predictions">
         {({ navigation }) => (
-          <PredictionsScreen
-            onBotPress={(botId) => {
-              // Navigate to bot detail (stack screen)
-              const parent = navigation.getParent();
-              if (parent) {
-                parent.navigate('BotDetail', { botId });
-              }
-            }}
-          />
+          <Suspense fallback={<LoadingFallback />}>
+            <PredictionsScreen
+              onBotPress={(botId) => {
+                // Navigate to bot detail (stack screen)
+                const parent = navigation.getParent();
+                if (parent) {
+                  parent.navigate('BotDetail', { botId });
+                }
+              }}
+            />
+          </Suspense>
         )}
       </Tab.Screen>
 
       {/* Store Tab */}
       <Tab.Screen name="Store">
         {() => (
-          <StoreScreen
-            currentPlan="free"
-            onSelectPlan={(planId) => {
-              console.log('Plan selected:', planId);
-            }}
-            onPurchase={(planId) => {
-              console.log('Purchase initiated:', planId);
-              // In future: integrate payment
-            }}
-          />
+          <Suspense fallback={<LoadingFallback />}>
+            <StoreScreen
+              currentPlan="free"
+              onSelectPlan={(planId) => {
+                console.log('Plan selected:', planId);
+              }}
+              onPurchase={(planId) => {
+                console.log('Purchase initiated:', planId);
+                // In future: integrate payment
+              }}
+            />
+          </Suspense>
         )}
       </Tab.Screen>
 
       {/* Profile Tab */}
       <Tab.Screen name="Profile">
         {({ navigation }) => (
-          <ProfileScreen
-            profile={{
-              id: '1',
-              name: 'Utku Bozbay',
-              email: 'utku@goalgpt.com',
-              vipStatus: 'free',
-              dayCounter: 47,
-              stats: {
-                totalPredictions: 234,
-                winRate: 78.5,
-                currentStreak: 12,
-                level: 8,
-                xp: 1250,
-                xpToNextLevel: 2000,
-              },
-              badges: ['🏆', '🔥', '⭐', '💎', '🎯'],
-              favoriteTeams: ['Barcelona', 'Real Madrid', 'Man United'],
-            }}
-            onEditProfile={() => {
-              console.log('Edit profile');
-            }}
-            onSettings={() => {
-              console.log('Settings');
-            }}
-            onLogout={() => {
-              console.log('Logout');
-            }}
-            onNavigate={(section) => {
-              console.log('Navigate to:', section);
-            }}
-          />
+          <Suspense fallback={<LoadingFallback />}>
+            <ProfileScreen
+              profile={{
+                id: '1',
+                name: 'Utku Bozbay',
+                email: 'utku@goalgpt.com',
+                vipStatus: 'free',
+                dayCounter: 47,
+                stats: {
+                  totalPredictions: 234,
+                  winRate: 78.5,
+                  currentStreak: 12,
+                  level: 8,
+                  xp: 1250,
+                  xpToNextLevel: 2000,
+                },
+                badges: ['🏆', '🔥', '⭐', '💎', '🎯'],
+                favoriteTeams: ['Barcelona', 'Real Madrid', 'Man United'],
+              }}
+              onEditProfile={() => {
+                console.log('Edit profile');
+              }}
+              onSettings={() => {
+                console.log('Settings');
+              }}
+              onLogout={() => {
+                console.log('Logout');
+              }}
+              onNavigate={(section) => {
+                console.log('Navigate to:', section);
+              }}
+            />
+          </Suspense>
         )}
       </Tab.Screen>
     </Tab.Navigator>
@@ -309,10 +343,12 @@ const RootStackNavigator = () => {
           const { matchId } = route.params;
 
           return (
-            <MatchDetailScreenContainer
-              matchId={matchId}
-              onBack={() => navigation.goBack()}
-            />
+            <Suspense fallback={<LoadingFallback />}>
+              <MatchDetailScreenContainer
+                matchId={matchId}
+                onBack={() => navigation.goBack()}
+              />
+            </Suspense>
           );
         }}
       </Stack.Screen>
@@ -346,18 +382,20 @@ const RootStackNavigator = () => {
           ];
 
           return (
-            <BotDetailScreen
-              bot={mockBot}
-              otherBots={mockOtherBots}
-              predictions={mockPredictions}
-              onBotSelect={(newBotId) => {
-                navigation.push('BotDetail', { botId: newBotId });
-              }}
-              onPredictionPress={(predictionId) => {
-                console.log('Prediction pressed:', predictionId);
-              }}
-              onBack={() => navigation.goBack()}
-            />
+            <Suspense fallback={<LoadingFallback />}>
+              <BotDetailScreen
+                bot={mockBot}
+                otherBots={mockOtherBots}
+                predictions={mockPredictions}
+                onBotSelect={(newBotId) => {
+                  navigation.push('BotDetail', { botId: newBotId });
+                }}
+                onPredictionPress={(predictionId) => {
+                  console.log('Prediction pressed:', predictionId);
+                }}
+                onBack={() => navigation.goBack()}
+              />
+            </Suspense>
           );
         }}
       </Stack.Screen>
