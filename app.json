@@ -1,0 +1,124 @@
+{
+  "expo": {
+    "name": "GoalGPT",
+    "slug": "goalgpt-mobile",
+    "version": "2.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#2196F3"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.wizardstech.goalgpt",
+      "buildNumber": "1",
+      "associatedDomains": [
+        "applinks:goalgpt.com",
+        "applinks:www.goalgpt.com",
+        "applinks:partnergoalgpt.com",
+        "applinks:www.partnergoalgpt.com"
+      ],
+      "infoPlist": {
+        "NSCameraUsageDescription": "Allow GoalGPT to access your camera for profile photos.",
+        "NSPhotoLibraryUsageDescription": "Allow GoalGPT to access your photo library.",
+        "NSUserNotificationsUsageDescription": "Allow GoalGPT to send you notifications about match updates and predictions.",
+        "CFBundleURLTypes": [
+          {
+            "CFBundleURLSchemes": [
+              "goalgpt"
+            ]
+          }
+        ]
+      },
+      "config": {
+        "googleMobileAdsAppId": "ca-app-pub-xxxxxxxxxxxxxxxx~yyyyyyyyyy"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#2196F3"
+      },
+      "package": "com.wizardstech.goalgpt",
+      "versionCode": 1,
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "POST_NOTIFICATIONS"
+      ],
+      "useNextNotificationsApi": true,
+      "googleServicesFile": "./google-services.json",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "goalgpt.com"
+            },
+            {
+              "scheme": "https",
+              "host": "www.goalgpt.com"
+            },
+            {
+              "scheme": "https",
+              "host": "partnergoalgpt.com"
+            },
+            {
+              "scheme": "https",
+              "host": "www.partnergoalgpt.com"
+            },
+            {
+              "scheme": "goalgpt"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ]
+    },
+    "plugins": [
+      "expo-font",
+      "expo-secure-store",
+      "expo-apple-authentication",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#2196F3"
+        }
+      ]
+    ],
+    "scheme": "goalgpt",
+    "notification": {
+      "icon": "./assets/icon.png",
+      "color": "#2196F3",
+      "androidMode": "default",
+      "androidCollapsedTitle": "GoalGPT"
+    },
+    "extra": {
+      "apiUrl": "http://142.93.103.128:3000",
+      "wsUrl": "ws://142.93.103.128:3000/ws",
+      "eas": {
+        "projectId": "YOUR_EAS_PROJECT_ID"
+      },
+      "firebaseApiKey": "YOUR_FIREBASE_API_KEY",
+      "firebaseAuthDomain": "YOUR_PROJECT_ID.firebaseapp.com",
+      "firebaseProjectId": "YOUR_FIREBASE_PROJECT_ID",
+      "firebaseStorageBucket": "YOUR_PROJECT_ID.appspot.com",
+      "firebaseSenderId": "YOUR_SENDER_ID",
+      "firebaseAppId": "YOUR_APP_ID",
+      "firebaseMeasurementId": "YOUR_MEASUREMENT_ID"
+    }
+  }
+}
