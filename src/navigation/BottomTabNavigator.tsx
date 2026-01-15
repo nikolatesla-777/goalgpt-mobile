@@ -1,12 +1,40 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
+import LoadingScreen from '../components/LoadingScreen';
 
-// Screens
+// Eager load HomeScreen for fast startup (critical for first impression)
 import HomeScreen from '../screens/home/HomeScreen';
-import LiveScreen from '../screens/live/LiveScreen';
-import PredictionsScreen from '../screens/predictions/PredictionsScreen';
-import ProfileScreen from '../screens/profile/ProfileScreen';
+
+// Lazy load other screens to reduce initial bundle size
+const LiveScreen = lazy(() => import('../screens/live/LiveScreen'));
+const PredictionsScreen = lazy(() => import('../screens/predictions/PredictionsScreen'));
+const ProfileScreen = lazy(() => import('../screens/profile/ProfileScreen'));
+
+// Wrapper components with Suspense for lazy-loaded screens
+function LiveScreenWrapper() {
+  return (
+    <Suspense fallback={<LoadingScreen />}>
+      <LiveScreen />
+    </Suspense>
+  );
+}
+
+function PredictionsScreenWrapper() {
+  return (
+    <Suspense fallback={<LoadingScreen />}>
+      <PredictionsScreen />
+    </Suspense>
+  );
+}
+
+function ProfileScreenWrapper() {
+  return (
+    <Suspense fallback={<LoadingScreen />}>
+      <ProfileScreen />
+    </Suspense>
+  );
+}
 
 const Tab = createBottomTabNavigator();
 
@@ -43,7 +71,7 @@ export default function BottomTabNavigator() {
       />
       <Tab.Screen
         name="Live"
-        component={LiveScreen}
+        component={LiveScreenWrapper}
         options={{
           tabBarLabel: 'Canlı',
           tabBarIcon: ({ color, size }) => (
@@ -53,7 +81,7 @@ export default function BottomTabNavigator() {
       />
       <Tab.Screen
         name="Predictions"
-        component={PredictionsScreen}
+        component={PredictionsScreenWrapper}
         options={{
           tabBarLabel: 'Tahminler',
           tabBarIcon: ({ color, size }) => (
@@ -63,7 +91,7 @@ export default function BottomTabNavigator() {
       />
       <Tab.Screen
         name="Profile"
-        component={ProfileScreen}
+        component={ProfileScreenWrapper}
         options={{
           tabBarLabel: 'Profil',
           tabBarIcon: ({ color, size }) => (
