@@ -16,7 +16,26 @@
         "gradleCommand": ":app:assembleDebug"
       },
       "env": {
-        "NODE_ENV": "development"
+        "NODE_ENV": "development",
+        "EXPO_PUBLIC_ENVIRONMENT": "development"
+      }
+    },
+    "staging": {
+      "distribution": "internal",
+      "channel": "staging",
+      "ios": {
+        "simulator": false,
+        "buildConfiguration": "Release",
+        "bundleIdentifier": "com.wizardstech.goalgpt.staging"
+      },
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease",
+        "applicationId": "com.wizardstech.goalgpt.staging"
+      },
+      "env": {
+        "NODE_ENV": "production",
+        "EXPO_PUBLIC_ENVIRONMENT": "staging"
       }
     },
     "preview": {
@@ -30,23 +49,28 @@
         "gradleCommand": ":app:assembleRelease"
       },
       "env": {
-        "NODE_ENV": "production"
+        "NODE_ENV": "production",
+        "EXPO_PUBLIC_ENVIRONMENT": "preview"
       }
     },
     "production": {
       "distribution": "store",
+      "channel": "production",
       "ios": {
         "simulator": false,
         "buildConfiguration": "Release",
+        "bundleIdentifier": "com.wizardstech.goalgpt",
         "autoIncrement": "buildNumber"
       },
       "android": {
         "buildType": "aab",
         "gradleCommand": ":app:bundleRelease",
+        "applicationId": "com.wizardstech.goalgpt",
         "autoIncrement": "versionCode"
       },
       "env": {
-        "NODE_ENV": "production"
+        "NODE_ENV": "production",
+        "EXPO_PUBLIC_ENVIRONMENT": "production"
       }
     }
   },

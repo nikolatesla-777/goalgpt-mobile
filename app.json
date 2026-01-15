@@ -2,10 +2,10 @@
   "expo": {
     "name": "GoalGPT",
     "slug": "goalgpt-mobile",
-    "version": "2.0.0",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -107,18 +107,17 @@
       "androidCollapsedTitle": "GoalGPT"
     },
     "extra": {
-      "apiUrl": "http://142.93.103.128:3000",
-      "wsUrl": "ws://142.93.103.128:3000/ws",
       "eas": {
         "projectId": "YOUR_EAS_PROJECT_ID"
-      },
-      "firebaseApiKey": "YOUR_FIREBASE_API_KEY",
-      "firebaseAuthDomain": "YOUR_PROJECT_ID.firebaseapp.com",
-      "firebaseProjectId": "YOUR_FIREBASE_PROJECT_ID",
-      "firebaseStorageBucket": "YOUR_PROJECT_ID.appspot.com",
-      "firebaseSenderId": "YOUR_SENDER_ID",
-      "firebaseAppId": "YOUR_APP_ID",
-      "firebaseMeasurementId": "YOUR_MEASUREMENT_ID"
+      }
+    },
+    "owner": "goalgpt",
+    "updates": {
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/YOUR_EAS_PROJECT_ID"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
     }
   }
 }
