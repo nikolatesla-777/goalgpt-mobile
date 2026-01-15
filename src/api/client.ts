@@ -7,11 +7,15 @@ import Constants from 'expo-constants';
 import { API_ENDPOINTS } from '../constants/api';
 import { APP_CONFIG } from '../constants/config';
 import { isRetryableError } from '../utils/errorHandler';
+import { logger } from '../utils/logger';
 
 // Get API URL from environment
-const API_URL = Constants.expoConfig?.extra?.apiUrl || 'http://142.93.103.128:3000';
+const API_URL =
+  process.env.EXPO_PUBLIC_API_URL ||
+  Constants.expoConfig?.extra?.apiUrl ||
+  'http://localhost:3000';
 
-console.log('🌐 API Client initialized with baseURL:', API_URL);
+logger.debug('API Client initialized', { baseURL: API_URL });
 
 // Token storage keys
 const ACCESS_TOKEN_KEY = 'access_token';

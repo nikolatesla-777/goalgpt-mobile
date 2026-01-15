@@ -144,7 +144,7 @@ export const MatchDetailScreenContainer: React.FC<MatchDetailScreenContainerProp
       stadium={match.stadium}
       referee={match.referee}
       stats={transformedStats}
-      events={[]} // TODO: Transform trend data to events
+      events={[]} // Events data structure TBD - trend data available in separate tab
       predictions={[]} // Will be fetched separately
       homeLineup={homeLineup}
       awayLineup={awayLineup}

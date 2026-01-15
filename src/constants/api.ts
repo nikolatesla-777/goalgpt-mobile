@@ -2,11 +2,15 @@
 // GoalGPT Mobile App - API Endpoints
 
 import Constants from 'expo-constants';
+import { logger } from '../utils/logger';
 
 // Get WebSocket URL from environment
-const WS_URL = Constants.expoConfig?.extra?.wsUrl || 'ws://142.93.103.128:3000/ws';
+const WS_URL =
+  process.env.EXPO_PUBLIC_WS_URL ||
+  Constants.expoConfig?.extra?.wsUrl ||
+  'ws://localhost:3000/ws';
 
-console.log('🔌 WebSocket URL configured:', WS_URL);
+logger.debug('WebSocket URL configured', { url: WS_URL });
 
 // API endpoints are now relative paths (baseURL is set in apiClient)
 export const API_ENDPOINTS = {

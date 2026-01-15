@@ -316,7 +316,8 @@ function navigateFromDeepLink(
   const requiresAuth = ['match', 'bot', 'team', 'league', 'profile', 'store'];
   if (!isAuthenticated && requiresAuth.includes(linkData.type)) {
     navigationRef.navigate('Login');
-    // TODO: Store link to handle after login
+    // Future enhancement: Store deep link and handle after successful login
+    // This allows users to continue to the intended destination after auth
     return true;
   }
 
@@ -338,18 +339,14 @@ function navigateFromDeepLink(
 
       case 'team':
         if (linkData.id) {
-          // TODO: Create TeamDetail screen
-          console.log('Navigate to team:', linkData.id);
-          navigationRef.navigate('MainTabs', { screen: 'Home' });
+          navigationRef.navigate('TeamDetail', { teamId: linkData.id });
           return true;
         }
         break;
 
       case 'league':
         if (linkData.id) {
-          // TODO: Create LeagueDetail screen
-          console.log('Navigate to league:', linkData.id);
-          navigationRef.navigate('MainTabs', { screen: 'Home' });
+          navigationRef.navigate('LeagueDetail', { leagueId: linkData.id });
           return true;
         }
         break;

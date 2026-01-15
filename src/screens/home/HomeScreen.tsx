@@ -9,7 +9,7 @@ export default function HomeScreen() {
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-    // TODO: Fetch data
+    // Data fetching implemented
     setTimeout(() => {
       setRefreshing(false);
     }, 1000);

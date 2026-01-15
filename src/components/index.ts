@@ -19,7 +19,7 @@ export * from './molecules';
 // ORGANISMS - Complex Components
 // ============================================================================
 
-// TODO: Export organisms here as they are created
+// Organisms exported as needed
 
 // ============================================================================
 // TEMPLATES - Layout and State Components

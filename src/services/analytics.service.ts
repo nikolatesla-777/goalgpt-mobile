@@ -188,7 +188,7 @@ export function trackEvent(eventName: AnalyticsEventName | string, params?: Even
       params: cleanParams,
     });
 
-    // TODO: Add support for React Native analytics (Amplitude, Segment, etc.)
+    // Future: Additional analytics providers (Amplitude, Segment) can be integrated
     // if (Platform.OS !== 'web') {
     //   // Log to native analytics service
     // }
