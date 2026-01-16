@@ -7,6 +7,7 @@
 
 import React, { memo, useCallback, useMemo } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../../context/ThemeContext';
 import { spacing, borderRadius } from '../../constants/theme';
@@ -268,23 +269,32 @@ export const LiveMatchCard: React.FC<LiveMatchCardProps> = memo(({
             <View style={styles.indicatorsSection}>
               {match.hasRedCard && (
                 <View style={[styles.indicator, { backgroundColor: theme.error.bg }]}>
-                  <NeonText size="small" style={{ color: theme.error.main }}>
-                    🟥 Kırmızı Kart
-                  </NeonText>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                    <Ionicons name="square" size={12} color={theme.error.main} />
+                    <NeonText size="small" style={{ color: theme.error.main }}>
+                      Kırmızı Kart
+                    </NeonText>
+                  </View>
                 </View>
               )}
               {match.hasPenalty && (
                 <View style={[styles.indicator, { backgroundColor: theme.warning.bg }]}>
-                  <NeonText size="small" style={{ color: theme.warning.main }}>
-                    ⚽ Penaltı
-                  </NeonText>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                    <Ionicons name="football" size={12} color={theme.warning.main} />
+                    <NeonText size="small" style={{ color: theme.warning.main }}>
+                      Penaltı
+                    </NeonText>
+                  </View>
                 </View>
               )}
               {match.recentEvents && match.recentEvents.length > 0 && (
                 <View style={[styles.indicator, { backgroundColor: theme.primary[500] + '20' }]}>
-                  <NeonText size="small" style={{ color: theme.primary[500] }}>
-                    ⚡ {match.recentEvents[0].type === 'goal' ? 'GOL!' : 'OLAY!'}
-                  </NeonText>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                    <Ionicons name="flash" size={12} color={theme.primary[500]} />
+                    <NeonText size="small" style={{ color: theme.primary[500] }}>
+                      {match.recentEvents[0].type === 'goal' ? 'GOL!' : 'OLAY!'}
+                    </NeonText>
+                  </View>
                 </View>
               )}
             </View>

@@ -9,6 +9,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { PredictionsList } from '../components/organisms/PredictionsList';
 import { useTheme } from '../theme/ThemeProvider';
 import { spacing, typography } from '../constants/tokens';
@@ -29,7 +30,7 @@ type TierFilter = PredictionTier | 'all';
 interface FilterChip {
   key: string;
   label: string;
-  icon: string;
+  icon: keyof typeof Ionicons.glyphMap;
   active: boolean;
 }
 
@@ -189,17 +190,17 @@ export const PredictionsScreen: React.FC<PredictionsScreenProps> = ({
 
   const renderFilterChips = () => {
     const resultChips: FilterChip[] = [
-      { key: 'all', label: 'All', icon: '📊', active: resultFilter === 'all' },
-      { key: 'win', label: 'Won', icon: '✅', active: resultFilter === 'win' },
-      { key: 'lose', label: 'Lost', icon: '❌', active: resultFilter === 'lose' },
-      { key: 'pending', label: 'Pending', icon: '⏳', active: resultFilter === 'pending' },
+      { key: 'all', label: 'All', icon: 'bar-chart', active: resultFilter === 'all' },
+      { key: 'win', label: 'Won', icon: 'checkmark-circle', active: resultFilter === 'win' },
+      { key: 'lose', label: 'Lost', icon: 'close-circle', active: resultFilter === 'lose' },
+      { key: 'pending', label: 'Pending', icon: 'time-outline', active: resultFilter === 'pending' },
     ];
 
     const tierChips: FilterChip[] = [
-      { key: 'all', label: 'All Tiers', icon: '🎯', active: tierFilter === 'all' },
-      { key: 'free', label: 'Free', icon: '🆓', active: tierFilter === 'free' },
-      { key: 'premium', label: 'Premium', icon: '💎', active: tierFilter === 'premium' },
-      { key: 'vip', label: 'VIP', icon: '👑', active: tierFilter === 'vip' },
+      { key: 'all', label: 'All Tiers', icon: 'apps', active: tierFilter === 'all' },
+      { key: 'free', label: 'Free', icon: 'pricetag-outline', active: tierFilter === 'free' },
+      { key: 'premium', label: 'Premium', icon: 'diamond', active: tierFilter === 'premium' },
+      { key: 'vip', label: 'VIP', icon: 'trophy', active: tierFilter === 'vip' },
     ];
 
     return (
@@ -215,7 +216,11 @@ export const PredictionsScreen: React.FC<PredictionsScreenProps> = ({
                 onPress={() => setResultFilter(chip.key as ResultFilter)}
                 activeOpacity={0.7}
               >
-                <Text style={styles.chipIcon}>{chip.icon}</Text>
+                <Ionicons
+                  name={chip.icon}
+                  size={16}
+                  color={chip.active ? '#4BC41E' : 'rgba(255, 255, 255, 0.6)'}
+                />
                 <Text style={[styles.chipLabel, chip.active && styles.chipLabelActive]}>
                   {chip.label}
                 </Text>
@@ -235,7 +240,11 @@ export const PredictionsScreen: React.FC<PredictionsScreenProps> = ({
                 onPress={() => setTierFilter(chip.key as TierFilter)}
                 activeOpacity={0.7}
               >
-                <Text style={styles.chipIcon}>{chip.icon}</Text>
+                <Ionicons
+                  name={chip.icon}
+                  size={16}
+                  color={chip.active ? '#4BC41E' : 'rgba(255, 255, 255, 0.6)'}
+                />
                 <Text style={[styles.chipLabel, chip.active && styles.chipLabelActive]}>
                   {chip.label}
                 </Text>
@@ -250,7 +259,11 @@ export const PredictionsScreen: React.FC<PredictionsScreenProps> = ({
           onPress={() => setShowFavoritesOnly(!showFavoritesOnly)}
           activeOpacity={0.7}
         >
-          <Text style={styles.favoritesIcon}>{showFavoritesOnly ? '⭐' : '☆'}</Text>
+          <Ionicons
+            name={showFavoritesOnly ? 'star' : 'star-outline'}
+            size={20}
+            color={showFavoritesOnly ? '#FFD700' : 'rgba(255, 255, 255, 0.7)'}
+          />
           <Text style={[styles.favoritesLabel, showFavoritesOnly && styles.favoritesLabelActive]}>
             Show Favorites Only
           </Text>
@@ -271,7 +284,7 @@ export const PredictionsScreen: React.FC<PredictionsScreenProps> = ({
     if (error) {
       return (
         <View style={styles.centerContent}>
-          <Text style={styles.errorIcon}>⚠️</Text>
+          <Ionicons name="alert-circle-outline" size={64} color="#DC2626" />
           <Text style={styles.errorText}>{error}</Text>
           <TouchableOpacity
             onPress={fetchPredictions}
@@ -313,7 +326,8 @@ export const PredictionsScreen: React.FC<PredictionsScreenProps> = ({
       {/* WebSocket Connection Status */}
       {!isConnected && (
         <View style={styles.connectionBanner}>
-          <Text style={styles.connectionText}>⚠️ Bağlantı kesildi - Yeniden bağlanılıyor...</Text>
+          <Ionicons name="warning" size={16} color="#FFFFFF" style={{ marginRight: 8 }} />
+          <Text style={styles.connectionText}>Bağlantı kesildi - Yeniden bağlanılıyor...</Text>
         </View>
       )}
 
@@ -341,7 +355,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#DC2626',
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.lg,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   connectionText: {
     fontFamily: typography.fonts.ui.semibold,
@@ -387,9 +403,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(75, 196, 30, 0.2)',
     borderColor: '#4BC41E',
   },
-  chipIcon: {
-    fontSize: 14,
-  },
   chipLabel: {
     fontFamily: typography.fonts.ui.regular,
     fontSize: typography.fontSize.button.small,
@@ -414,9 +427,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 215, 0, 0.15)',
     borderColor: '#FFD700',
   },
-  favoritesIcon: {
-    fontSize: 20,
-  },
   favoritesLabel: {
     fontFamily: typography.fonts.ui.regular,
     fontSize: typography.fontSize.button.medium,
@@ -437,10 +447,6 @@ const styles = StyleSheet.create({
     fontSize: typography.fontSize.button.medium,
     color: 'rgba(255, 255, 255, 0.6)',
     marginTop: spacing.md,
-  },
-  errorIcon: {
-    fontSize: 64,
-    marginBottom: spacing.md,
   },
   errorText: {
     fontFamily: typography.fonts.ui.regular,

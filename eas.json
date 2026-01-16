@@ -25,13 +25,11 @@
       "channel": "staging",
       "ios": {
         "simulator": false,
-        "buildConfiguration": "Release",
-        "bundleIdentifier": "com.wizardstech.goalgpt.staging"
+        "buildConfiguration": "Release"
       },
       "android": {
         "buildType": "apk",
-        "gradleCommand": ":app:assembleRelease",
-        "applicationId": "com.wizardstech.goalgpt.staging"
+        "gradleCommand": ":app:assembleRelease"
       },
       "env": {
         "NODE_ENV": "production",
@@ -59,13 +57,11 @@
       "ios": {
         "simulator": false,
         "buildConfiguration": "Release",
-        "bundleIdentifier": "com.wizardstech.goalgpt",
         "autoIncrement": "buildNumber"
       },
       "android": {
-        "buildType": "aab",
+        "buildType": "app-bundle",
         "gradleCommand": ":app:bundleRelease",
-        "applicationId": "com.wizardstech.goalgpt",
         "autoIncrement": "versionCode"
       },
       "env": {

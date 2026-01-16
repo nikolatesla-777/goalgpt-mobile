@@ -13,6 +13,7 @@ import type {
   MatchScoreEvent,
   MatchStatusEvent,
   MatchEventData,
+  MinuteUpdateEvent,
   ConnectionStatusEvent,
 } from '../types/websocket.types';
 
@@ -115,6 +116,22 @@ export function useWebSocket(options: UseWebSocketOptions = {}): UseWebSocketRet
       onMatchStats: (event) => {
         console.log('📈 Stats update:', event.matchId);
         handlers.onMatchStats?.(event);
+      },
+
+      onMinuteUpdate: (event: MinuteUpdateEvent) => {
+        console.log('⏱️ Minute update:', event.matchId, `${event.minute}'`);
+        setMatchUpdates((prev) => {
+          const updated = new Map(prev);
+          const existing = updated.get(event.matchId);
+          updated.set(event.matchId, {
+            ...existing,
+            matchId: event.matchId,
+            minute: event.minute,
+            timestamp: event.timestamp,
+          });
+          return updated;
+        });
+        handlers.onMinuteUpdate?.(event);
       },
 
       onPredictionUpdate: (event) => {

@@ -11,7 +11,11 @@ export type WebSocketEventType =
   | 'match:event'
   | 'match:stats'
   | 'prediction:update'
-  | 'connection:status';
+  | 'connection:status'
+  | 'MINUTE_UPDATE'
+  | 'PING'
+  | 'ping'
+  | 'pong';
 
 export type MatchStatus =
   | 'upcoming'
@@ -94,6 +98,12 @@ export interface MatchStatsEvent {
   timestamp: string;
 }
 
+export interface MinuteUpdateEvent {
+  matchId: string | number;
+  minute: number;
+  timestamp: string;
+}
+
 // ============================================================================
 // Prediction Update Events
 // ============================================================================
@@ -126,6 +136,7 @@ export interface WebSocketEventHandlers {
   onMatchStatus?: (event: MatchStatusEvent) => void;
   onMatchEvent?: (event: MatchEventData) => void;
   onMatchStats?: (event: MatchStatsEvent) => void;
+  onMinuteUpdate?: (event: MinuteUpdateEvent) => void;
   onPredictionUpdate?: (event: PredictionUpdateEvent) => void;
   onConnectionChange?: (event: ConnectionStatusEvent) => void;
   onError?: (error: Error) => void;

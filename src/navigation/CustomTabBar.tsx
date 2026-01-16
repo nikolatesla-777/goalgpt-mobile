@@ -9,6 +9,7 @@ import React from 'react';
 import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { typography, spacing } from '../constants/tokens';
 
 // ============================================================================
@@ -60,9 +61,12 @@ export const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, 
           >
             {/* Icon */}
             <View style={[styles.iconContainer, isFocused && styles.iconContainerActive]}>
-              <Text style={[styles.icon, isFocused && styles.iconActive]}>
-                {tabConfig.icon}
-              </Text>
+              <Ionicons
+                name={tabConfig.icon}
+                size={24}
+                color={isFocused ? '#4BC41E' : 'rgba(255, 255, 255, 0.6)'}
+                style={isFocused && styles.iconActive}
+              />
             </View>
 
             {/* Label */}
@@ -84,20 +88,20 @@ export const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, 
 // ============================================================================
 
 interface TabConfig {
-  icon: string;
+  icon: keyof typeof Ionicons.glyphMap;
   label: string;
 }
 
 const getTabConfig = (routeName: string): TabConfig => {
   const configs: Record<string, TabConfig> = {
-    Home: { icon: '🏠', label: 'Home' },
-    LiveMatches: { icon: '⚽', label: 'Live' },
-    Predictions: { icon: '🤖', label: 'AI' },
-    Store: { icon: '🏪', label: 'Store' },
-    Profile: { icon: '👤', label: 'Profile' },
+    Home: { icon: 'home', label: 'Home' },
+    LiveMatches: { icon: 'football', label: 'Live' },
+    Predictions: { icon: 'sparkles', label: 'AI' },
+    Store: { icon: 'storefront', label: 'Store' },
+    Profile: { icon: 'person', label: 'Profile' },
   };
 
-  return configs[routeName] || { icon: '❓', label: routeName };
+  return configs[routeName] || { icon: 'help-circle', label: routeName };
 };
 
 // ============================================================================
@@ -131,9 +135,6 @@ const styles = StyleSheet.create({
   },
   iconContainerActive: {
     backgroundColor: 'rgba(75, 196, 30, 0.15)',
-  },
-  icon: {
-    fontSize: 24,
   },
   iconActive: {
     transform: [{ scale: 1.1 }],

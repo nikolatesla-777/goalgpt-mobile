@@ -32,7 +32,7 @@ export class WebSocketService {
     url: API_ENDPOINTS.WS,
     reconnectInterval: 3000, // 3 seconds
     maxReconnectAttempts: 10,
-    heartbeatInterval: 30000, // 30 seconds
+    heartbeatInterval: 25000, // 25 seconds (matches backend requirement)
     autoConnect: true,
   };
 
@@ -187,12 +187,26 @@ export class WebSocketService {
         this.eventHandlers.onMatchStats?.(data);
         break;
 
+      case 'MINUTE_UPDATE':
+        this.eventHandlers.onMinuteUpdate?.(data);
+        break;
+
       case 'prediction:update':
         this.eventHandlers.onPredictionUpdate?.(data);
         break;
 
       case 'connection:status':
         this.eventHandlers.onConnectionChange?.(data);
+        break;
+
+      case 'PING':
+      case 'ping':
+        // Acknowledge heartbeat, respond with pong
+        this.send({ type: 'pong', data: {} });
+        break;
+
+      case 'pong':
+        // Server acknowledged our ping, no action needed
         break;
 
       default:
@@ -340,6 +354,7 @@ export class WebSocketService {
       'match:status': 'onMatchStatus',
       'match:event': 'onMatchEvent',
       'match:stats': 'onMatchStats',
+      'MINUTE_UPDATE': 'onMinuteUpdate',
       'prediction:update': 'onPredictionUpdate',
       'connection:status': 'onConnectionChange',
     };

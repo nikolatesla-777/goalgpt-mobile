@@ -6,6 +6,7 @@
 
 import React from 'react';
 import { View, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../context/ThemeContext';
 import { Button } from '../atoms/Button';
 import { typography, spacing } from '../../constants/theme';
@@ -15,8 +16,8 @@ import { typography, spacing } from '../../constants/theme';
 // ============================================================================
 
 export interface EmptyStateProps {
-  /** Icon/emoji to display */
-  icon?: string;
+  /** Ionicons icon name to display */
+  icon?: keyof typeof Ionicons.glyphMap;
 
   /** Title text */
   title: string;
@@ -45,7 +46,7 @@ export interface EmptyStateProps {
 // ============================================================================
 
 export const EmptyState: React.FC<EmptyStateProps> = ({
-  icon = '📭',
+  icon = 'mail-open-outline',
   title,
   description,
   actionText,
@@ -132,7 +133,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       {/* Icon */}
       {icon && (
         <View style={iconContainerStyle}>
-          <Text style={iconStyle}>{icon}</Text>
+          <Ionicons name={icon} size={config.iconSize} color={theme.text.secondary} />
         </View>
       )}
 
@@ -164,7 +165,7 @@ export const NoMatchesFound: React.FC<Omit<EmptyStateProps, 'icon' | 'title' | '
   props
 ) => (
   <EmptyState
-    icon="⚽"
+    icon="football-outline"
     title="No Matches Found"
     description="There are no matches available at the moment. Check back later!"
     {...props}
@@ -179,7 +180,7 @@ export const NoResultsFound: React.FC<Omit<EmptyStateProps, 'icon' | 'title' | '
   props
 ) => (
   <EmptyState
-    icon="🔍"
+    icon="search-outline"
     title="No Results Found"
     description="We couldn't find what you're looking for. Try adjusting your search."
     {...props}
@@ -194,7 +195,7 @@ export const NoDataAvailable: React.FC<Omit<EmptyStateProps, 'icon' | 'title' | 
   props
 ) => (
   <EmptyState
-    icon="📊"
+    icon="bar-chart-outline"
     title="No Data Available"
     description="Data is not available at this time. Please try again later."
     {...props}
@@ -209,7 +210,7 @@ export const ComingSoon: React.FC<Omit<EmptyStateProps, 'icon' | 'title' | 'desc
   props
 ) => (
   <EmptyState
-    icon="🚀"
+    icon="rocket-outline"
     title="Coming Soon"
     description="This feature is under development. Stay tuned for updates!"
     {...props}
@@ -224,7 +225,7 @@ export const UnderMaintenance: React.FC<Omit<EmptyStateProps, 'icon' | 'title' |
   props
 ) => (
   <EmptyState
-    icon="🔧"
+    icon="construct-outline"
     title="Under Maintenance"
     description="We're making improvements to serve you better. Please check back soon."
     {...props}

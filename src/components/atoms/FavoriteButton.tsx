@@ -7,6 +7,7 @@
 
 import React, { useState } from 'react';
 import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useFavorites } from '../../context/FavoritesContext';
 import type { MatchFavorite, PredictionFavorite, TeamFavorite } from '../../types/favorites.types';
 
@@ -140,9 +141,11 @@ export const FavoriteButton: React.FC<FavoriteButtonProps> = ({
       {isLoading ? (
         <ActivityIndicator size="small" color="#4BC41E" />
       ) : (
-        <Text style={[styles.icon, { fontSize: iconSize }]}>
-          {isFavorited ? '❤️' : '🤍'}
-        </Text>
+        <Ionicons
+          name={isFavorited ? 'heart' : 'heart-outline'}
+          size={iconSize}
+          color={isFavorited ? '#FF4B4B' : '#FFFFFF'}
+        />
       )}
     </TouchableOpacity>
   );

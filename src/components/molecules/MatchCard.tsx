@@ -8,6 +8,7 @@
 
 import React, { useRef } from 'react';
 import { View, Pressable, StyleSheet, Animated, Text, Image } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { GlassCard } from '../atoms/GlassCard';
 import { NeonText, LiveIndicator, ScoreText } from '../atoms/NeonText';
 import { FavoriteButton } from '../atoms/FavoriteButton';
@@ -176,9 +177,8 @@ export const MatchCard: React.FC<MatchCardProps> = ({
       <View style={styles.headerRow}>
         {league && (
           <View style={styles.leagueRow}>
-            <Text style={styles.leagueText}>
-              ⚽ {league}
-            </Text>
+            <Ionicons name="football-outline" size={14} color="rgba(255, 255, 255, 0.6)" style={{ marginRight: 4 }} />
+            <Text style={styles.leagueText}>{league}</Text>
           </View>
         )}
         {showFavorite && matchId && (

@@ -6,6 +6,7 @@
 
 import React from 'react';
 import { View, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../context/ThemeContext';
 import { Button } from '../atoms/Button';
 import { typography, spacing } from '../../constants/theme';
@@ -26,8 +27,8 @@ export interface ErrorStateProps {
   /** Custom error message */
   message?: string;
 
-  /** Error icon/emoji */
-  icon?: string;
+  /** Ionicons icon name */
+  icon?: keyof typeof Ionicons.glyphMap;
 
   /** Retry button text */
   retryText?: string;
@@ -55,30 +56,30 @@ export interface ErrorStateProps {
 // ERROR CONFIGURATIONS
 // ============================================================================
 
-const errorConfigs: Record<ErrorType, { icon: string; title: string; message: string }> = {
+const errorConfigs: Record<ErrorType, { icon: keyof typeof Ionicons.glyphMap; title: string; message: string }> = {
   network: {
-    icon: '📡',
+    icon: 'wifi-outline',
     title: 'Connection Error',
     message:
       'Unable to connect to the server. Please check your internet connection and try again.',
   },
   server: {
-    icon: '⚠️',
+    icon: 'warning-outline',
     title: 'Server Error',
     message: 'Something went wrong on our end. Please try again later.',
   },
   notFound: {
-    icon: '🔍',
+    icon: 'search-outline',
     title: 'Not Found',
     message: "We couldn't find what you're looking for. It may have been moved or deleted.",
   },
   unauthorized: {
-    icon: '🔒',
+    icon: 'lock-closed-outline',
     title: 'Access Denied',
     message: "You don't have permission to access this content. Please log in and try again.",
   },
   generic: {
-    icon: '❌',
+    icon: 'close-circle-outline',
     title: 'Something Went Wrong',
     message: 'An unexpected error occurred. Please try again.',
   },
@@ -194,7 +195,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
       {/* Icon */}
       {displayIcon && (
         <View style={iconContainerStyle}>
-          <Text style={iconStyle}>{displayIcon}</Text>
+          <Ionicons name={displayIcon} size={sizeSettings.iconSize} color={theme.status.error} />
         </View>
       )}
 

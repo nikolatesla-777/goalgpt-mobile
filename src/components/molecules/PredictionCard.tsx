@@ -8,6 +8,7 @@
 
 import React, { useRef } from 'react';
 import { View, Pressable, StyleSheet, Animated, Text, Image } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { GlassCard } from '../atoms/GlassCard';
 import { NeonText, ScoreText } from '../atoms/NeonText';
 import { FavoriteButton } from '../atoms/FavoriteButton';
@@ -257,7 +258,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
       <View style={styles.predictionRow}>
         {/* Robot Icon */}
         <View style={styles.robotIcon}>
-          <Text style={styles.robotEmoji}>🤖</Text>
+          <Ionicons name="sparkles" size={20} color="#4BC41E" />
         </View>
 
         {/* Prediction Info */}
