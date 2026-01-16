@@ -166,6 +166,12 @@ export class WebSocketService {
   private handleEventMessage(message: WebSocketMessage): void {
     const { type, data } = message;
 
+    // Validate data exists
+    if (!data) {
+      console.warn('⚠️ WebSocket message missing data:', type);
+      return;
+    }
+
     switch (type) {
       case 'match:update':
         this.eventHandlers.onMatchUpdate?.(data);

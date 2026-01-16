@@ -63,6 +63,11 @@ export function useWebSocket(options: UseWebSocketOptions = {}): UseWebSocketRet
     // Internal event handlers
     const internalHandlers: WebSocketEventHandlers = {
       onMatchUpdate: (event: MatchUpdateEvent) => {
+        if (!event || !event.matchId) {
+          console.warn('⚠️ Invalid match update event:', event);
+          return;
+        }
+
         console.log('📊 Match update:', event.matchId);
         setMatchUpdates((prev) => {
           const updated = new Map(prev);
@@ -73,6 +78,11 @@ export function useWebSocket(options: UseWebSocketOptions = {}): UseWebSocketRet
       },
 
       onMatchScore: (event: MatchScoreEvent) => {
+        if (!event || !event.matchId) {
+          console.warn('⚠️ Invalid score update event:', event);
+          return;
+        }
+
         console.log('⚽ Score update:', event.matchId, `${event.homeScore}-${event.awayScore}`);
         setMatchUpdates((prev) => {
           const updated = new Map(prev);
@@ -91,6 +101,11 @@ export function useWebSocket(options: UseWebSocketOptions = {}): UseWebSocketRet
       },
 
       onMatchStatus: (event: MatchStatusEvent) => {
+        if (!event || !event.matchId) {
+          console.warn('⚠️ Invalid status update event:', event);
+          return;
+        }
+
         console.log('🔄 Status update:', event.matchId, event.status);
         setMatchUpdates((prev) => {
           const updated = new Map(prev);
@@ -108,17 +123,33 @@ export function useWebSocket(options: UseWebSocketOptions = {}): UseWebSocketRet
       },
 
       onMatchEvent: (event: MatchEventData) => {
+        if (!event || !event.matchId) {
+          console.warn('⚠️ Invalid match event:', event);
+          return;
+        }
+
         console.log('🎯 Match event:', event.matchId, event.eventType);
         setLastEvent(event);
         handlers.onMatchEvent?.(event);
       },
 
       onMatchStats: (event) => {
+        if (!event || !event.matchId) {
+          console.warn('⚠️ Invalid stats update event:', event);
+          return;
+        }
+
         console.log('📈 Stats update:', event.matchId);
         handlers.onMatchStats?.(event);
       },
 
       onMinuteUpdate: (event: MinuteUpdateEvent) => {
+        // Validate event data
+        if (!event || !event.matchId) {
+          console.warn('⚠️ Invalid minute update event:', event);
+          return;
+        }
+
         console.log('⏱️ Minute update:', event.matchId, `${event.minute}'`);
         setMatchUpdates((prev) => {
           const updated = new Map(prev);
