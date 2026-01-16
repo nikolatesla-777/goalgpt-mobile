@@ -25,6 +25,7 @@ import { AuthProvider } from './src/context/AuthContext';
 import { ThemeProvider } from './src/theme/ThemeProvider';
 import { FavoritesProvider } from './src/context/FavoritesContext';
 import { AnalyticsProvider } from './src/context/AnalyticsContext';
+import { WebSocketProvider } from './src/context/WebSocketContext';
 
 // Navigation
 // import RootNavigator from './src/navigation/RootNavigator';
@@ -36,6 +37,9 @@ import { setupNotificationCategories } from './src/services/notifications.servic
 
 // Sentry
 import { initializeSentry } from './src/config/sentry.config';
+
+// Toast Notifications
+import Toast from 'react-native-toast-message';
 
 // Prevent auto-hiding splash screen
 SplashScreen.preventAutoHideAsync();
@@ -94,9 +98,12 @@ export default function App() {
       <ThemeProvider>
         <AnalyticsProvider>
           <AuthProvider>
-            <FavoritesProvider>
-              <AppNavigator />
-            </FavoritesProvider>
+            <WebSocketProvider>
+              <FavoritesProvider>
+                <AppNavigator />
+                <Toast />
+              </FavoritesProvider>
+            </WebSocketProvider>
           </AuthProvider>
         </AnalyticsProvider>
       </ThemeProvider>

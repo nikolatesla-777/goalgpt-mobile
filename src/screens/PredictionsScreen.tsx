@@ -6,7 +6,7 @@
  * Features: Predictions list, filters (result/tier/favorites), pull-to-refresh
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { PredictionsList } from '../components/organisms/PredictionsList';
@@ -15,6 +15,9 @@ import { spacing, typography } from '../constants/tokens';
 import type { PredictionItem } from '../components/organisms/PredictionsList';
 import type { PredictionResult, PredictionTier } from '../components/molecules/PredictionCard';
 import { getMatchedPredictions } from '../services/predictions.service';
+import Toast from 'react-native-toast-message';
+import { useWebSocket } from '../hooks/useWebSocket';
+import { WebSocketStatusIndicator } from '../components/atoms/WebSocketStatusIndicator';
 
 // ============================================================================
 // TYPES
@@ -73,6 +76,12 @@ export const PredictionsScreen: React.FC<PredictionsScreenProps> = ({
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // WebSocket connection
+  const { isConnected, on } = useWebSocket();
+
+  // Track previous prediction results for settlement detection
+  const previousResultsRef = useRef<Map<string | number, PredictionResult>>(new Map());
+
   // Fetch predictions
   const fetchPredictions = useCallback(async () => {
     try {
@@ -111,6 +120,68 @@ export const PredictionsScreen: React.FC<PredictionsScreenProps> = ({
       setIsRefreshing(false);
     }
   }, [propOnRefresh, fetchPredictions]);
+
+  // ============================================================================
+  // SETTLEMENT DETECTION & TOAST NOTIFICATIONS
+  // ============================================================================
+
+  // Detect prediction settlements and show toast notifications
+  useEffect(() => {
+    if (!predictions || predictions.length === 0) return;
+
+    predictions.forEach((prediction) => {
+      const prevResult = previousResultsRef.current.get(prediction.id);
+      const currentResult = prediction.result;
+
+      // Check if this is a new settlement (was pending, now win/lose)
+      const wasPending = !prevResult || prevResult === 'pending';
+      const isNowSettled = currentResult === 'win' || currentResult === 'lose';
+
+      if (wasPending && isNowSettled) {
+        const isWin = currentResult === 'win';
+
+        // Show toast notification
+        Toast.show({
+          type: isWin ? 'success' : 'error',
+          text1: isWin ? '🏆 Kazandınız!' : '😔 Kaybettiniz',
+          text2: `${prediction.botName || 'Bot'} · ${prediction.prediction}`,
+          text2Style: { fontSize: 12 },
+          visibilityTime: isWin ? 5000 : 3000,
+          position: 'top',
+        });
+
+        console.log(`[PredictionsScreen] Settlement detected:`, {
+          id: prediction.id,
+          result: currentResult,
+          botName: prediction.botName,
+          prediction: prediction.prediction,
+        });
+      }
+
+      // Update previous result
+      previousResultsRef.current.set(prediction.id, currentResult);
+    });
+  }, [predictions]);
+
+  // ============================================================================
+  // WEBSOCKET PREDICTION UPDATE LISTENER
+  // ============================================================================
+
+  // Listen for real-time prediction updates via WebSocket
+  useEffect(() => {
+    if (!isConnected) return;
+
+    const unsubscribe = on('prediction:update', (data: any) => {
+      console.log('[PredictionsScreen] Real-time prediction update:', data);
+
+      // Refetch predictions to get latest data
+      fetchPredictions();
+    });
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [isConnected, on, fetchPredictions]);
 
   // ============================================================================
   // RENDER FILTER CHIPS
@@ -239,6 +310,13 @@ export const PredictionsScreen: React.FC<PredictionsScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
+      {/* WebSocket Connection Status */}
+      {!isConnected && (
+        <View style={styles.connectionBanner}>
+          <Text style={styles.connectionText}>⚠️ Bağlantı kesildi - Yeniden bağlanılıyor...</Text>
+        </View>
+      )}
+
       <View style={styles.container}>
         {/* Filter Section */}
         {renderFilterChips()}
@@ -258,6 +336,17 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#000000',
+  },
+  connectionBanner: {
+    backgroundColor: '#DC2626',
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    alignItems: 'center',
+  },
+  connectionText: {
+    fontFamily: typography.fonts.ui.semibold,
+    fontSize: typography.fontSize.button.small,
+    color: '#FFFFFF',
   },
   container: {
     flex: 1,
