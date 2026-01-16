@@ -74,6 +74,12 @@ export function WebSocketProvider({
    */
   const connect = useCallback(async () => {
     try {
+      // Check if websocketService is available
+      if (!websocketService || typeof websocketService.connect !== 'function') {
+        logger.warn('WebSocket service not available');
+        return;
+      }
+
       // Get auth token
       const token = await TokenStorage.getAccessToken();
 
@@ -93,7 +99,9 @@ export function WebSocketProvider({
    * Disconnect from WebSocket server
    */
   const disconnect = useCallback(() => {
-    websocketService.disconnect();
+    if (websocketService && typeof websocketService.disconnect === 'function') {
+      websocketService.disconnect();
+    }
   }, []);
 
   // ============================================================================
@@ -120,11 +128,17 @@ export function WebSocketProvider({
 
   useEffect(() => {
     // Subscribe to status changes
-    const unsubscribe = websocketService.onStatusChange((newStatus) => {
-      setStatus(newStatus);
-    });
+    if (websocketService && typeof websocketService.onStatusChange === 'function') {
+      const unsubscribe = websocketService.onStatusChange((newStatus) => {
+        setStatus(newStatus);
+      });
 
-    return () => unsubscribe();
+      return () => {
+        if (typeof unsubscribe === 'function') {
+          unsubscribe();
+        }
+      };
+    }
   }, []);
 
   // ============================================================================
@@ -146,28 +160,37 @@ export function WebSocketProvider({
    * Subscribe to a channel
    */
   const subscribe = useCallback((channel: string) => {
-    websocketService.subscribe(channel);
+    if (websocketService && typeof websocketService.subscribe === 'function') {
+      websocketService.subscribe(channel);
+    }
   }, []);
 
   /**
    * Unsubscribe from a channel
    */
   const unsubscribe = useCallback((channel: string) => {
-    websocketService.unsubscribe(channel);
+    if (websocketService && typeof websocketService.unsubscribe === 'function') {
+      websocketService.unsubscribe(channel);
+    }
   }, []);
 
   /**
    * Register event handler
    */
   const on = useCallback((event: string, handler: WebSocketEventHandler) => {
-    return websocketService.on(event, handler);
+    if (websocketService && typeof websocketService.on === 'function') {
+      return websocketService.on(event, handler);
+    }
+    return () => {}; // Return no-op unsubscribe function
   }, []);
 
   /**
    * Send message
    */
   const send = useCallback((message: any) => {
-    websocketService.send(message);
+    if (websocketService && typeof websocketService.send === 'function') {
+      websocketService.send(message);
+    }
   }, []);
 
   // ============================================================================
