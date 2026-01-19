@@ -66,39 +66,39 @@ export interface Theme {
 export const darkTheme: Theme = {
   mode: 'dark',
   colors: {
-    // Base
-    background: colors.neutral.black,        // Pure black (OLED)
-    surface: colors.neutral.darkGray,        // Card backgrounds
-    overlay: colors.opacity.black95,         // Modals
+    // Base - Premium Dark (Slate)
+    background: '#0f172a',           // Slate 900 (Main BG)
+    surface: '#1e293b',              // Slate 800 (Card BG / Header)
+    overlay: 'rgba(15, 23, 42, 0.8)', // Slate 900 with opacity
 
     // Text
     text: {
-      primary: colors.neutral.white,         // White (21:1 contrast)
-      secondary: colors.neutral.lightGray,   // Gray (4.5:1 contrast)
-      tertiary: '#48484A',                   // Dark gray
-      disabled: '#3A3A3C',                   // Very dark gray
+      primary: '#f8fafc',            // Slate 50 (High Contrast)
+      secondary: '#94a3b8',          // Slate 400 (Subtitles)
+      tertiary: '#64748b',           // Slate 500 (Meta)
+      disabled: '#334155',           // Slate 700
     },
 
     // Brand
-    primary: colors.brand.primary,           // Brand green
-    primaryGlow: colors.opacity.primary30,
+    primary: '#3b82f6',              // Blue 500 (Web Active Tab)
+    primaryGlow: 'rgba(59, 130, 246, 0.3)',
 
     // Semantic
-    success: colors.semantic.win,
-    warning: colors.semantic.pending,
-    error: colors.semantic.alert,
-    info: colors.semantic.info,
+    success: '#22c55e',              // Green 500
+    warning: '#f59e0b',              // Amber 500
+    error: '#ef4444',                // Red 500
+    info: '#3b82f6',                 // Blue 500
 
     // Status
-    live: colors.semantic.live,
-    win: colors.semantic.win,
-    pending: colors.semantic.pending,
-    lose: colors.semantic.lose,
-    vip: colors.semantic.vip,
+    live: '#22c55e',                 // Green 500
+    win: '#22c55e',
+    pending: '#f59e0b',
+    lose: '#ef4444',
+    vip: '#f59e0b',
 
     // Borders
-    border: colors.opacity.white10,
-    divider: colors.opacity.white05,
+    border: '#334155',               // Slate 700 (Subtle borders)
+    divider: '#1e293b',              // Slate 800
   },
   typography,
   spacing,
@@ -106,6 +106,8 @@ export const darkTheme: Theme = {
   shadows,
   glassmorphism,
   layout,
+  // Add status bar style for Expo
+  // statusBar: 'light',
 };
 
 // ============================================

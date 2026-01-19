@@ -9,6 +9,44 @@ import { API_ENDPOINTS } from '../constants/api';
 import type { PredictionItem } from '../components/organisms/PredictionsList';
 import type { PredictionResult, PredictionTier } from '../components/molecules/PredictionCard';
 
+// Raw Backend Interface (Matches Web)
+export interface AIPrediction {
+  id: string;
+  external_id?: string;
+  created_at: string;
+  match_id?: string;
+
+  // Bot Info
+  bot_name?: string;
+  canonical_bot_name: string;
+  overall_confidence?: number;
+
+  // Match Info
+  country_name?: string;
+  country_logo?: string;
+  league_name?: string;
+  home_team_name: string;
+  away_team_name: string;
+  home_team_logo?: string;
+  away_team_logo?: string;
+
+  // Scores & Status
+  home_score_display?: number;
+  away_score_display?: number;
+  final_score?: string;
+  live_match_status?: number; // 1:Sched, 2:Live, 3:HT, 8:FT
+  live_match_minute?: number;
+  match_minute?: number;
+  match_status_id?: number;
+
+  // Prediction
+  prediction: string;
+  score_at_prediction?: string;
+  minute_at_prediction?: number;
+  result?: 'won' | 'lost' | 'pending' | 'void';
+  access_type?: 'VIP' | 'PREMIUM' | 'FREE';
+}
+
 export interface MatchedPredictionsResponse {
   success: boolean;
   data: {
@@ -39,22 +77,22 @@ function transformPrediction(pred: any): PredictionItem {
   // Map backend result to mobile app result
   const result: PredictionResult =
     pred.result === 'won' || pred.prediction_result === 'winner' ? 'win' :
-    pred.result === 'lost' || pred.prediction_result === 'loser' ? 'lose' :
-    'pending';
+      pred.result === 'lost' || pred.prediction_result === 'loser' ? 'lose' :
+        'pending';
 
   // Map access_type to tier
   const tier: PredictionTier =
     pred.access_type === 'VIP' ? 'vip' :
-    pred.access_type === 'PREMIUM' ? 'premium' :
-    'free';
+      pred.access_type === 'PREMIUM' ? 'premium' :
+        'free';
 
   // Determine match status
   const status_id = pred.match_status_id;
   const matchStatus =
     status_id === 8 ? 'FT' :
-    status_id === 3 ? 'HT' :
-    status_id === 2 || status_id === 4 || status_id === 5 || status_id === 7 ? 'LIVE' :
-    'Scheduled';
+      status_id === 3 ? 'HT' :
+        status_id === 2 || status_id === 4 || status_id === 5 || status_id === 7 ? 'LIVE' :
+          'Scheduled';
 
   // Extract bot ID from bot_name (e.g., "BOT 71" → 71)
   let botId = 0;
