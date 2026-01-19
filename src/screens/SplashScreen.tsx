@@ -1,12 +1,13 @@
 /**
  * SplashScreen
  *
- * Initial loading screen with logo animation
+ * Initial loading screen with stadium background, dark gradient, and logo animation
  * Master Plan compliant - Authentication Layer
  */
 
 import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Text, Animated, Easing } from 'react-native';
+import { View, StyleSheet, Text, Animated, Easing, ImageBackground } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../theme/ThemeProvider';
 import { typography, spacing } from '../constants/tokens';
 
@@ -98,41 +99,59 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
   }, [duration, onComplete]);
 
   return (
-    <Animated.View
-      style={[
-        styles.container,
-        { opacity: containerOpacity },
-      ]}
-    >
-      {/* Logo */}
-      <Animated.View
-        style={[
-          styles.logoContainer,
-          {
-            opacity: logoOpacity,
-            transform: [{ scale: logoScale }],
-          },
-        ]}
+    <View style={styles.mainContainer}>
+      <ImageBackground
+        source={require('../../assets/images/splash-bg.png')}
+        style={styles.bgContainer}
+        resizeMode="cover"
       >
-        <Text style={styles.logoText}>⚽</Text>
-        <Text style={styles.logoTitle}>GoalGPT</Text>
-      </Animated.View>
+        <LinearGradient
+          colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.8)', '#000000']}
+          locations={[0, 0.6, 1]}
+          style={styles.gradient}
+        />
 
-      {/* Tagline */}
-      <Animated.Text style={[styles.tagline, { opacity: taglineOpacity }]}>
-        POWERED BY AI
-      </Animated.Text>
+        <Animated.View
+          style={[
+            styles.contentContainer,
+            { opacity: containerOpacity },
+          ]}
+        >
+          {/* Logo */}
+          <Animated.View
+            style={[
+              styles.logoContainer,
+              {
+                opacity: logoOpacity,
+                transform: [{ scale: logoScale }],
+              },
+            ]}
+          >
+            <Animated.Image
+              source={require('../../assets/images/splash-logo.png')}
+              style={styles.logoImage}
+              resizeMode="contain"
+            />
+            <Text style={styles.logoTitle}>GoalGPT</Text>
+          </Animated.View>
 
-      {/* Scanline */}
-      <Animated.View
-        style={[
-          styles.scanline,
-          {
-            transform: [{ translateX: scanlinePosition }],
-          },
-        ]}
-      />
-    </Animated.View>
+          {/* Tagline */}
+          <Animated.Text style={[styles.tagline, { opacity: taglineOpacity }]}>
+            POWERED BY AI
+          </Animated.Text>
+
+          {/* Scanline - Optional for this look, keeps tech feel */}
+          <Animated.View
+            style={[
+              styles.scanline,
+              {
+                transform: [{ translateX: scanlinePosition }],
+              },
+            ]}
+          />
+        </Animated.View>
+      </ImageBackground>
+    </View>
   );
 };
 
@@ -141,18 +160,32 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
 // ============================================================================
 
 const styles = StyleSheet.create({
-  container: {
+  mainContainer: {
     flex: 1,
     backgroundColor: '#000000',
+  },
+  bgContainer: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    width: '100%',
+    height: '100%',
+  },
+  gradient: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  contentContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10,
   },
   logoContainer: {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  logoText: {
-    fontSize: 100,
+  logoImage: {
+    width: 150,
+    height: 150,
     marginBottom: spacing.md,
   },
   logoTitle: {
@@ -160,21 +193,24 @@ const styles = StyleSheet.create({
     fontSize: 48,
     color: '#FFFFFF',
     letterSpacing: 2,
-    textShadowColor: 'rgba(75, 196, 30, 0.8)',
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 20,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)', // Stronger shadow for bg contrast
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 10,
   },
   tagline: {
     fontFamily: typography.fonts.ui.medium,
     fontSize: 15,
-    color: '#8E8E93',
+    color: '#E0E0E0', // Slightly lighter for readability against dark bg
     marginTop: 24,
     letterSpacing: 1,
     textTransform: 'uppercase',
+    textShadowColor: 'rgba(0,0,0,0.5)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
   },
   scanline: {
     position: 'absolute',
-    bottom: 100,
+    bottom: 150, // Adjusted position relative to container center
     width: 120,
     height: 2,
     backgroundColor: 'rgba(75, 196, 30, 0.8)',
