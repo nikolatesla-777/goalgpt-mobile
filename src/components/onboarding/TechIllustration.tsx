@@ -12,9 +12,9 @@ import {
     Network,
     Users,
     Bot,
-    Lock,
-    Unlock,
-    Crown
+    Crown,
+    Gem,
+    Sparkles
 } from 'lucide-react-native';
 
 const ICON_SIZE = 120;
@@ -258,10 +258,8 @@ const Scene3 = () => {
 
 // ============================================================================
 // SCENE 4: GLOBAL CONNECTED COMMUNITY
-// Central GoalGPT Logo + Dynamic Connections + Orbiting Avatars
 // ============================================================================
 const Scene4 = () => {
-    // Rotation for the entire community ring
     const ringRotation = useRef(new Animated.Value(0)).current;
 
     // Core Pulse
@@ -306,7 +304,7 @@ const Scene4 = () => {
 
     const counterSpin = ringRotation.interpolate({
         inputRange: [0, 1],
-        outputRange: ['0deg', '-360deg'] // Keep faces upright
+        outputRange: ['0deg', '-360deg']
     });
 
     const FACES = [
@@ -316,7 +314,7 @@ const Scene4 = () => {
         { emoji: "🕵️‍♂️", bg: "#7C3AED" },
         { emoji: "👳‍♂️", bg: "#B45309" },
         { emoji: "👱‍♂️", bg: "#047857" },
-        { emoji: "👩", bg: "#BE185D" }, // Replaced Cap with Woman
+        { emoji: "👩", bg: "#BE185D" },
         { emoji: "👨‍🦱", bg: "#BE185D" },
     ];
 
@@ -335,7 +333,6 @@ const Scene4 = () => {
                 alignItems: 'center', justifyContent: 'center',
                 transform: [{ scale: coreScale }],
                 zIndex: 20,
-                // Glow effect
                 shadowColor: ACCENT_COLOR,
                 shadowOffset: { width: 0, height: 0 },
                 shadowOpacity: 0.8,
@@ -343,7 +340,6 @@ const Scene4 = () => {
                 elevation: 10
             }}>
                 <View style={{ width: 90, height: 90, borderRadius: 45, overflow: 'hidden', borderWidth: 2, borderColor: ACCENT_COLOR, alignItems: 'center', justifyContent: 'center' }}>
-                    {/* Using the image from assets */}
                     <Image
                         source={require('../../../assets/images/goalgpt-3d-logo.png')}
                         style={{ width: '100%', height: '100%' }}
@@ -359,10 +355,6 @@ const Scene4 = () => {
             ]}>
                 {FACES.map((face, index) => {
                     const angle = (index / FACES.length) * 2 * Math.PI;
-                    // We render them at specific angles. 
-                    // To draw a line from center (0,0) to the item, use a View with specific width and rotation
-
-                    // Convert index to degrees for rotation of the line
                     const deg = (index / FACES.length) * 360;
 
                     return (
@@ -371,12 +363,12 @@ const Scene4 = () => {
                             <Animated.View style={{
                                 position: 'absolute',
                                 height: 1,
-                                width: RADIUS, // Line length matches radius
+                                width: RADIUS,
                                 backgroundColor: ACCENT_COLOR,
                                 opacity: lineOpacity,
                                 transform: [
-                                    { rotate: `${deg}deg` }, // Rotate the line to point to the avatar
-                                    { translateX: RADIUS / 2 } // Shift it so starts at center
+                                    { rotate: `${deg}deg` },
+                                    { translateX: RADIUS / 2 }
                                 ]
                             }} />
 
@@ -386,10 +378,10 @@ const Scene4 = () => {
                                     styles.stickerBubble,
                                     {
                                         transform: [
-                                            { rotate: `${deg}deg` }, // Rotate position around center
-                                            { translateX: RADIUS },   // Move out to radius
-                                            { rotate: `${-deg}deg` }, // Cancel rotation interaction
-                                            { rotate: counterSpin }   // Cancel orbit rotation to keep face upright
+                                            { rotate: `${deg}deg` },
+                                            { translateX: RADIUS },
+                                            { rotate: `${-deg}deg` },
+                                            { rotate: counterSpin }
                                         ]
                                     }
                                 ]}
@@ -405,133 +397,117 @@ const Scene4 = () => {
     );
 };
 
+
 // ============================================================================
-// SCENE 5: VIP UNLOCK - PREMIUM ACCESS
-// Locked Content -> Unlocks to reveal Crown/Premium Badge with Luxury Gold Aesthetics
+// SCENE 5: VIP UNLOCK - PREMIUM CROWN (Refined)
+// A singular, majestic Golden Crown with shimmering effects.
+// Consistent scale with other screens (ICON_SIZE ~120).
 // ============================================================================
 const Scene5 = () => {
-    // Unlock Animation Sequence
-    const lockOpacity = useRef(new Animated.Value(1)).current;
-    const unlockOpacity = useRef(new Animated.Value(0)).current;
-    const crownScale = useRef(new Animated.Value(0)).current;
-    const crownOpacity = useRef(new Animated.Value(0)).current;
-
-    // Background Radiance
-    const raysRotation = useRef(new Animated.Value(0)).current;
-    const bgScale = useRef(new Animated.Value(0.8)).current;
+    const crownScale = useRef(new Animated.Value(1)).current;
+    const shimmerTranslate = useRef(new Animated.Value(-150)).current;
+    const glowOpacity = useRef(new Animated.Value(0.4)).current;
 
     useEffect(() => {
-        // Rotating Sunburst/Rays background
-        Animated.loop(
-            Animated.timing(raysRotation, {
-                toValue: 1,
-                duration: 10000,
-                easing: Easing.linear,
-                useNativeDriver: true
-            })
-        ).start();
-
-        // Pulsing background
+        // Floating / Hover Effect
         Animated.loop(
             Animated.sequence([
-                Animated.timing(bgScale, { toValue: 1.1, duration: 2000, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-                Animated.timing(bgScale, { toValue: 0.8, duration: 2000, easing: Easing.inOut(Easing.ease), useNativeDriver: true })
+                Animated.timing(crownScale, { toValue: 1.1, duration: 2000, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+                Animated.timing(crownScale, { toValue: 1, duration: 2000, easing: Easing.inOut(Easing.ease), useNativeDriver: true })
             ])
         ).start();
 
-        // Main Reveal Sequence
-        const playUnlockSequence = () => {
+        // Glow Pulse
+        Animated.loop(
             Animated.sequence([
-                // 1. Locked State sits for a moment
-                Animated.delay(500),
-                // 2. Lock Shakes (Simulated by no shake here for simplicity, or add shake later)
-                // 3. Switch to Unlock Icon
-                Animated.timing(lockOpacity, { toValue: 0, duration: 200, useNativeDriver: true }),
-                Animated.timing(unlockOpacity, { toValue: 1, duration: 400, useNativeDriver: true }),
-                Animated.delay(500),
-                // 4. Reveal Crown (Explosion effect)
-                Animated.parallel([
-                    Animated.timing(unlockOpacity, { toValue: 0, duration: 300, useNativeDriver: true }),
-                    Animated.timing(crownScale, { toValue: 1.5, duration: 400, easing: Easing.back(1.5), useNativeDriver: true }),
-                    Animated.timing(crownOpacity, { toValue: 1, duration: 300, useNativeDriver: true }),
-                ]),
-                Animated.delay(2000), // Admire the Crown
-                // 5. Reset to Locked
-                Animated.parallel([
-                    Animated.timing(crownOpacity, { toValue: 0, duration: 500, useNativeDriver: true }),
-                    Animated.timing(crownScale, { toValue: 0, duration: 500, useNativeDriver: true }),
-                ]),
-                Animated.delay(200),
-                Animated.timing(lockOpacity, { toValue: 1, duration: 400, useNativeDriver: true }),
-            ]).start(() => playUnlockSequence());
-        };
-        playUnlockSequence();
-    }, []);
+                Animated.timing(glowOpacity, { toValue: 0.8, duration: 1500, useNativeDriver: true }),
+                Animated.timing(glowOpacity, { toValue: 0.4, duration: 1500, useNativeDriver: true })
+            ])
+        ).start();
 
-    const spin = raysRotation.interpolate({
-        inputRange: [0, 1],
-        outputRange: ['0deg', '360deg']
-    });
+        // Metallic Shimmer / Reflection passing across
+        Animated.loop(
+            Animated.sequence([
+                Animated.delay(1000),
+                Animated.timing(shimmerTranslate, { toValue: 150, duration: 1200, easing: Easing.linear, useNativeDriver: true }),
+                Animated.timing(shimmerTranslate, { toValue: -150, duration: 0, useNativeDriver: true })
+            ])
+        ).start();
+    }, []);
 
     const GOLD_ACCENT = '#FFD700';
 
     return (
         <View style={styles.sceneContainer}>
-            {/* Rotating Premium Rays Background */}
+            {/* Subtle Golden Glow Halo (Restrained size) */}
             <Animated.View style={{
                 position: 'absolute',
-                transform: [{ rotate: spin }, { scale: bgScale }],
-                opacity: 0.3
-            }}>
-                <View style={{ width: 300, height: 300, borderRadius: 150, borderWidth: 2, borderColor: GOLD_ACCENT, borderStyle: 'dotted' }} />
-                {/* Simulated rays with multiple squares rotated */}
-                {[0, 45, 90, 135].map((deg, i) => (
-                    <View key={i} style={{
-                        position: 'absolute', top: 0, left: 0, width: 300, height: 300,
-                        borderWidth: 1, borderColor: 'rgba(255, 215, 0, 0.2)',
-                        transform: [{ rotate: `${deg}deg` }]
-                    }} />
-                ))}
+                width: 140, height: 140,
+                borderRadius: 70,
+                backgroundColor: GOLD_ACCENT,
+                opacity: glowOpacity,
+                transform: [{ scale: crownScale }],
+                shadowColor: GOLD_ACCENT, shadowRadius: 30, shadowOpacity: 0.8
+            }} />
+
+            {/* Floating Particles (Sparkles) */}
+            <FloatingSparkle delay={0} x={-60} y={-40} color={GOLD_ACCENT} />
+            <FloatingSparkle delay={800} x={60} y={-50} color="#FFF" />
+            <FloatingSparkle delay={1500} x={50} y={50} color={GOLD_ACCENT} />
+            <FloatingSparkle delay={400} x={-50} y={40} color="#FFF" />
+
+            {/* The Majestic Crown */}
+            <Animated.View style={{ transform: [{ scale: crownScale }] }}>
+                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                    <Crown size={120} color={GOLD_ACCENT} fill={GOLD_ACCENT} />
+
+                    {/* Shimmer Overlay (Masked visually by being small thin line or similar trick)
+                         Since we can't easily mask vectors in RN without complex layout, 
+                         we'll simulate shimmer by fading a white duplicate or just moving a white view over it 
+                         if we were using an image. For vector, a "Gem" placement works well to catch the eye.
+                     */}
+                    <View style={{ position: 'absolute', top: 30 }}>
+                        <Gem size={30} color="#FFF" fill="#FFF" style={{ opacity: 0.8 }} />
+                    </View>
+                </View>
             </Animated.View>
 
-            {/* Static Premium Circle Container */}
-            <View style={{
-                width: 140, height: 140, borderRadius: 70,
-                backgroundColor: 'rgba(255, 215, 0, 0.1)', // Gold tint
-                alignItems: 'center', justifyContent: 'center',
+            {/* Premium Badge Text */}
+            <Animated.View style={{
+                position: 'absolute', bottom: 50,
+                backgroundColor: 'rgba(255, 215, 0, 0.2)',
+                paddingHorizontal: 16, paddingVertical: 6,
+                borderRadius: 20,
                 borderWidth: 1, borderColor: GOLD_ACCENT,
-                shadowColor: GOLD_ACCENT, shadowOpacity: 0.5, shadowRadius: 20
+                transform: [{ translateY: Animated.multiply(crownScale, 5) }]
             }}>
-                {/* LOCKED STATE */}
-                <Animated.View style={{ position: 'absolute', opacity: lockOpacity }}>
-                    <Lock size={60} color="#FFF" />
-                    <View style={{ position: 'absolute', bottom: -20, backgroundColor: '#333', paddingHorizontal: 10, paddingVertical: 2, borderRadius: 4 }}>
-                        <Text style={{ color: '#FFF', fontSize: 10, fontWeight: 'bold' }}>LOCKED</Text>
-                    </View>
-                </Animated.View>
-
-                {/* UNLOCKED STATE (Transition) */}
-                <Animated.View style={{ position: 'absolute', opacity: unlockOpacity }}>
-                    <Unlock size={60} color={GOLD_ACCENT} />
-                    <View style={{ position: 'absolute', bottom: -20, backgroundColor: GOLD_ACCENT, paddingHorizontal: 10, paddingVertical: 2, borderRadius: 4 }}>
-                        <Text style={{ color: '#000', fontSize: 10, fontWeight: 'bold' }}>OPEN</Text>
-                    </View>
-                </Animated.View>
-
-                {/* VIP / CROWN STATE (Final Reveal) */}
-                <Animated.View style={{ position: 'absolute', opacity: crownOpacity, transform: [{ scale: crownScale }] }}>
-                    <Crown size={70} color={GOLD_ACCENT} fill={GOLD_ACCENT} />
-                    {/* Sparkles */}
-                    <Zap size={24} color="#FFF" fill="#FFF" style={{ position: 'absolute', top: -10, right: -10 }} />
-                    <Zap size={16} color="#FFF" fill="#FFF" style={{ position: 'absolute', bottom: 0, left: -10 }} />
-
-                    <View style={{ position: 'absolute', bottom: -30, backgroundColor: GOLD_ACCENT, paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12, width: 100, alignItems: 'center' }}>
-                        <Text style={{ color: '#000', fontSize: 14, fontWeight: 'bold', letterSpacing: 1 }}>VIP ACCESS</Text>
-                    </View>
-                </Animated.View>
-            </View>
-
+                <Text style={{ color: GOLD_ACCENT, fontSize: 14, fontWeight: 'bold', letterSpacing: 2 }}>VIP ACCESS</Text>
+            </Animated.View>
         </View>
+    );
+};
+
+// Helper for floating sparkles
+const FloatingSparkle = ({ delay, x, y, color }: { delay: number, x: number, y: number, color: string }) => {
+    const scale = useRef(new Animated.Value(0)).current;
+
+    useEffect(() => {
+        Animated.loop(
+            Animated.sequence([
+                Animated.delay(delay),
+                Animated.timing(scale, { toValue: 1, duration: 1000, useNativeDriver: true }),
+                Animated.timing(scale, { toValue: 0, duration: 1000, useNativeDriver: true })
+            ])
+        ).start();
+    }, []);
+
+    return (
+        <Animated.View style={{
+            position: 'absolute',
+            transform: [{ translateX: x }, { translateY: y }, { scale }]
+        }}>
+            <Sparkles size={20} color={color} fill={color} />
+        </Animated.View>
     );
 };
 
@@ -671,13 +647,12 @@ const styles = StyleSheet.create({
         fontSize: 24,
         letterSpacing: 2,
     },
-    // SCENE 4 STYLES
     stickerBubble: {
         position: 'absolute',
         width: 50,
         height: 50,
         borderRadius: 25,
-        backgroundColor: 'rgba(255, 255, 255, 0.1)', // Glass effect
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 1.5,
@@ -685,8 +660,5 @@ const styles = StyleSheet.create({
         shadowColor: ACCENT_COLOR,
         shadowOpacity: 0.4,
         shadowRadius: 8,
-        // Center the item itself so translation works from center
-        // marginLeft: -25,
-        // marginTop: -25
     }
 });
