@@ -100,43 +100,22 @@ const Stack = createStackNavigator<RootStackParamList>();
 // ============================================================================
 
 const AuthStackNavigator = () => {
-  const [showOnboarding, setShowOnboarding] = React.useState(true);
-
   return (
     <AuthStack.Navigator
       screenOptions={{
         headerShown: false,
       }}
+      initialRouteName="Onboarding"
     >
-      {/* Splash Screen */}
-      <AuthStack.Screen name="Splash">
-        {({ navigation }) => (
-          <Suspense fallback={<LoadingFallback />}>
-            <SplashScreen
-              onComplete={() => {
-                // After splash, navigate to onboarding or login
-                if (showOnboarding) {
-                  navigation.navigate('Onboarding');
-                } else {
-                  navigation.navigate('Login');
-                }
-              }}
-            />
-          </Suspense>
-        )}
-      </AuthStack.Screen>
-
-      {/* Onboarding Screen */}
+      {/* Onboarding Screen - First screen after AnimatedSplash */}
       <AuthStack.Screen name="Onboarding">
         {({ navigation }) => (
           <Suspense fallback={<LoadingFallback />}>
             <OnboardingScreen
               onComplete={() => {
-                setShowOnboarding(false);
                 navigation.navigate('Login');
               }}
               onSkip={() => {
-                setShowOnboarding(false);
                 navigation.navigate('Login');
               }}
             />
