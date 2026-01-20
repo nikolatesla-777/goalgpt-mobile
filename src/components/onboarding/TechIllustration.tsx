@@ -15,10 +15,8 @@ import {
     Cpu,
     Globe,
     Shield,
-    Users,
-    MessageCircle,
-    ThumbsUp,
-    Sparkles
+    Zap,
+    Network
 } from 'lucide-react-native';
 
 const ICON_SIZE = 120;
@@ -261,132 +259,126 @@ const Scene3 = () => {
 };
 
 // ============================================================================
-// SCENE 4: COMMUNITY & INSIGHTS (Happy Robot)
+// SCENE 4: GLOBAL AI NETWORK (Premium Community)
+// Sophisticated Orbiting "Sticker" People around a High-Tech Core
 // ============================================================================
 const Scene4 = () => {
-    // We create multiple "Avatar" instances that loop independently
-    const Avatar = ({ emoji, startX, startY, delay, duration }: any) => {
-        const opacity = useRef(new Animated.Value(0)).current;
-        const translateY = useRef(new Animated.Value(0)).current;
-        const scale = useRef(new Animated.Value(0)).current;
+    // Rotation for the entire face ring
+    const ringRotation = useRef(new Animated.Value(0)).current;
 
-        useEffect(() => {
-            const animate = () => {
-                Animated.sequence([
-                    Animated.delay(delay),
-                    Animated.parallel([
-                        Animated.timing(opacity, { toValue: 1, duration: 500, useNativeDriver: true }),
-                        Animated.timing(scale, { toValue: 1, duration: 500, easing: Easing.out(Easing.back(1.5)), useNativeDriver: true }),
-                        Animated.timing(translateY, { toValue: -20, duration: duration, easing: Easing.out(Easing.ease), useNativeDriver: true })
-                    ]),
-                    Animated.delay(1000), // Linger
-                    Animated.parallel([
-                        Animated.timing(opacity, { toValue: 0, duration: 500, useNativeDriver: true }),
-                        Animated.timing(scale, { toValue: 0.5, duration: 500, useNativeDriver: true }),
-                    ]),
-                    Animated.timing(translateY, { toValue: 0, duration: 0, useNativeDriver: true })
-                ]).start(() => animate());
-            };
-            animate();
-        }, []);
-
-        return (
-            <Animated.View style={[
-                styles.avatarBubble,
-                {
-                    left: startX,
-                    top: startY,
-                    opacity,
-                    transform: [{ translateY }, { scale }]
-                }
-            ]}>
-                <Text style={{ fontSize: 24 }}>{emoji}</Text>
-            </Animated.View>
-        );
-    };
-
-    const pulseScale = useRef(new Animated.Value(1)).current;
-
-    // Wink Animation (Eyelid)
-    const winkOpacity = useRef(new Animated.Value(0)).current;
+    // Core Pulse
+    const coreScale = useRef(new Animated.Value(1)).current;
+    const coreOpacity = useRef(new Animated.Value(0.8)).current;
 
     useEffect(() => {
-        // Pulse Effect
+        // Slow rotation of the community ring
         Animated.loop(
-            Animated.sequence([
-                Animated.timing(pulseScale, { toValue: 1.1, duration: 1000, useNativeDriver: true }),
-                Animated.timing(pulseScale, { toValue: 1, duration: 1000, useNativeDriver: true })
-            ])
+            Animated.timing(ringRotation, {
+                toValue: 1,
+                duration: 20000, // Very slow, majestic rotation
+                easing: Easing.linear,
+                useNativeDriver: true
+            })
         ).start();
 
-        // Wink Effect Loop
+        // Heartbeat pulse of the Central AI
         Animated.loop(
             Animated.sequence([
-                Animated.delay(2000),
-                // Wink Close
-                Animated.timing(winkOpacity, { toValue: 1, duration: 100, useNativeDriver: true }),
-                Animated.delay(200),
-                // Wink Open
-                Animated.timing(winkOpacity, { toValue: 0, duration: 100, useNativeDriver: true }),
-                Animated.delay(3000) // Wait before next wink
+                Animated.parallel([
+                    Animated.timing(coreScale, { toValue: 1.2, duration: 1500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+                    Animated.timing(coreOpacity, { toValue: 1, duration: 1500, useNativeDriver: true })
+                ]),
+                Animated.parallel([
+                    Animated.timing(coreScale, { toValue: 1, duration: 1500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+                    Animated.timing(coreOpacity, { toValue: 0.8, duration: 1500, useNativeDriver: true })
+                ])
             ])
         ).start();
     }, []);
 
+    const spin = ringRotation.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0deg', '360deg']
+    });
+
+    const counterSpin = ringRotation.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0deg', '-360deg'] // Counter rotate faces so they stay upright
+    });
+
+    // Diverse, mostly male "Sticker" faces as requested
+    const FACES = [
+        { emoji: "🧔", bg: "#1E3A8A" }, // Beard
+        { emoji: "👨‍💻", bg: "#065F46" }, // Tech
+        { emoji: "👨🏿", bg: "#4B5563" }, // Dark skin
+        { emoji: "🕵️‍♂️", bg: "#7C3AED" }, // Detective/Analyist
+        { emoji: "👳‍♂️", bg: "#B45309" }, // Turban
+        { emoji: "👱‍♂️", bg: "#047857" }, // Blonde
+        { emoji: "🧢", bg: "#1D4ED8" }, // Cap (Concept)
+        { emoji: "👨‍🦱", bg: "#BE185D" }, // Curly
+    ];
+
     return (
         <View style={styles.sceneContainer}>
-            {/* Central Robot Hub */}
-            <Animated.View style={{ transform: [{ scale: pulseScale }], alignItems: 'center', justifyContent: 'center' }}>
-                <View style={{
-                    width: 90, height: 90, borderRadius: 45,
-                    backgroundColor: 'rgba(75, 196, 30, 0.15)',
-                    alignItems: 'center', justifyContent: 'center',
-                    borderWidth: 1, borderColor: ACCENT_COLOR,
-                    shadowColor: ACCENT_COLOR, shadowOpacity: 0.5, shadowRadius: 10
-                }}>
-                    {/* The Bot Icon */}
-                    <Bot size={50} color={ACCENT_COLOR} />
+            {/* The Connected Network Lines (Static Background for ring) */}
+            <View style={{ position: 'absolute', width: 220, height: 220, borderRadius: 110, borderWidth: 1, borderColor: 'rgba(75,196,30,0.15)', borderStyle: 'dashed' }} />
+            <View style={{ position: 'absolute', width: 280, height: 280, borderRadius: 140, borderWidth: 1, borderColor: 'rgba(75,196,30,0.05)' }} />
 
-                    {/* Wink Eyelid Overlay */}
-                    {/* Positioned relative to the container, aiming for the right eye of the Lucide Bot icon */}
-                    {/* Lucide Bot eyes are roughly at top 35%, spaced apart */}
-                    <Animated.View
-                        style={{
-                            position: 'absolute',
-                            width: 12,
-                            height: 12,
-                            backgroundColor: '#071A12', // Match background color to hide eye
-                            // Adjust positioning to cover the right eye
-                            top: 32,
-                            right: 28,
-                            opacity: winkOpacity,
-                            justifyContent: 'center', alignItems: 'center'
-                        }}
-                    >
-                        <View style={{ width: 10, height: 2, backgroundColor: ACCENT_COLOR }} />
-                    </Animated.View>
+            {/* Central High-Tech Core (Replacing the Robot) */}
+            <Animated.View style={{
+                alignItems: 'center', justifyContent: 'center',
+                transform: [{ scale: coreScale }, { translateY: 0 }]
+            }}>
+                {/* Core Glow */}
+                <View style={{ position: 'absolute', width: 80, height: 80, borderRadius: 40, backgroundColor: ACCENT_COLOR, opacity: 0.2, shadowColor: ACCENT_COLOR, shadowRadius: 20, shadowOpacity: 1 }} />
 
-                    {/* Playful Sparkle near winking eye */}
-                    <Animated.View style={{
-                        position: 'absolute', top: -10, right: -10,
-                        opacity: winkOpacity,
-                        transform: [{ scale: winkOpacity }]
-                    }}>
-                        <Sparkles size={24} color="#FFD700" fill="#FFD700" />
-                    </Animated.View>
-
+                {/* Core Icon Structure */}
+                <View style={{ backgroundColor: '#000', padding: 15, borderRadius: 40, borderWidth: 2, borderColor: ACCENT_COLOR, zIndex: 10 }}>
+                    <Network size={40} color={ACCENT_COLOR} />
                 </View>
-                <View style={{ position: 'absolute', width: 130, height: 130, borderRadius: 65, borderWidth: 1, borderColor: 'rgba(75, 196, 30, 0.2)' }} />
+
+                {/* Satellite Nodes */}
+                <View style={{ position: 'absolute', top: -30 }}>
+                    <Zap size={16} color="#FFD700" fill="#FFD700" />
+                </View>
             </Animated.View>
 
-            {/* Floating Happy People */}
-            <Avatar emoji="👩‍💼" startX={40} startY={40} delay={0} duration={2000} />
-            <Avatar emoji="👨‍💻" startX={220} startY={30} delay={800} duration={2200} />
-            <Avatar emoji="🧔" startX={20} startY={120} delay={1500} duration={2500} />
-            <Avatar emoji="👱‍♀️" startX={240} startY={140} delay={400} duration={1800} />
-            <Avatar emoji="🤴" startX={50} startY={220} delay={2000} duration={2100} />
-            <Avatar emoji="👩‍🦰" startX={200} startY={210} delay={1200} duration={2300} />
-            <Avatar emoji="🎉" startX={130} startY={10} delay={3000} duration={3000} />
+            {/* Orbiting Community Ring */}
+            <Animated.View style={[
+                { position: 'absolute', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' },
+                { transform: [{ rotate: spin }] }
+            ]}>
+                {FACES.map((face, index) => {
+                    // Position faces in a circle
+                    const angle = (index / FACES.length) * 2 * Math.PI;
+                    const radius = 110; // Distance from center
+                    const x = Math.cos(angle) * radius;
+                    const y = Math.sin(angle) * radius;
+
+                    return (
+                        <Animated.View
+                            key={index}
+                            style={[
+                                styles.stickerBubble,
+                                {
+                                    transform: [
+                                        { translateX: x },
+                                        { translateY: y },
+                                        { rotate: counterSpin } // Keep face upright
+                                    ]
+                                }
+                            ]}
+                        >
+                            <Text style={{ fontSize: 28 }}>{face.emoji}</Text>
+                        </Animated.View>
+                    );
+                })}
+            </Animated.View>
+
+            {/* Floating "Success" Particles in Background */}
+            <View style={{ position: 'absolute', opacity: 0.3 }}>
+                <Users size={200} color={ACCENT_COLOR} />
+            </View>
 
         </View>
     );
@@ -528,18 +520,21 @@ const styles = StyleSheet.create({
         letterSpacing: 2,
     },
     // SCENE 4 STYLES
-    avatarBubble: {
+    stickerBubble: {
         position: 'absolute',
-        width: 44,
-        height: 44,
-        borderRadius: 22,
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        backgroundColor: 'rgba(255, 255, 255, 0.1)', // Glass effect
         justifyContent: 'center',
         alignItems: 'center',
-        borderWidth: 1,
-        borderColor: 'rgba(75, 196, 30, 0.4)',
+        borderWidth: 1.5,
+        borderColor: 'rgba(75, 196, 30, 0.5)',
         shadowColor: ACCENT_COLOR,
-        shadowOpacity: 0.3,
-        shadowRadius: 5
+        shadowOpacity: 0.4,
+        shadowRadius: 8,
+        // Center the item itself so translation works from center
+        marginLeft: -25,
+        marginTop: -25
     }
 });
