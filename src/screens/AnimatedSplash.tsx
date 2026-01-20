@@ -148,20 +148,27 @@ export const AnimatedSplash: React.FC<AnimatedSplashProps> = ({ onComplete }) =>
 
     return (
         <Animated.View style={[styles.container, { opacity: containerOpacity }]}>
-            {/* 1. Full-screen Gradient Background */}
+            {/* 0. Background Image (Bottom Layer - Hi-tech Stadium) */}
+            <Image
+                source={require('../../assets/images/splash-stadium.jpg')}
+                style={[StyleSheet.absoluteFill, { width: '100%', height: '100%' }]}
+                resizeMode="cover"
+            />
+
+            {/* 1. Dark Gradient Overlay (60% opacity to let image show subtly) */}
             <LinearGradient
-                colors={['#0A1F14', '#071A12', '#040D08']}
+                colors={['rgba(10, 31, 20, 0.75)', 'rgba(7, 26, 18, 0.85)', 'rgba(4, 13, 8, 0.95)']}
                 style={StyleSheet.absoluteFill}
                 start={{ x: 0.5, y: 0 }}
                 end={{ x: 0.5, y: 1 }}
             />
 
-            {/* 2. Subtle radial glow in center (using overlapping gradients) */}
+            {/* 2. Subtle center glow */}
             <LinearGradient
-                colors={['rgba(75, 196, 30, 0.08)', 'transparent']}
+                colors={['rgba(75, 196, 30, 0.06)', 'transparent']}
                 style={StyleSheet.absoluteFill}
-                start={{ x: 0.5, y: 0.3 }}
-                end={{ x: 0.5, y: 0.9 }}
+                start={{ x: 0.5, y: 0.35 }}
+                end={{ x: 0.5, y: 0.85 }}
             />
 
             {/* 4. Center Content */}
