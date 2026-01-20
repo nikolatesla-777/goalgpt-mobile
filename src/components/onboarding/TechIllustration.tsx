@@ -400,105 +400,103 @@ const Scene4 = () => {
 
 
 // ============================================================================
-// SCENE 5: VIP UNLOCK - DIAMOND TIER (Redesign)
-// Replaced Yellow/Gold with sophisticated Platinum & GoalGPT Green.
-// Centerpiece: A floating Diamond/Crown in Silver/Green.
-// Modern Tech Aesthetics.
+// SCENE 5: VIP ACCESS REDESIGN
+// Platinum Silver + Emerald Green Theme
+// Centerpiece: Floating Crown with Platinum Finish
+// Tech Circles around the Crown
 // ============================================================================
 const Scene5 = () => {
     const itemScale = useRef(new Animated.Value(0.9)).current;
-    const rotateAnim = useRef(new Animated.Value(0)).current;
-
-    // Tech Rings
-    const ring1Rotate = useRef(new Animated.Value(0)).current;
-    const ring2Rotate = useRef(new Animated.Value(0)).current;
+    const ringRotate1 = useRef(new Animated.Value(0)).current;
+    const ringRotate2 = useRef(new Animated.Value(0)).current;
+    const shimmerPos = useRef(new Animated.Value(-150)).current;
 
     useEffect(() => {
-        // Breathing Effect
+        // Floating/Pulse effect
         Animated.loop(
             Animated.sequence([
-                Animated.timing(itemScale, { toValue: 1.05, duration: 2500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-                Animated.timing(itemScale, { toValue: 0.9, duration: 2500, easing: Easing.inOut(Easing.ease), useNativeDriver: true })
+                Animated.timing(itemScale, { toValue: 1.05, duration: 2000, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+                Animated.timing(itemScale, { toValue: 0.9, duration: 2000, easing: Easing.inOut(Easing.ease), useNativeDriver: true })
             ])
         ).start();
 
-        // Slow Rotation for Rings
+        // Counter-rotating tech rings
         Animated.loop(
-            Animated.timing(ring1Rotate, { toValue: 1, duration: 15000, easing: Easing.linear, useNativeDriver: true })
+            Animated.timing(ringRotate1, { toValue: 1, duration: 12000, easing: Easing.linear, useNativeDriver: true })
         ).start();
         Animated.loop(
-            Animated.timing(ring2Rotate, { toValue: 1, duration: 20000, easing: Easing.linear, useNativeDriver: true })
+            Animated.timing(ringRotate2, { toValue: 1, duration: 18000, easing: Easing.linear, useNativeDriver: true })
         ).start();
 
+        // Shimmer effect
+        Animated.loop(
+            Animated.sequence([
+                Animated.delay(1000),
+                Animated.timing(shimmerPos, { toValue: 150, duration: 1000, easing: Easing.linear, useNativeDriver: true }),
+                Animated.timing(shimmerPos, { toValue: -150, duration: 0, useNativeDriver: true })
+            ])
+        ).start();
     }, []);
 
-    const spin1 = ring1Rotate.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
-    const spin2 = ring2Rotate.interpolate({ inputRange: [0, 1], outputRange: ['360deg', '0deg'] });
+    const spin1 = ringRotate1.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
+    const spin2 = ringRotate2.interpolate({ inputRange: [0, 1], outputRange: ['360deg', '0deg'] });
 
-    const PRIMARY_ACCENT = '#4BC41E'; // GoalGPT Green
-    const PLATINUM = '#E2E8F0'; // Slate 200/Silver
+    const PRIMARY_ACCENT = '#4BC41E';
+    const PLATINUM = '#F8FAFC';
 
     return (
         <View style={styles.sceneContainer}>
-            {/* Tech Ring 1 (Dashed) */}
+            {/* Tech Rings (Diamond version circles favored by user) */}
             <Animated.View style={{
-                position: 'absolute', width: 220, height: 220,
-                borderRadius: 110, borderWidth: 1, borderColor: 'rgba(75, 196, 30, 0.3)', borderStyle: 'dashed',
+                position: 'absolute', width: 200, height: 200,
+                borderRadius: 100, borderWidth: 1, borderColor: 'rgba(75, 196, 30, 0.4)', borderStyle: 'dashed',
                 transform: [{ rotate: spin1 }]
             }} />
-
-            {/* Tech Ring 2 (Solid fine) */}
             <Animated.View style={{
-                position: 'absolute', width: 180, height: 180,
-                borderRadius: 90, borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.1)',
+                position: 'absolute', width: 160, height: 160,
+                borderRadius: 80, borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.1)',
                 transform: [{ rotate: spin2 }]
             }} />
 
-            {/* Central Glow */}
-            <Animated.View style={{
+            {/* Subtle Glow */}
+            <View style={{
                 position: 'absolute',
                 width: 140, height: 140, borderRadius: 70,
                 backgroundColor: PRIMARY_ACCENT,
-                opacity: 0.15,
-                transform: [{ scale: itemScale }],
-                shadowColor: PRIMARY_ACCENT, shadowRadius: 40, shadowOpacity: 0.5
+                opacity: 0.1,
+                shadowColor: PRIMARY_ACCENT, shadowRadius: 30, shadowOpacity: 0.5
             }} />
 
-            {/* The Artifact: Platinum Crown with Emerald Gems */}
-            <Animated.View style={{ transform: [{ scale: itemScale }], alignItems: 'center' }}>
-                <Gem size={ICON_SIZE} color={PLATINUM} fill="rgba(75, 196, 30, 0.1)" strokeWidth={1.5} />
-                <View style={{ position: 'absolute', top: '35%' }}>
-                    <Sparkles size={40} color={PRIMARY_ACCENT} fill={PRIMARY_ACCENT} />
+            {/* The Crown Artifact (Favored by user) */}
+            <Animated.View style={{ transform: [{ scale: itemScale }], alignItems: 'center', justifyContent: 'center' }}>
+                <Crown size={120} color={PLATINUM} fill="rgba(255, 255, 255, 0.05)" strokeWidth={1.5} />
+
+                {/* Emerald Gems on the Crown (Emerald Green Accent) */}
+                <View style={{ position: 'absolute', top: '35%', flexDirection: 'row', gap: 10 }}>
+                    <Gem size={16} color={PRIMARY_ACCENT} fill={PRIMARY_ACCENT} />
+                    <Gem size={16} color={PRIMARY_ACCENT} fill={PRIMARY_ACCENT} />
                 </View>
 
-                {/* Satellite Gems */}
-                <Animated.View style={{ position: 'absolute', top: -20, left: -20, transform: [{ translateY: Animated.multiply(itemScale, 10) }] }}>
-                    <StartStar size={12} color="#FFF" />
-                </Animated.View>
-                <Animated.View style={{ position: 'absolute', bottom: -10, right: -20, transform: [{ translateY: Animated.multiply(itemScale, -10) }] }}>
-                    <StartStar size={16} color={PRIMARY_ACCENT} />
+                {/* Sparkling detail */}
+                <Animated.View style={{ position: 'absolute', top: -10, left: 30, transform: [{ scale: itemScale }] }}>
+                    <Sparkles size={24} color={PRIMARY_ACCENT} />
                 </Animated.View>
             </Animated.View>
 
-            {/* Sleek Label */}
+            {/* VIP Label (Platinum & Green) */}
             <View style={{
-                position: 'absolute', bottom: 40,
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                paddingHorizontal: 16, paddingVertical: 8,
-                borderRadius: 20,
-                borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)'
+                position: 'absolute', bottom: 45,
+                backgroundColor: 'rgba(75, 196, 30, 0.15)',
+                paddingHorizontal: 20, paddingVertical: 8,
+                borderRadius: 24,
+                borderWidth: 1.5, borderColor: PRIMARY_ACCENT,
+                shadowColor: PRIMARY_ACCENT, shadowOpacity: 0.3, shadowRadius: 10
             }}>
-                <Text style={{ color: '#FFF', fontSize: 12, fontWeight: 'bold', letterSpacing: 3 }}>DIAMOND TIER</Text>
+                <Text style={{ color: '#FFF', fontSize: 13, fontWeight: '900', letterSpacing: 3 }}>VIP ACCESS</Text>
             </View>
-
         </View>
     );
 };
-
-// Helper for stars
-const StartStar = ({ size, color }: { size: number, color: string }) => {
-    return <Star size={size} color={color} fill={color} />;
-}
 
 
 interface TechIllustrationProps {
