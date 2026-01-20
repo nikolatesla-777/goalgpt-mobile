@@ -1,16 +1,9 @@
 import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Animated, Easing, Text, Dimensions } from 'react-native';
+import { View, StyleSheet, Animated, Easing, Text, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
     Brain,
     Activity,
-    ScanLine,
-    BarChart2,
-    Crosshair,
-    Bot,
-    Check,
-    Crown,
-    Gem,
     Database,
     Cpu,
     Globe,
@@ -260,41 +253,46 @@ const Scene3 = () => {
 };
 
 // ============================================================================
-// SCENE 4: GLOBAL AI NETWORK (Premium Community)
-// Sophisticated Orbiting "Sticker" People around a High-Tech Core
+// SCENE 4: GLOBAL CONNECTED COMMUNITY
+// Central GoalGPT Logo + Dynamic Connections + Orbiting Avatars
 // ============================================================================
 const Scene4 = () => {
-    // Rotation for the entire face ring
+    // Rotation for the entire community ring
     const ringRotation = useRef(new Animated.Value(0)).current;
 
     // Core Pulse
     const coreScale = useRef(new Animated.Value(1)).current;
-    const coreOpacity = useRef(new Animated.Value(0.8)).current;
+
+    // Connection Lines Pulse
+    const lineOpacity = useRef(new Animated.Value(0.3)).current;
 
     useEffect(() => {
         // Slow rotation of the community ring
         Animated.loop(
             Animated.timing(ringRotation, {
                 toValue: 1,
-                duration: 20000, // Very slow, majestic rotation
+                duration: 25000,
                 easing: Easing.linear,
                 useNativeDriver: true
             })
         ).start();
 
-        // Heartbeat pulse of the Central AI
+        // Logo Pulse
         Animated.loop(
             Animated.sequence([
-                Animated.parallel([
-                    Animated.timing(coreScale, { toValue: 1.2, duration: 1500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-                    Animated.timing(coreOpacity, { toValue: 1, duration: 1500, useNativeDriver: true })
-                ]),
-                Animated.parallel([
-                    Animated.timing(coreScale, { toValue: 1, duration: 1500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-                    Animated.timing(coreOpacity, { toValue: 0.8, duration: 1500, useNativeDriver: true })
-                ])
+                Animated.timing(coreScale, { toValue: 1.1, duration: 1500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+                Animated.timing(coreScale, { toValue: 1, duration: 1500, easing: Easing.inOut(Easing.ease), useNativeDriver: true })
             ])
         ).start();
+
+        // Data Flow Pulse on lines
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(lineOpacity, { toValue: 0.8, duration: 1000, useNativeDriver: true }),
+                Animated.timing(lineOpacity, { toValue: 0.3, duration: 1000, useNativeDriver: true })
+            ])
+        ).start();
+
     }, []);
 
     const spin = ringRotation.interpolate({
@@ -304,81 +302,104 @@ const Scene4 = () => {
 
     const counterSpin = ringRotation.interpolate({
         inputRange: [0, 1],
-        outputRange: ['0deg', '-360deg'] // Counter rotate faces so they stay upright
+        outputRange: ['0deg', '-360deg'] // Keep faces upright
     });
 
-    // Diverse, mostly male "Sticker" faces as requested
     const FACES = [
-        { emoji: "🧔", bg: "#1E3A8A" }, // Beard
-        { emoji: "👨‍💻", bg: "#065F46" }, // Tech
-        { emoji: "👨🏿", bg: "#4B5563" }, // Dark skin
-        { emoji: "🕵️‍♂️", bg: "#7C3AED" }, // Detective/Analyist
-        { emoji: "👳‍♂️", bg: "#B45309" }, // Turban
-        { emoji: "👱‍♂️", bg: "#047857" }, // Blonde
-        { emoji: "🧢", bg: "#1D4ED8" }, // Cap (Concept)
-        { emoji: "👨‍🦱", bg: "#BE185D" }, // Curly
+        { emoji: "🧔", bg: "#1E3A8A" },
+        { emoji: "👨‍💻", bg: "#065F46" },
+        { emoji: "👨🏿", bg: "#4B5563" },
+        { emoji: "🕵️‍♂️", bg: "#7C3AED" },
+        { emoji: "👳‍♂️", bg: "#B45309" },
+        { emoji: "👱‍♂️", bg: "#047857" },
+        { emoji: "🧢", bg: "#1D4ED8" },
+        { emoji: "👨‍🦱", bg: "#BE185D" },
     ];
+
+    const RADIUS = 110;
 
     return (
         <View style={styles.sceneContainer}>
-            {/* The Connected Network Lines (Static Background for ring) */}
-            <View style={{ position: 'absolute', width: 220, height: 220, borderRadius: 110, borderWidth: 1, borderColor: 'rgba(75,196,30,0.15)', borderStyle: 'dashed' }} />
-            <View style={{ position: 'absolute', width: 280, height: 280, borderRadius: 140, borderWidth: 1, borderColor: 'rgba(75,196,30,0.05)' }} />
+            {/* Background Network Ring */}
+            <View style={{ position: 'absolute', width: RADIUS * 2, height: RADIUS * 2, borderRadius: RADIUS, borderWidth: 1, borderColor: 'rgba(75,196,30,0.1)' }} />
 
-            {/* Central High-Tech Core (Replacing the Robot) */}
+            {/* Central GoalGPT Logo */}
             <Animated.View style={{
+                width: 100, height: 100,
+                borderRadius: 50,
+                backgroundColor: '#000',
                 alignItems: 'center', justifyContent: 'center',
-                transform: [{ scale: coreScale }, { translateY: 0 }]
+                transform: [{ scale: coreScale }],
+                zIndex: 20,
+                // Glow effect
+                shadowColor: ACCENT_COLOR,
+                shadowOffset: { width: 0, height: 0 },
+                shadowOpacity: 0.8,
+                shadowRadius: 15,
+                elevation: 10
             }}>
-                {/* Core Glow */}
-                <View style={{ position: 'absolute', width: 80, height: 80, borderRadius: 40, backgroundColor: ACCENT_COLOR, opacity: 0.2, shadowColor: ACCENT_COLOR, shadowRadius: 20, shadowOpacity: 1 }} />
-
-                {/* Core Icon Structure */}
-                <View style={{ backgroundColor: '#000', padding: 15, borderRadius: 40, borderWidth: 2, borderColor: ACCENT_COLOR, zIndex: 10 }}>
-                    <Network size={40} color={ACCENT_COLOR} />
-                </View>
-
-                {/* Satellite Nodes */}
-                <View style={{ position: 'absolute', top: -30 }}>
-                    <Zap size={16} color="#FFD700" fill="#FFD700" />
+                <View style={{ width: 90, height: 90, borderRadius: 45, overflow: 'hidden', borderWidth: 2, borderColor: ACCENT_COLOR, alignItems: 'center', justifyContent: 'center' }}>
+                    {/* Using the image from assets */}
+                    <Image
+                        source={require('../../../assets/images/goalgpt-3d-logo.png')}
+                        style={{ width: '100%', height: '100%' }}
+                        resizeMode="cover"
+                    />
                 </View>
             </Animated.View>
 
-            {/* Orbiting Community Ring */}
+            {/* Orbiting Layer with Connections */}
             <Animated.View style={[
                 { position: 'absolute', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' },
                 { transform: [{ rotate: spin }] }
             ]}>
                 {FACES.map((face, index) => {
-                    // Position faces in a circle
                     const angle = (index / FACES.length) * 2 * Math.PI;
-                    const radius = 110; // Distance from center
-                    const x = Math.cos(angle) * radius;
-                    const y = Math.sin(angle) * radius;
+                    // We render them at specific angles. 
+                    // To draw a line from center (0,0) to the item, use a View with specific width and rotation
+
+                    // Convert index to degrees for rotation of the line
+                    const deg = (index / FACES.length) * 360;
 
                     return (
-                        <Animated.View
-                            key={index}
-                            style={[
-                                styles.stickerBubble,
-                                {
-                                    transform: [
-                                        { translateX: x },
-                                        { translateY: y },
-                                        { rotate: counterSpin } // Keep face upright
-                                    ]
-                                }
-                            ]}
-                        >
-                            <Text style={{ fontSize: 28 }}>{face.emoji}</Text>
-                        </Animated.View>
+                        <View key={index} style={{ position: 'absolute', alignItems: 'center', justifyContent: 'center' }}>
+                            {/* DYNAMIC CONNECTION LINE */}
+                            <Animated.View style={{
+                                position: 'absolute',
+                                height: 1,
+                                width: RADIUS, // Line length matches radius
+                                backgroundColor: ACCENT_COLOR,
+                                opacity: lineOpacity,
+                                transform: [
+                                    { rotate: `${deg}deg` }, // Rotate the line to point to the avatar
+                                    { translateX: RADIUS / 2 } // Shift it so starts at center
+                                ]
+                            }} />
+
+                            {/* THE AVATAR BUBBLE */}
+                            <Animated.View
+                                style={[
+                                    styles.stickerBubble,
+                                    {
+                                        transform: [
+                                            { rotate: `${deg}deg` }, // Rotate position around center
+                                            { translateX: RADIUS },   // Move out to radius
+                                            { rotate: `${-deg}deg` }, // Cancel rotation interaction
+                                            { rotate: counterSpin }   // Cancel orbit rotation to keep face upright
+                                        ]
+                                    }
+                                ]}
+                            >
+                                <Text style={{ fontSize: 28 }}>{face.emoji}</Text>
+                            </Animated.View>
+                        </View>
                     );
                 })}
             </Animated.View>
 
-            {/* Floating "Success" Particles in Background */}
-            <View style={{ position: 'absolute', opacity: 0.3 }}>
-                <Users size={200} color={ACCENT_COLOR} />
+            {/* Background Particles */}
+            <View style={{ position: 'absolute', opacity: 0.1 }}>
+                <Users size={250} color={ACCENT_COLOR} />
             </View>
 
         </View>
@@ -535,7 +556,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.4,
         shadowRadius: 8,
         // Center the item itself so translation works from center
-        marginLeft: -25,
-        marginTop: -25
+        // marginLeft: -25,
+        // marginTop: -25
     }
 });
