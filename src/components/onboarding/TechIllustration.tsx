@@ -17,7 +17,8 @@ import {
     Shield,
     Users,
     MessageCircle,
-    ThumbsUp
+    ThumbsUp,
+    Sparkles
 } from 'lucide-react-native';
 
 const ICON_SIZE = 120;
@@ -260,8 +261,7 @@ const Scene3 = () => {
 };
 
 // ============================================================================
-// SCENE 4: COMMUNITY & INSIGHTS (New Request)
-// Happy Human Emojis appearing continuously
+// SCENE 4: COMMUNITY & INSIGHTS (Happy Robot)
 // ============================================================================
 const Scene4 = () => {
     // We create multiple "Avatar" instances that loop independently
@@ -307,44 +307,85 @@ const Scene4 = () => {
 
     const pulseScale = useRef(new Animated.Value(1)).current;
 
+    // Wink Animation (Eyelid)
+    const winkOpacity = useRef(new Animated.Value(0)).current;
+
     useEffect(() => {
+        // Pulse Effect
         Animated.loop(
             Animated.sequence([
-                Animated.timing(pulseScale, { toValue: 1.1, duration: 1500, useNativeDriver: true }),
-                Animated.timing(pulseScale, { toValue: 1, duration: 1500, useNativeDriver: true })
+                Animated.timing(pulseScale, { toValue: 1.1, duration: 1000, useNativeDriver: true }),
+                Animated.timing(pulseScale, { toValue: 1, duration: 1000, useNativeDriver: true })
+            ])
+        ).start();
+
+        // Wink Effect Loop
+        Animated.loop(
+            Animated.sequence([
+                Animated.delay(2000),
+                // Wink Close
+                Animated.timing(winkOpacity, { toValue: 1, duration: 100, useNativeDriver: true }),
+                Animated.delay(200),
+                // Wink Open
+                Animated.timing(winkOpacity, { toValue: 0, duration: 100, useNativeDriver: true }),
+                Animated.delay(3000) // Wait before next wink
             ])
         ).start();
     }, []);
 
     return (
         <View style={styles.sceneContainer}>
-            {/* Central Globe/Network Hub */}
+            {/* Central Robot Hub */}
             <Animated.View style={{ transform: [{ scale: pulseScale }], alignItems: 'center', justifyContent: 'center' }}>
                 <View style={{
-                    width: 80, height: 80, borderRadius: 40,
-                    backgroundColor: 'rgba(75, 196, 30, 0.1)',
+                    width: 90, height: 90, borderRadius: 45,
+                    backgroundColor: 'rgba(75, 196, 30, 0.15)',
                     alignItems: 'center', justifyContent: 'center',
-                    borderWidth: 1, borderColor: ACCENT_COLOR
+                    borderWidth: 1, borderColor: ACCENT_COLOR,
+                    shadowColor: ACCENT_COLOR, shadowOpacity: 0.5, shadowRadius: 10
                 }}>
-                    <Globe size={40} color={ACCENT_COLOR} />
+                    {/* The Bot Icon */}
+                    <Bot size={50} color={ACCENT_COLOR} />
+
+                    {/* Wink Eyelid Overlay */}
+                    {/* Positioned relative to the container, aiming for the right eye of the Lucide Bot icon */}
+                    {/* Lucide Bot eyes are roughly at top 35%, spaced apart */}
+                    <Animated.View
+                        style={{
+                            position: 'absolute',
+                            width: 12,
+                            height: 12,
+                            backgroundColor: '#071A12', // Match background color to hide eye
+                            // Adjust positioning to cover the right eye
+                            top: 32,
+                            right: 28,
+                            opacity: winkOpacity,
+                            justifyContent: 'center', alignItems: 'center'
+                        }}
+                    >
+                        <View style={{ width: 10, height: 2, backgroundColor: ACCENT_COLOR }} />
+                    </Animated.View>
+
+                    {/* Playful Sparkle near winking eye */}
+                    <Animated.View style={{
+                        position: 'absolute', top: -10, right: -10,
+                        opacity: winkOpacity,
+                        transform: [{ scale: winkOpacity }]
+                    }}>
+                        <Sparkles size={24} color="#FFD700" fill="#FFD700" />
+                    </Animated.View>
+
                 </View>
-                <View style={{ position: 'absolute', width: 120, height: 120, borderRadius: 60, borderWidth: 1, borderColor: 'rgba(75, 196, 30, 0.2)' }} />
+                <View style={{ position: 'absolute', width: 130, height: 130, borderRadius: 65, borderWidth: 1, borderColor: 'rgba(75, 196, 30, 0.2)' }} />
             </Animated.View>
 
             {/* Floating Happy People */}
-            {/* Top Left */}
             <Avatar emoji="👩‍💼" startX={40} startY={40} delay={0} duration={2000} />
-            {/* Top Right */}
             <Avatar emoji="👨‍💻" startX={220} startY={30} delay={800} duration={2200} />
-            {/* Mid Left */}
             <Avatar emoji="🧔" startX={20} startY={120} delay={1500} duration={2500} />
-            {/* Mid Right */}
             <Avatar emoji="👱‍♀️" startX={240} startY={140} delay={400} duration={1800} />
-            {/* Bot Left */}
             <Avatar emoji="🤴" startX={50} startY={220} delay={2000} duration={2100} />
-            {/* Bot Right */}
             <Avatar emoji="👩‍🦰" startX={200} startY={210} delay={1200} duration={2300} />
-            {/* Center Top */}
             <Avatar emoji="🎉" startX={130} startY={10} delay={3000} duration={3000} />
 
         </View>
