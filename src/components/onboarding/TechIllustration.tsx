@@ -11,7 +11,10 @@ import {
     Zap,
     Network,
     Users,
-    Bot
+    Bot,
+    Lock,
+    Unlock,
+    Crown
 } from 'lucide-react-native';
 
 const ICON_SIZE = 120;
@@ -313,7 +316,7 @@ const Scene4 = () => {
         { emoji: "🕵️‍♂️", bg: "#7C3AED" },
         { emoji: "👳‍♂️", bg: "#B45309" },
         { emoji: "👱‍♂️", bg: "#047857" },
-        { emoji: "👩", bg: "#BE185D" },
+        { emoji: "👩", bg: "#BE185D" }, // Replaced Cap with Woman
         { emoji: "👨‍🦱", bg: "#BE185D" },
     ];
 
@@ -398,7 +401,135 @@ const Scene4 = () => {
                 })}
             </Animated.View>
 
+        </View>
+    );
+};
 
+// ============================================================================
+// SCENE 5: VIP UNLOCK - PREMIUM ACCESS
+// Locked Content -> Unlocks to reveal Crown/Premium Badge with Luxury Gold Aesthetics
+// ============================================================================
+const Scene5 = () => {
+    // Unlock Animation Sequence
+    const lockOpacity = useRef(new Animated.Value(1)).current;
+    const unlockOpacity = useRef(new Animated.Value(0)).current;
+    const crownScale = useRef(new Animated.Value(0)).current;
+    const crownOpacity = useRef(new Animated.Value(0)).current;
+
+    // Background Radiance
+    const raysRotation = useRef(new Animated.Value(0)).current;
+    const bgScale = useRef(new Animated.Value(0.8)).current;
+
+    useEffect(() => {
+        // Rotating Sunburst/Rays background
+        Animated.loop(
+            Animated.timing(raysRotation, {
+                toValue: 1,
+                duration: 10000,
+                easing: Easing.linear,
+                useNativeDriver: true
+            })
+        ).start();
+
+        // Pulsing background
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(bgScale, { toValue: 1.1, duration: 2000, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+                Animated.timing(bgScale, { toValue: 0.8, duration: 2000, easing: Easing.inOut(Easing.ease), useNativeDriver: true })
+            ])
+        ).start();
+
+        // Main Reveal Sequence
+        const playUnlockSequence = () => {
+            Animated.sequence([
+                // 1. Locked State sits for a moment
+                Animated.delay(500),
+                // 2. Lock Shakes (Simulated by no shake here for simplicity, or add shake later)
+                // 3. Switch to Unlock Icon
+                Animated.timing(lockOpacity, { toValue: 0, duration: 200, useNativeDriver: true }),
+                Animated.timing(unlockOpacity, { toValue: 1, duration: 400, useNativeDriver: true }),
+                Animated.delay(500),
+                // 4. Reveal Crown (Explosion effect)
+                Animated.parallel([
+                    Animated.timing(unlockOpacity, { toValue: 0, duration: 300, useNativeDriver: true }),
+                    Animated.timing(crownScale, { toValue: 1.5, duration: 400, easing: Easing.back(1.5), useNativeDriver: true }),
+                    Animated.timing(crownOpacity, { toValue: 1, duration: 300, useNativeDriver: true }),
+                ]),
+                Animated.delay(2000), // Admire the Crown
+                // 5. Reset to Locked
+                Animated.parallel([
+                    Animated.timing(crownOpacity, { toValue: 0, duration: 500, useNativeDriver: true }),
+                    Animated.timing(crownScale, { toValue: 0, duration: 500, useNativeDriver: true }),
+                ]),
+                Animated.delay(200),
+                Animated.timing(lockOpacity, { toValue: 1, duration: 400, useNativeDriver: true }),
+            ]).start(() => playUnlockSequence());
+        };
+        playUnlockSequence();
+    }, []);
+
+    const spin = raysRotation.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0deg', '360deg']
+    });
+
+    const GOLD_ACCENT = '#FFD700';
+
+    return (
+        <View style={styles.sceneContainer}>
+            {/* Rotating Premium Rays Background */}
+            <Animated.View style={{
+                position: 'absolute',
+                transform: [{ rotate: spin }, { scale: bgScale }],
+                opacity: 0.3
+            }}>
+                <View style={{ width: 300, height: 300, borderRadius: 150, borderWidth: 2, borderColor: GOLD_ACCENT, borderStyle: 'dotted' }} />
+                {/* Simulated rays with multiple squares rotated */}
+                {[0, 45, 90, 135].map((deg, i) => (
+                    <View key={i} style={{
+                        position: 'absolute', top: 0, left: 0, width: 300, height: 300,
+                        borderWidth: 1, borderColor: 'rgba(255, 215, 0, 0.2)',
+                        transform: [{ rotate: `${deg}deg` }]
+                    }} />
+                ))}
+            </Animated.View>
+
+            {/* Static Premium Circle Container */}
+            <View style={{
+                width: 140, height: 140, borderRadius: 70,
+                backgroundColor: 'rgba(255, 215, 0, 0.1)', // Gold tint
+                alignItems: 'center', justifyContent: 'center',
+                borderWidth: 1, borderColor: GOLD_ACCENT,
+                shadowColor: GOLD_ACCENT, shadowOpacity: 0.5, shadowRadius: 20
+            }}>
+                {/* LOCKED STATE */}
+                <Animated.View style={{ position: 'absolute', opacity: lockOpacity }}>
+                    <Lock size={60} color="#FFF" />
+                    <View style={{ position: 'absolute', bottom: -20, backgroundColor: '#333', paddingHorizontal: 10, paddingVertical: 2, borderRadius: 4 }}>
+                        <Text style={{ color: '#FFF', fontSize: 10, fontWeight: 'bold' }}>LOCKED</Text>
+                    </View>
+                </Animated.View>
+
+                {/* UNLOCKED STATE (Transition) */}
+                <Animated.View style={{ position: 'absolute', opacity: unlockOpacity }}>
+                    <Unlock size={60} color={GOLD_ACCENT} />
+                    <View style={{ position: 'absolute', bottom: -20, backgroundColor: GOLD_ACCENT, paddingHorizontal: 10, paddingVertical: 2, borderRadius: 4 }}>
+                        <Text style={{ color: '#000', fontSize: 10, fontWeight: 'bold' }}>OPEN</Text>
+                    </View>
+                </Animated.View>
+
+                {/* VIP / CROWN STATE (Final Reveal) */}
+                <Animated.View style={{ position: 'absolute', opacity: crownOpacity, transform: [{ scale: crownScale }] }}>
+                    <Crown size={70} color={GOLD_ACCENT} fill={GOLD_ACCENT} />
+                    {/* Sparkles */}
+                    <Zap size={24} color="#FFF" fill="#FFF" style={{ position: 'absolute', top: -10, right: -10 }} />
+                    <Zap size={16} color="#FFF" fill="#FFF" style={{ position: 'absolute', bottom: 0, left: -10 }} />
+
+                    <View style={{ position: 'absolute', bottom: -30, backgroundColor: GOLD_ACCENT, paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12, width: 100, alignItems: 'center' }}>
+                        <Text style={{ color: '#000', fontSize: 14, fontWeight: 'bold', letterSpacing: 1 }}>VIP ACCESS</Text>
+                    </View>
+                </Animated.View>
+            </View>
 
         </View>
     );
@@ -415,6 +546,7 @@ export const TechIllustration: React.FC<TechIllustrationProps> = ({ slideId }) =
         case 2: return <Scene2 />;
         case 3: return <Scene3 />;
         case 4: return <Scene4 />;
+        case 5: return <Scene5 />;
         default: return <Scene1 />;
     }
 };

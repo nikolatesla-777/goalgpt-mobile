@@ -65,6 +65,12 @@ const SLIDES: OnboardingSlide[] = [
     description:
       'Thousands of users explore real-time football insights to make more informed choices.',
   },
+  {
+    id: 5,
+    title: 'Go VIP, Unlock Limits!',
+    description:
+      'Gain exclusive access to locked matches and premium AI insights. Upgrade now to maximize your potential.',
+  },
 ];
 
 // ============================================================================
