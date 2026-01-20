@@ -61,9 +61,9 @@ const SLIDES: OnboardingSlide[] = [
   },
   {
     id: 4,
-    title: 'Unlock Premium Features',
+    title: 'Smarter decisions start with GoalGPT',
     description:
-      'Get access to exclusive AI bots, unlimited predictions, and expert analysis.',
+      'Thousands of users explore real-time football insights to make more informed choices.',
   },
 ];
 

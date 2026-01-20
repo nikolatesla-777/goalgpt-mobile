@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Animated, Easing, Text } from 'react-native';
+import { View, StyleSheet, Animated, Easing, Text, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
     Brain,
@@ -14,7 +14,10 @@ import {
     Database,
     Cpu,
     Globe,
-    Shield
+    Shield,
+    Users,
+    MessageCircle,
+    ThumbsUp
 } from 'lucide-react-native';
 
 const ICON_SIZE = 120;
@@ -23,7 +26,6 @@ const SECONDARY_COLOR = '#4BC41E';
 
 // ============================================================================
 // SCENE 1: WELCOME / AI CORE
-// A central "brain" pulsing, with orbiting data nodes
 // ============================================================================
 const Scene1 = () => {
     const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -62,7 +64,6 @@ const Scene1 = () => {
 
     return (
         <View style={styles.sceneContainer}>
-            {/* Orbiting Elements */}
             <Animated.View style={[styles.orbitContainer, { transform: [{ rotate: spin }] }]}>
                 <View style={[styles.orbitNode, { top: 0, left: '50%', marginLeft: -15 }]}>
                     <Database size={30} color={SECONDARY_COLOR} opacity={0.6} />
@@ -77,11 +78,7 @@ const Scene1 = () => {
                     <Shield size={30} color={SECONDARY_COLOR} opacity={0.6} />
                 </View>
             </Animated.View>
-
-            {/* Glowing Background */}
             <Animated.View style={[styles.glowRing, { opacity: opacityAnim, transform: [{ scale: Animated.multiply(scaleAnim, 1.2) }] }]} />
-
-            {/* Main Icon */}
             <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
                 <Brain size={ICON_SIZE} color={ACCENT_COLOR} fill="rgba(75, 196, 30, 0.2)" />
             </Animated.View>
@@ -91,10 +88,8 @@ const Scene1 = () => {
 
 // ============================================================================
 // SCENE 2: LIVE MATCH SCANNER
-// Sophisticated Radar Scanner detecting signals and goals
 // ============================================================================
 const Scene2 = () => {
-    // Animation Values
     const scanRotation = useRef(new Animated.Value(0)).current;
     const blip1Scale = useRef(new Animated.Value(0)).current;
     const blip1Opacity = useRef(new Animated.Value(0)).current;
@@ -103,7 +98,6 @@ const Scene2 = () => {
     const gridOpacity = useRef(new Animated.Value(0.3)).current;
 
     useEffect(() => {
-        // 1. Radar Rotation (Infinite)
         Animated.loop(
             Animated.timing(scanRotation, {
                 toValue: 1,
@@ -113,7 +107,6 @@ const Scene2 = () => {
             })
         ).start();
 
-        // 2. Pulse Grid Background
         Animated.loop(
             Animated.sequence([
                 Animated.timing(gridOpacity, { toValue: 0.6, duration: 1500, useNativeDriver: true }),
@@ -121,7 +114,6 @@ const Scene2 = () => {
             ])
         ).start();
 
-        // 3. Signal Blips
         const pulseBlip = (scale: Animated.Value, opacity: Animated.Value, delay: number) => {
             return Animated.loop(
                 Animated.sequence([
@@ -139,7 +131,6 @@ const Scene2 = () => {
 
         pulseBlip(blip1Scale, blip1Opacity, 500).start();
         pulseBlip(blip2Scale, blip2Opacity, 2000).start();
-
     }, []);
 
     const spin = scanRotation.interpolate({
@@ -152,66 +143,34 @@ const Scene2 = () => {
             <Animated.View style={{ opacity: gridOpacity, position: 'absolute' }}>
                 <Activity size={220} color={SECONDARY_COLOR} strokeWidth={0.5} style={{ opacity: 0.2 }} />
             </Animated.View>
-
             <View style={[styles.orbitContainer, { width: 180, height: 180, borderRadius: 90, borderColor: 'rgba(75, 196, 30, 0.3)', borderWidth: 1 }]} />
             <View style={[styles.orbitContainer, { width: 100, height: 100, borderRadius: 50, borderColor: 'rgba(75, 196, 30, 0.5)', borderWidth: 1 }]} />
             <View style={{ width: 4, height: 4, borderRadius: 2, backgroundColor: ACCENT_COLOR, position: 'absolute' }} />
-
             <View style={{ backgroundColor: 'rgba(7, 26, 18, 0.8)', padding: 10, borderRadius: 20, borderWidth: 1, borderColor: ACCENT_COLOR }}>
                 <Database size={32} color={ACCENT_COLOR} />
             </View>
-
             <Animated.View style={[
                 styles.radarContainer,
                 {
-                    position: 'absolute',
-                    width: 200,
-                    height: 200,
-                    justifyContent: 'center',
-                    alignItems: 'center',
+                    position: 'absolute', width: 200, height: 200, justifyContent: 'center', alignItems: 'center',
                     transform: [{ rotate: spin }]
                 }
             ]}>
                 <LinearGradient
                     colors={['rgba(75, 196, 30, 0.5)', 'transparent']}
-                    style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 100,
-                        width: 100,
-                        height: 40,
-                        transform: [{ translateY: 100 }, { rotate: '-90deg' }, { translateX: 50 }, { translateY: -20 }]
-                    }}
+                    style={{ position: 'absolute', top: 0, left: 100, width: 100, height: 40, transform: [{ translateY: 100 }, { rotate: '-90deg' }, { translateX: 50 }, { translateY: -20 }] }}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
                 />
-                <View style={{
-                    position: 'absolute',
-                    top: 100,
-                    left: 100,
-                    width: 100,
-                    height: 2,
-                    backgroundColor: ACCENT_COLOR,
-                    shadowColor: ACCENT_COLOR,
-                    shadowRadius: 5,
-                    shadowOpacity: 1
-                }} />
+                <View style={{ position: 'absolute', top: 100, left: 100, width: 100, height: 2, backgroundColor: ACCENT_COLOR, shadowColor: ACCENT_COLOR, shadowRadius: 5, shadowOpacity: 1 }} />
             </Animated.View>
-
-            <Animated.View style={[
-                styles.blip,
-                { top: 60, right: 40, transform: [{ scale: blip1Scale }], opacity: blip1Opacity }
-            ]}>
+            <Animated.View style={[styles.blip, { top: 60, right: 40, transform: [{ scale: blip1Scale }], opacity: blip1Opacity }]}>
                 <View style={styles.blipCore} />
                 <View style={styles.blipTag}>
                     <Text style={styles.blipText}>MATCH FOUND</Text>
                 </View>
             </Animated.View>
-
-            <Animated.View style={[
-                styles.blip,
-                { bottom: 70, left: 50, transform: [{ scale: blip2Scale }], opacity: blip2Opacity }
-            ]}>
+            <Animated.View style={[styles.blip, { bottom: 70, left: 50, transform: [{ scale: blip2Scale }], opacity: blip2Opacity }]}>
                 <View style={[styles.blipCore, { backgroundColor: '#FFD700', shadowColor: '#FFD700' }]} />
                 <View style={[styles.blipTag, { borderColor: '#FFD700' }]}>
                     <Text style={[styles.blipText, { color: '#FFD700' }]}>GOAL DETECTED</Text>
@@ -222,26 +181,19 @@ const Scene2 = () => {
 };
 
 // ============================================================================
-// SCENE 3: AI SIGNAL ENGINE (New Request)
-// Momentum bars, Drop-down notification, WON effect
+// SCENE 3: AI SIGNAL ENGINE
 // ============================================================================
 const Scene3 = () => {
-    // 1. Momentum Bars (Fluctuating)
     const bar1Height = useRef(new Animated.Value(20)).current;
     const bar2Height = useRef(new Animated.Value(40)).current;
     const bar3Height = useRef(new Animated.Value(30)).current;
     const bar4Height = useRef(new Animated.Value(60)).current;
-
-    // 2. Notification Drop
     const notifY = useRef(new Animated.Value(-100)).current;
     const notifOpacity = useRef(new Animated.Value(0)).current;
-
-    // 3. WON Effect
     const wonScale = useRef(new Animated.Value(0)).current;
     const wonOpacity = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
-        // --- 1. Bar Fluctuations (Infinite) ---
         const fluctuate = (anim: Animated.Value, min: number, max: number, duration: number) => {
             Animated.loop(
                 Animated.sequence([
@@ -256,61 +208,41 @@ const Scene3 = () => {
         fluctuate(bar3Height, 40, 90, 900);
         fluctuate(bar4Height, 30, 80, 1300);
 
-        // --- 2. Sequence: Drop Notif -> WON Effect -> Reset ---
         const playSequence = () => {
             Animated.sequence([
                 Animated.delay(500),
-
-                // Step A: Notification Drops
                 Animated.parallel([
                     Animated.timing(notifY, { toValue: 0, duration: 600, easing: Easing.bounce, useNativeDriver: true }),
                     Animated.timing(notifOpacity, { toValue: 1, duration: 400, useNativeDriver: true })
                 ]),
-
                 Animated.delay(800),
-
-                // Step B: WON Effect Pops
                 Animated.parallel([
                     Animated.timing(wonScale, { toValue: 1, duration: 400, easing: Easing.back(2), useNativeDriver: true }),
                     Animated.timing(wonOpacity, { toValue: 1, duration: 300, useNativeDriver: true })
                 ]),
-
                 Animated.delay(2000),
-
-                // Step C: Reset All (Fade out)
                 Animated.parallel([
                     Animated.timing(notifOpacity, { toValue: 0, duration: 400, useNativeDriver: true }),
                     Animated.timing(wonOpacity, { toValue: 0, duration: 400, useNativeDriver: true }),
                 ]),
-
-                // Reset Values instantly
                 Animated.parallel([
                     Animated.timing(notifY, { toValue: -100, duration: 0, useNativeDriver: true }),
                     Animated.timing(wonScale, { toValue: 0, duration: 0, useNativeDriver: true }),
                 ])
-
-            ]).start(() => playSequence()); // Loop sequence
+            ]).start(() => playSequence());
         };
-
         playSequence();
-
     }, []);
 
     return (
         <View style={styles.sceneContainer}>
-            {/* Background Momentum Bars */}
             <View style={{ flexDirection: 'row', alignItems: 'flex-end', height: 120, gap: 12, marginBottom: 20 }}>
                 <Animated.View style={{ width: 16, backgroundColor: 'rgba(75, 196, 30, 0.4)', borderRadius: 4, height: bar1Height }} />
                 <Animated.View style={{ width: 16, backgroundColor: 'rgba(75, 196, 30, 0.6)', borderRadius: 4, height: bar2Height }} />
                 <Animated.View style={{ width: 16, backgroundColor: 'rgba(75, 196, 30, 0.8)', borderRadius: 4, height: bar3Height }} />
                 <Animated.View style={{ width: 16, backgroundColor: ACCENT_COLOR, borderRadius: 4, height: bar4Height }} />
             </View>
-
-            {/* Notification Card */}
-            <Animated.View style={[
-                styles.notifCard,
-                { transform: [{ translateY: notifY }], opacity: notifOpacity }
-            ]}>
+            <Animated.View style={[styles.notifCard, { transform: [{ translateY: notifY }], opacity: notifOpacity }]}>
                 <Bot size={20} color={ACCENT_COLOR} />
                 <View style={{ marginLeft: 10 }}>
                     <Text style={styles.notifTitle}>Goal Prediction</Text>
@@ -320,12 +252,7 @@ const Scene3 = () => {
                     <Text style={{ color: ACCENT_COLOR, fontSize: 10, fontWeight: 'bold' }}>LIVE</Text>
                 </View>
             </Animated.View>
-
-            {/* WON Effect Stamp */}
-            <Animated.View style={[
-                styles.wonBadge,
-                { transform: [{ scale: wonScale }, { rotate: '-10deg' }], opacity: wonOpacity }
-            ]}>
+            <Animated.View style={[styles.wonBadge, { transform: [{ scale: wonScale }, { rotate: '-10deg' }], opacity: wonOpacity }]}>
                 <Text style={styles.wonText}>WON</Text>
             </Animated.View>
         </View>
@@ -333,33 +260,93 @@ const Scene3 = () => {
 };
 
 // ============================================================================
-// SCENE 4: PREMIUM (Unlock)
-// Glowing Crown
+// SCENE 4: COMMUNITY & INSIGHTS (New Request)
+// Happy Human Emojis appearing continuously
 // ============================================================================
 const Scene4 = () => {
-    const scaleAnim = useRef(new Animated.Value(1)).current;
+    // We create multiple "Avatar" instances that loop independently
+    const Avatar = ({ emoji, startX, startY, delay, duration }: any) => {
+        const opacity = useRef(new Animated.Value(0)).current;
+        const translateY = useRef(new Animated.Value(0)).current;
+        const scale = useRef(new Animated.Value(0)).current;
+
+        useEffect(() => {
+            const animate = () => {
+                Animated.sequence([
+                    Animated.delay(delay),
+                    Animated.parallel([
+                        Animated.timing(opacity, { toValue: 1, duration: 500, useNativeDriver: true }),
+                        Animated.timing(scale, { toValue: 1, duration: 500, easing: Easing.out(Easing.back(1.5)), useNativeDriver: true }),
+                        Animated.timing(translateY, { toValue: -20, duration: duration, easing: Easing.out(Easing.ease), useNativeDriver: true })
+                    ]),
+                    Animated.delay(1000), // Linger
+                    Animated.parallel([
+                        Animated.timing(opacity, { toValue: 0, duration: 500, useNativeDriver: true }),
+                        Animated.timing(scale, { toValue: 0.5, duration: 500, useNativeDriver: true }),
+                    ]),
+                    Animated.timing(translateY, { toValue: 0, duration: 0, useNativeDriver: true })
+                ]).start(() => animate());
+            };
+            animate();
+        }, []);
+
+        return (
+            <Animated.View style={[
+                styles.avatarBubble,
+                {
+                    left: startX,
+                    top: startY,
+                    opacity,
+                    transform: [{ translateY }, { scale }]
+                }
+            ]}>
+                <Text style={{ fontSize: 24 }}>{emoji}</Text>
+            </Animated.View>
+        );
+    };
+
+    const pulseScale = useRef(new Animated.Value(1)).current;
 
     useEffect(() => {
         Animated.loop(
             Animated.sequence([
-                Animated.timing(scaleAnim, { toValue: 1.1, duration: 2000, useNativeDriver: true }),
-                Animated.timing(scaleAnim, { toValue: 1, duration: 2000, useNativeDriver: true })
+                Animated.timing(pulseScale, { toValue: 1.1, duration: 1500, useNativeDriver: true }),
+                Animated.timing(pulseScale, { toValue: 1, duration: 1500, useNativeDriver: true })
             ])
         ).start();
     }, []);
 
     return (
         <View style={styles.sceneContainer}>
-            <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-                <Crown size={120} color="#FFD700" fill="rgba(255, 215, 0, 0.2)" strokeWidth={2} />
+            {/* Central Globe/Network Hub */}
+            <Animated.View style={{ transform: [{ scale: pulseScale }], alignItems: 'center', justifyContent: 'center' }}>
+                <View style={{
+                    width: 80, height: 80, borderRadius: 40,
+                    backgroundColor: 'rgba(75, 196, 30, 0.1)',
+                    alignItems: 'center', justifyContent: 'center',
+                    borderWidth: 1, borderColor: ACCENT_COLOR
+                }}>
+                    <Globe size={40} color={ACCENT_COLOR} />
+                </View>
+                <View style={{ position: 'absolute', width: 120, height: 120, borderRadius: 60, borderWidth: 1, borderColor: 'rgba(75, 196, 30, 0.2)' }} />
             </Animated.View>
 
-            <View style={{ position: 'absolute', top: -30, right: -20 }}>
-                <Gem size={30} color={ACCENT_COLOR} />
-            </View>
-            <View style={{ position: 'absolute', bottom: -20, left: -20 }}>
-                <Gem size={24} color={ACCENT_COLOR} />
-            </View>
+            {/* Floating Happy People */}
+            {/* Top Left */}
+            <Avatar emoji="👩‍💼" startX={40} startY={40} delay={0} duration={2000} />
+            {/* Top Right */}
+            <Avatar emoji="👨‍💻" startX={220} startY={30} delay={800} duration={2200} />
+            {/* Mid Left */}
+            <Avatar emoji="🧔" startX={20} startY={120} delay={1500} duration={2500} />
+            {/* Mid Right */}
+            <Avatar emoji="👱‍♀️" startX={240} startY={140} delay={400} duration={1800} />
+            {/* Bot Left */}
+            <Avatar emoji="🤴" startX={50} startY={220} delay={2000} duration={2100} />
+            {/* Bot Right */}
+            <Avatar emoji="👩‍🦰" startX={200} startY={210} delay={1200} duration={2300} />
+            {/* Center Top */}
+            <Avatar emoji="🎉" startX={130} startY={10} delay={3000} duration={3000} />
+
         </View>
     );
 };
@@ -422,13 +409,8 @@ const styles = StyleSheet.create({
         padding: 4,
         borderRadius: 20,
     },
-    // NEW STYLES FOR SCANNER SCENE
-    radarContainer: {
-        // Defines the rotating layer
-    },
-    radarBeam: {
-        // Gradient cone styles
-    },
+    radarContainer: {},
+    radarBeam: {},
     blip: {
         position: 'absolute',
         alignItems: 'center',
@@ -456,9 +438,8 @@ const styles = StyleSheet.create({
         color: ACCENT_COLOR,
         fontSize: 10,
         fontWeight: 'bold',
-        fontFamily: 'monospace' // Or your app's mono font
+        fontFamily: 'monospace'
     },
-    // NEW STYLES FOR SIGNAL ENGINE SCENE (SCENE 3)
     notifCard: {
         position: 'absolute',
         top: 40,
@@ -504,5 +485,20 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 24,
         letterSpacing: 2,
+    },
+    // SCENE 4 STYLES
+    avatarBubble: {
+        position: 'absolute',
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: 'rgba(75, 196, 30, 0.4)',
+        shadowColor: ACCENT_COLOR,
+        shadowOpacity: 0.3,
+        shadowRadius: 5
     }
 });
