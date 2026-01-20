@@ -1,31 +1,19 @@
-import React, { useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
-import Animated, {
-    useSharedValue,
-    useAnimatedStyle,
-    withRepeat,
-    withTiming,
-    withSequence,
-    Easing,
-    withDelay,
-    interpolate,
-} from 'react-native-reanimated';
+import React, { useEffect, useRef } from 'react';
+import { View, StyleSheet, Animated, Easing } from 'react-native';
 import {
     Brain,
-    Zap,
     Activity,
     ScanLine,
     BarChart2,
     Crosshair,
-    Target,
+    Bot, // Using Bot instead of Target for better visibility
     Check,
     Crown,
     Gem,
-    Cpu,
     Database,
+    Cpu,
     Globe,
-    Shield,
-    Bot
+    Shield
 } from 'lucide-react-native';
 
 const ICON_SIZE = 120;
@@ -37,51 +25,47 @@ const SECONDARY_COLOR = '#4BC41E';
 // A central "brain" pulsing, with orbiting data nodes
 // ============================================================================
 const Scene1 = () => {
-    const scale = useSharedValue(1);
-    const opacity = useSharedValue(0.5);
-    const rotate = useSharedValue(0);
+    const scaleAnim = useRef(new Animated.Value(1)).current;
+    const opacityAnim = useRef(new Animated.Value(0.5)).current;
+    const rotateAnim = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
-        scale.value = withRepeat(
-            withSequence(
-                withTiming(1.1, { duration: 1500, easing: Easing.inOut(Easing.ease) }),
-                withTiming(1, { duration: 1500, easing: Easing.inOut(Easing.ease) })
-            ),
-            -1,
-            true
-        );
-        opacity.value = withRepeat(
-            withSequence(
-                withTiming(1, { duration: 1000 }),
-                withTiming(0.5, { duration: 1000 })
-            ),
-            -1,
-            true
-        );
-        rotate.value = withRepeat(
-            withTiming(360, { duration: 8000, easing: Easing.linear }),
-            -1,
-            false
-        );
+        // Pulse Scale
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(scaleAnim, { toValue: 1.1, duration: 1500, useNativeDriver: true, easing: Easing.inOut(Easing.ease) }),
+                Animated.timing(scaleAnim, { toValue: 1, duration: 1500, useNativeDriver: true, easing: Easing.inOut(Easing.ease) })
+            ])
+        ).start();
+
+        // Pulse Opacity
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(opacityAnim, { toValue: 1, duration: 1000, useNativeDriver: true }),
+                Animated.timing(opacityAnim, { toValue: 0.5, duration: 1000, useNativeDriver: true })
+            ])
+        ).start();
+
+        // Rotation
+        Animated.loop(
+            Animated.timing(rotateAnim, {
+                toValue: 1,
+                duration: 8000,
+                easing: Easing.linear,
+                useNativeDriver: true
+            })
+        ).start();
     }, []);
 
-    const centerStyle = useAnimatedStyle(() => ({
-        transform: [{ scale: scale.value }],
-    }));
-
-    const glowStyle = useAnimatedStyle(() => ({
-        opacity: opacity.value,
-        transform: [{ scale: scale.value * 1.2 }],
-    }));
-
-    const orbitStyle = useAnimatedStyle(() => ({
-        transform: [{ rotate: `${rotate.value}deg` }],
-    }));
+    const spin = rotateAnim.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0deg', '360deg']
+    });
 
     return (
         <View style={styles.sceneContainer}>
             {/* Orbiting Elements */}
-            <Animated.View style={[styles.orbitContainer, orbitStyle]}>
+            <Animated.View style={[styles.orbitContainer, { transform: [{ rotate: spin }] }]}>
                 <View style={[styles.orbitNode, { top: 0, left: '50%', marginLeft: -15 }]}>
                     <Database size={30} color={SECONDARY_COLOR} opacity={0.6} />
                 </View>
@@ -97,10 +81,10 @@ const Scene1 = () => {
             </Animated.View>
 
             {/* Glowing Background */}
-            <Animated.View style={[styles.glowRing, glowStyle]} />
+            <Animated.View style={[styles.glowRing, { opacity: opacityAnim, transform: [{ scale: Animated.multiply(scaleAnim, 1.2) }] }]} />
 
             {/* Main Icon */}
-            <Animated.View style={centerStyle}>
+            <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
                 <Brain size={ICON_SIZE} color={ACCENT_COLOR} fill="rgba(75, 196, 30, 0.2)" />
             </Animated.View>
         </View>
@@ -112,44 +96,39 @@ const Scene1 = () => {
 // Scan line moving over chart
 // ============================================================================
 const Scene2 = () => {
-    const scanY = useSharedValue(-50);
-    const chartOpacity = useSharedValue(0.6);
+    const scanY = useRef(new Animated.Value(-50)).current;
+    const chartOpacity = useRef(new Animated.Value(0.6)).current;
 
     useEffect(() => {
-        scanY.value = withRepeat(
-            withTiming(150, { duration: 2000, easing: Easing.linear }),
-            -1,
-            false
-        );
+        // Scan Line
+        Animated.loop(
+            Animated.timing(scanY, {
+                toValue: 150,
+                duration: 2000,
+                easing: Easing.linear,
+                useNativeDriver: true
+            })
+        ).start();
 
-        chartOpacity.value = withRepeat(
-            withSequence(
-                withTiming(1, { duration: 500 }),
-                withTiming(0.6, { duration: 500 })
-            ),
-            -1,
-            true
-        );
+        // Chart flicker
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(chartOpacity, { toValue: 1, duration: 500, useNativeDriver: true }),
+                Animated.timing(chartOpacity, { toValue: 0.6, duration: 500, useNativeDriver: true })
+            ])
+        ).start();
     }, []);
-
-    const scanLineStyle = useAnimatedStyle(() => ({
-        transform: [{ translateY: scanY.value }],
-    }));
-
-    const chartStyle = useAnimatedStyle(() => ({
-        opacity: chartOpacity.value,
-    }));
 
     return (
         <View style={styles.sceneContainer}>
-            <Animated.View style={chartStyle}>
+            <Animated.View style={{ opacity: chartOpacity }}>
                 <BarChart2 size={140} color={ACCENT_COLOR} />
             </Animated.View>
 
             <View style={styles.overlay}>
                 {/* Masking container for scan line */}
                 <View style={{ width: 160, height: 160, overflow: 'hidden' }}>
-                    <Animated.View style={[styles.scanLine, scanLineStyle]}>
+                    <Animated.View style={[styles.scanLine, { transform: [{ translateY: scanY }] }]}>
                         <ScanLine size={160} color="#FFFFFF" strokeWidth={1} />
                     </Animated.View>
                 </View>
@@ -163,56 +142,70 @@ const Scene2 = () => {
 // Target locking on
 // ============================================================================
 const Scene3 = () => {
-    const rotate = useSharedValue(0);
-    const scale = useSharedValue(1.5);
-    const opacity = useSharedValue(0);
+    const rotateAnim = useRef(new Animated.Value(0)).current;
+    const scaleAnim = useRef(new Animated.Value(1.5)).current;
+    const opacityAnim = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
-        rotate.value = withRepeat(
-            withTiming(90, { duration: 2000, easing: Easing.inOut(Easing.cubic) }),
-            -1,
-            true
-        );
-        scale.value = withRepeat(
-            withSequence(
-                withTiming(1, { duration: 800, easing: Easing.out(Easing.exp) }),
-                withDelay(1200, withTiming(1.5, { duration: 0 }))
-            ),
-            -1,
-            false
-        );
-        opacity.value = withRepeat(
-            withSequence(
-                withTiming(1, { duration: 400 }),
-                withDelay(1200, withTiming(0, { duration: 400 }))
-            ),
-            -1,
-            false
-        );
+        // Rotate Crosshair
+        Animated.loop(
+            Animated.timing(rotateAnim, {
+                toValue: 1,
+                duration: 2000,
+                easing: Easing.inOut(Easing.cubic),
+                useNativeDriver: true
+            })
+        ).start();
+
+        // Lock-on Effect sequence
+        Animated.loop(
+            Animated.sequence([
+                // Zoom in
+                Animated.parallel([
+                    Animated.timing(scaleAnim, { toValue: 1, duration: 800, easing: Easing.out(Easing.exp), useNativeDriver: true }),
+                    Animated.timing(opacityAnim, { toValue: 1, duration: 400, useNativeDriver: true })
+                ]),
+                // Hold
+                Animated.delay(800),
+                // Reset
+                Animated.parallel([
+                    Animated.timing(scaleAnim, { toValue: 1.5, duration: 0, useNativeDriver: true }),
+                    Animated.timing(opacityAnim, { toValue: 0, duration: 400, useNativeDriver: true })
+                ])
+            ])
+        ).start();
 
     }, []);
 
-    const crosshairStyle = useAnimatedStyle(() => ({
-        transform: [{ rotate: `${rotate.value}deg` }, { scale: scale.value }],
-        opacity: opacity.value
-    }));
+    const spin = rotateAnim.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0deg', '90deg']
+    });
 
-    const targetStyle = useAnimatedStyle(() => ({
-        opacity: interpolate(scale.value, [1.5, 1], [0.5, 1])
-    }));
+    // Interpolate scale for target opacity
+    const targetOpacity = scaleAnim.interpolate({
+        inputRange: [1, 1.5],
+        outputRange: [1, 0.5]
+    });
+
+    // Interpolate scale for lock badge opacity
+    const lockOpacity = scaleAnim.interpolate({
+        inputRange: [1, 1.1],
+        outputRange: [1, 0]
+    });
 
     return (
         <View style={styles.sceneContainer}>
-            <Animated.View style={targetStyle}>
+            <Animated.View style={{ opacity: targetOpacity }}>
                 <Bot size={100} color={ACCENT_COLOR} />
             </Animated.View>
 
-            <Animated.View style={[styles.overlay, crosshairStyle]}>
+            <Animated.View style={[styles.overlay, { transform: [{ rotate: spin }, { scale: scaleAnim }], opacity: opacityAnim }]}>
                 <Crosshair size={180} color="#FFFFFF" strokeWidth={1.5} />
             </Animated.View>
 
             {/* "Lock" confirmation */}
-            <Animated.View style={[styles.lockBadge, { opacity: interpolate(scale.value, [1.1, 1], [0, 1]) }]}>
+            <Animated.View style={[styles.lockBadge, { opacity: lockOpacity }]}>
                 <Check size={24} color="#000" />
             </Animated.View>
         </View>
@@ -224,27 +217,20 @@ const Scene3 = () => {
 // Glowing Crown
 // ============================================================================
 const Scene4 = () => {
-    const scale = useSharedValue(1);
-    const shine = useSharedValue(-100);
+    const scaleAnim = useRef(new Animated.Value(1)).current;
 
     useEffect(() => {
-        scale.value = withRepeat(
-            withSequence(
-                withTiming(1.1, { duration: 2000 }),
-                withTiming(1, { duration: 2000 })
-            ),
-            -1,
-            true
-        );
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(scaleAnim, { toValue: 1.1, duration: 2000, useNativeDriver: true }),
+                Animated.timing(scaleAnim, { toValue: 1, duration: 2000, useNativeDriver: true })
+            ])
+        ).start();
     }, []);
-
-    const crownStyle = useAnimatedStyle(() => ({
-        transform: [{ scale: scale.value }],
-    }));
 
     return (
         <View style={styles.sceneContainer}>
-            <Animated.View style={crownStyle}>
+            <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
                 <Crown size={120} color="#FFD700" fill="rgba(255, 215, 0, 0.2)" strokeWidth={2} />
             </Animated.View>
 
