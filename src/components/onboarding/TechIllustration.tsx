@@ -14,7 +14,8 @@ import {
     Bot,
     Crown,
     Gem,
-    Sparkles
+    Sparkles,
+    Star
 } from 'lucide-react-native';
 
 const ICON_SIZE = 120;
@@ -399,117 +400,105 @@ const Scene4 = () => {
 
 
 // ============================================================================
-// SCENE 5: VIP UNLOCK - PREMIUM CROWN (Refined)
-// A singular, majestic Golden Crown with shimmering effects.
-// Consistent scale with other screens (ICON_SIZE ~120).
+// SCENE 5: VIP UNLOCK - DIAMOND TIER (Redesign)
+// Replaced Yellow/Gold with sophisticated Platinum & GoalGPT Green.
+// Centerpiece: A floating Diamond/Crown in Silver/Green.
+// Modern Tech Aesthetics.
 // ============================================================================
 const Scene5 = () => {
-    const crownScale = useRef(new Animated.Value(1)).current;
-    const shimmerTranslate = useRef(new Animated.Value(-150)).current;
-    const glowOpacity = useRef(new Animated.Value(0.4)).current;
+    const itemScale = useRef(new Animated.Value(0.9)).current;
+    const rotateAnim = useRef(new Animated.Value(0)).current;
+
+    // Tech Rings
+    const ring1Rotate = useRef(new Animated.Value(0)).current;
+    const ring2Rotate = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
-        // Floating / Hover Effect
+        // Breathing Effect
         Animated.loop(
             Animated.sequence([
-                Animated.timing(crownScale, { toValue: 1.1, duration: 2000, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-                Animated.timing(crownScale, { toValue: 1, duration: 2000, easing: Easing.inOut(Easing.ease), useNativeDriver: true })
+                Animated.timing(itemScale, { toValue: 1.05, duration: 2500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+                Animated.timing(itemScale, { toValue: 0.9, duration: 2500, easing: Easing.inOut(Easing.ease), useNativeDriver: true })
             ])
         ).start();
 
-        // Glow Pulse
+        // Slow Rotation for Rings
         Animated.loop(
-            Animated.sequence([
-                Animated.timing(glowOpacity, { toValue: 0.8, duration: 1500, useNativeDriver: true }),
-                Animated.timing(glowOpacity, { toValue: 0.4, duration: 1500, useNativeDriver: true })
-            ])
+            Animated.timing(ring1Rotate, { toValue: 1, duration: 15000, easing: Easing.linear, useNativeDriver: true })
+        ).start();
+        Animated.loop(
+            Animated.timing(ring2Rotate, { toValue: 1, duration: 20000, easing: Easing.linear, useNativeDriver: true })
         ).start();
 
-        // Metallic Shimmer / Reflection passing across
-        Animated.loop(
-            Animated.sequence([
-                Animated.delay(1000),
-                Animated.timing(shimmerTranslate, { toValue: 150, duration: 1200, easing: Easing.linear, useNativeDriver: true }),
-                Animated.timing(shimmerTranslate, { toValue: -150, duration: 0, useNativeDriver: true })
-            ])
-        ).start();
     }, []);
 
-    const GOLD_ACCENT = '#FFD700';
+    const spin1 = ring1Rotate.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
+    const spin2 = ring2Rotate.interpolate({ inputRange: [0, 1], outputRange: ['360deg', '0deg'] });
+
+    const PRIMARY_ACCENT = '#4BC41E'; // GoalGPT Green
+    const PLATINUM = '#E2E8F0'; // Slate 200/Silver
 
     return (
         <View style={styles.sceneContainer}>
-            {/* Subtle Golden Glow Halo (Restrained size) */}
+            {/* Tech Ring 1 (Dashed) */}
             <Animated.View style={{
-                position: 'absolute',
-                width: 140, height: 140,
-                borderRadius: 70,
-                backgroundColor: GOLD_ACCENT,
-                opacity: glowOpacity,
-                transform: [{ scale: crownScale }],
-                shadowColor: GOLD_ACCENT, shadowRadius: 30, shadowOpacity: 0.8
+                position: 'absolute', width: 220, height: 220,
+                borderRadius: 110, borderWidth: 1, borderColor: 'rgba(75, 196, 30, 0.3)', borderStyle: 'dashed',
+                transform: [{ rotate: spin1 }]
             }} />
 
-            {/* Floating Particles (Sparkles) */}
-            <FloatingSparkle delay={0} x={-60} y={-40} color={GOLD_ACCENT} />
-            <FloatingSparkle delay={800} x={60} y={-50} color="#FFF" />
-            <FloatingSparkle delay={1500} x={50} y={50} color={GOLD_ACCENT} />
-            <FloatingSparkle delay={400} x={-50} y={40} color="#FFF" />
-
-            {/* The Majestic Crown */}
-            <Animated.View style={{ transform: [{ scale: crownScale }] }}>
-                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                    <Crown size={120} color={GOLD_ACCENT} fill={GOLD_ACCENT} />
-
-                    {/* Shimmer Overlay (Masked visually by being small thin line or similar trick)
-                         Since we can't easily mask vectors in RN without complex layout, 
-                         we'll simulate shimmer by fading a white duplicate or just moving a white view over it 
-                         if we were using an image. For vector, a "Gem" placement works well to catch the eye.
-                     */}
-                    <View style={{ position: 'absolute', top: 30 }}>
-                        <Gem size={30} color="#FFF" fill="#FFF" style={{ opacity: 0.8 }} />
-                    </View>
-                </View>
-            </Animated.View>
-
-            {/* Premium Badge Text */}
+            {/* Tech Ring 2 (Solid fine) */}
             <Animated.View style={{
-                position: 'absolute', bottom: 50,
-                backgroundColor: 'rgba(255, 215, 0, 0.2)',
-                paddingHorizontal: 16, paddingVertical: 6,
-                borderRadius: 20,
-                borderWidth: 1, borderColor: GOLD_ACCENT,
-                transform: [{ translateY: Animated.multiply(crownScale, 5) }]
-            }}>
-                <Text style={{ color: GOLD_ACCENT, fontSize: 14, fontWeight: 'bold', letterSpacing: 2 }}>VIP ACCESS</Text>
+                position: 'absolute', width: 180, height: 180,
+                borderRadius: 90, borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.1)',
+                transform: [{ rotate: spin2 }]
+            }} />
+
+            {/* Central Glow */}
+            <Animated.View style={{
+                position: 'absolute',
+                width: 140, height: 140, borderRadius: 70,
+                backgroundColor: PRIMARY_ACCENT,
+                opacity: 0.15,
+                transform: [{ scale: itemScale }],
+                shadowColor: PRIMARY_ACCENT, shadowRadius: 40, shadowOpacity: 0.5
+            }} />
+
+            {/* The Artifact: Platinum Crown with Emerald Gems */}
+            <Animated.View style={{ transform: [{ scale: itemScale }], alignItems: 'center' }}>
+                <Gem size={ICON_SIZE} color={PLATINUM} fill="rgba(75, 196, 30, 0.1)" strokeWidth={1.5} />
+                <View style={{ position: 'absolute', top: '35%' }}>
+                    <Sparkles size={40} color={PRIMARY_ACCENT} fill={PRIMARY_ACCENT} />
+                </View>
+
+                {/* Satellite Gems */}
+                <Animated.View style={{ position: 'absolute', top: -20, left: -20, transform: [{ translateY: Animated.multiply(itemScale, 10) }] }}>
+                    <StartStar size={12} color="#FFF" />
+                </Animated.View>
+                <Animated.View style={{ position: 'absolute', bottom: -10, right: -20, transform: [{ translateY: Animated.multiply(itemScale, -10) }] }}>
+                    <StartStar size={16} color={PRIMARY_ACCENT} />
+                </Animated.View>
             </Animated.View>
+
+            {/* Sleek Label */}
+            <View style={{
+                position: 'absolute', bottom: 40,
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                paddingHorizontal: 16, paddingVertical: 8,
+                borderRadius: 20,
+                borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)'
+            }}>
+                <Text style={{ color: '#FFF', fontSize: 12, fontWeight: 'bold', letterSpacing: 3 }}>DIAMOND TIER</Text>
+            </View>
+
         </View>
     );
 };
 
-// Helper for floating sparkles
-const FloatingSparkle = ({ delay, x, y, color }: { delay: number, x: number, y: number, color: string }) => {
-    const scale = useRef(new Animated.Value(0)).current;
-
-    useEffect(() => {
-        Animated.loop(
-            Animated.sequence([
-                Animated.delay(delay),
-                Animated.timing(scale, { toValue: 1, duration: 1000, useNativeDriver: true }),
-                Animated.timing(scale, { toValue: 0, duration: 1000, useNativeDriver: true })
-            ])
-        ).start();
-    }, []);
-
-    return (
-        <Animated.View style={{
-            position: 'absolute',
-            transform: [{ translateX: x }, { translateY: y }, { scale }]
-        }}>
-            <Sparkles size={20} color={color} fill={color} />
-        </Animated.View>
-    );
-};
+// Helper for stars
+const StartStar = ({ size, color }: { size: number, color: string }) => {
+    return <Star size={size} color={color} fill={color} />;
+}
 
 
 interface TechIllustrationProps {
