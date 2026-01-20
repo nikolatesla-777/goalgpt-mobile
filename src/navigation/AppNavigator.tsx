@@ -37,13 +37,16 @@ const RegisterScreen = lazy(() => import('../screens/RegisterScreen').then(m => 
 
 // Main App Screens - Lazy Loaded
 const HomeScreen = lazy(() => import('../screens/HomeScreen').then(m => ({ default: m.HomeScreen })));
-const LiveMatchesScreen = lazy(() => import('../screens/LiveMatchesScreen').then(m => ({ default: m.LiveMatchesScreen })));
+// Updated LiveScreen import logic to point to the new LivescoreScreen implementation
+const LiveMatchesScreen = lazy(() => import('../screens/live/LiveScreen'));
 const PredictionsScreen = lazy(() => import('../screens/predictions/PredictionsScreen'));
 const MatchDetailScreenContainer = lazy(() => import('../screens/MatchDetailScreenContainer').then(m => ({ default: m.MatchDetailScreenContainer })));
 const StoreScreen = lazy(() => import('../screens/StoreScreen').then(m => ({ default: m.StoreScreen })));
 const ProfileScreen = lazy(() => import('../screens/ProfileScreen').then(m => ({ default: m.ProfileScreen })));
 const BotDetailScreen = lazy(() => import('../screens/BotDetailScreen').then(m => ({ default: m.BotDetailScreen })));
 const LegalScreen = lazy(() => import('../screens/LegalScreen'));
+// Animated Splash - Imported directly for speed/reliablity, code split ok too but we need it fast
+import AnimatedSplash from '../screens/AnimatedSplash';
 
 // Mock Data (for Bot Detail only - other screens use real API)
 import { mockPredictions } from '../services/mockData';
@@ -431,6 +434,9 @@ export const AppNavigator = () => {
   const [isReady, setIsReady] = useState(false);
   const [initialUrl, setInitialUrl] = useState<string | null>(null);
 
+  // Controls the custom Animated Splash visibility
+  const [showSplash, setShowSplash] = useState(true);
+
   // Track navigation state changes
   // NOTE: Temporarily disabled - needs to be inside NavigationContainer
   // useNavigationTracking();
@@ -490,7 +496,16 @@ export const AppNavigator = () => {
     }
   }, [isReady, initialUrl, auth.isAuthenticated]);
 
-  // Show loading while checking auth state or initializing navigation
+  // 1. Show Animated Splash first (Overlay)
+  if (showSplash) {
+    return (
+      <AnimatedSplash
+        onComplete={() => setShowSplash(false)}
+      />
+    );
+  }
+
+  // 2. Show loading while checking auth state or initializing navigation
   if (auth.isLoading || !isReady) {
     return <NavigationLoadingScreen message="Initializing..." />;
   }
