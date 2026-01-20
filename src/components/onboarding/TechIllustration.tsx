@@ -16,7 +16,8 @@ import {
     Globe,
     Shield,
     Zap,
-    Network
+    Network,
+    Users
 } from 'lucide-react-native';
 
 const ICON_SIZE = 120;
