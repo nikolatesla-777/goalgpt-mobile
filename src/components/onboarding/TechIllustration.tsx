@@ -400,41 +400,31 @@ const Scene4 = () => {
 
 
 // ============================================================================
-// SCENE 5: VIP ACCESS REDESIGN
+// SCENE 5: VIP ACCESS - PREMIUM 3D CROWN
 // Platinum Silver + Emerald Green Theme
-// Centerpiece: Floating Crown with Platinum Finish
-// Tech Circles around the Crown
+// Centerpiece: A floating 3D Majestic Crown
+// Tech Rings and Sparkles
 // ============================================================================
 const Scene5 = () => {
     const itemScale = useRef(new Animated.Value(0.9)).current;
     const ringRotate1 = useRef(new Animated.Value(0)).current;
     const ringRotate2 = useRef(new Animated.Value(0)).current;
-    const shimmerPos = useRef(new Animated.Value(-150)).current;
 
     useEffect(() => {
         // Floating/Pulse effect
         Animated.loop(
             Animated.sequence([
-                Animated.timing(itemScale, { toValue: 1.05, duration: 2000, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-                Animated.timing(itemScale, { toValue: 0.9, duration: 2000, easing: Easing.inOut(Easing.ease), useNativeDriver: true })
+                Animated.timing(itemScale, { toValue: 1.05, duration: 2500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+                Animated.timing(itemScale, { toValue: 0.9, duration: 2500, easing: Easing.inOut(Easing.ease), useNativeDriver: true })
             ])
         ).start();
 
         // Counter-rotating tech rings
         Animated.loop(
-            Animated.timing(ringRotate1, { toValue: 1, duration: 12000, easing: Easing.linear, useNativeDriver: true })
+            Animated.timing(ringRotate1, { toValue: 1, duration: 15000, easing: Easing.linear, useNativeDriver: true })
         ).start();
         Animated.loop(
-            Animated.timing(ringRotate2, { toValue: 1, duration: 18000, easing: Easing.linear, useNativeDriver: true })
-        ).start();
-
-        // Shimmer effect
-        Animated.loop(
-            Animated.sequence([
-                Animated.delay(1000),
-                Animated.timing(shimmerPos, { toValue: 150, duration: 1000, easing: Easing.linear, useNativeDriver: true }),
-                Animated.timing(shimmerPos, { toValue: -150, duration: 0, useNativeDriver: true })
-            ])
+            Animated.timing(ringRotate2, { toValue: 1, duration: 20000, easing: Easing.linear, useNativeDriver: true })
         ).start();
     }, []);
 
@@ -442,57 +432,55 @@ const Scene5 = () => {
     const spin2 = ringRotate2.interpolate({ inputRange: [0, 1], outputRange: ['360deg', '0deg'] });
 
     const PRIMARY_ACCENT = '#4BC41E';
-    const PLATINUM = '#F8FAFC';
 
     return (
         <View style={styles.sceneContainer}>
-            {/* Tech Rings (Diamond version circles favored by user) */}
+            {/* Tech Rings */}
             <Animated.View style={{
-                position: 'absolute', width: 200, height: 200,
-                borderRadius: 100, borderWidth: 1, borderColor: 'rgba(75, 196, 30, 0.4)', borderStyle: 'dashed',
+                position: 'absolute', width: 230, height: 230,
+                borderRadius: 115, borderWidth: 1, borderColor: 'rgba(75, 196, 30, 0.4)', borderStyle: 'dashed',
                 transform: [{ rotate: spin1 }]
             }} />
             <Animated.View style={{
-                position: 'absolute', width: 160, height: 160,
-                borderRadius: 80, borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.1)',
+                position: 'absolute', width: 190, height: 190,
+                borderRadius: 95, borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.1)',
                 transform: [{ rotate: spin2 }]
             }} />
 
-            {/* Subtle Glow */}
-            <View style={{
+            {/* Central Glow */}
+            <Animated.View style={{
                 position: 'absolute',
                 width: 140, height: 140, borderRadius: 70,
                 backgroundColor: PRIMARY_ACCENT,
-                opacity: 0.1,
-                shadowColor: PRIMARY_ACCENT, shadowRadius: 30, shadowOpacity: 0.5
+                opacity: 0.15,
+                transform: [{ scale: itemScale }],
+                shadowColor: PRIMARY_ACCENT, shadowRadius: 40, shadowOpacity: 0.5
             }} />
 
-            {/* The Crown Artifact (Favored by user) */}
-            <Animated.View style={{ transform: [{ scale: itemScale }], alignItems: 'center', justifyContent: 'center' }}>
-                <Crown size={120} color={PLATINUM} fill="rgba(255, 255, 255, 0.05)" strokeWidth={1.5} />
+            {/* The 3D Crown Artifact */}
+            <Animated.View style={{ transform: [{ scale: itemScale }], width: 160, height: 160, alignItems: 'center', justifyContent: 'center' }}>
+                <Image
+                    source={require('../../../assets/images/vip-crown-3d.png')}
+                    style={{ width: '100%', height: '100%' }}
+                    resizeMode="contain"
+                />
 
-                {/* Emerald Gems on the Crown (Emerald Green Accent) */}
-                <View style={{ position: 'absolute', top: '35%', flexDirection: 'row', gap: 10 }}>
-                    <Gem size={16} color={PRIMARY_ACCENT} fill={PRIMARY_ACCENT} />
-                    <Gem size={16} color={PRIMARY_ACCENT} fill={PRIMARY_ACCENT} />
-                </View>
-
-                {/* Sparkling detail */}
-                <Animated.View style={{ position: 'absolute', top: -10, left: 30, transform: [{ scale: itemScale }] }}>
+                {/* Extra Sparkles for highlights */}
+                <Animated.View style={{ position: 'absolute', top: 20, right: 20, transform: [{ scale: itemScale }] }}>
                     <Sparkles size={24} color={PRIMARY_ACCENT} />
                 </Animated.View>
             </Animated.View>
 
             {/* VIP Label (Platinum & Green) */}
             <View style={{
-                position: 'absolute', bottom: 45,
-                backgroundColor: 'rgba(75, 196, 30, 0.15)',
-                paddingHorizontal: 20, paddingVertical: 8,
-                borderRadius: 24,
+                position: 'absolute', bottom: 35,
+                backgroundColor: 'rgba(7, 26, 18, 0.9)',
+                paddingHorizontal: 24, paddingVertical: 10,
+                borderRadius: 30,
                 borderWidth: 1.5, borderColor: PRIMARY_ACCENT,
-                shadowColor: PRIMARY_ACCENT, shadowOpacity: 0.3, shadowRadius: 10
+                shadowColor: PRIMARY_ACCENT, shadowOpacity: 0.4, shadowRadius: 15
             }}>
-                <Text style={{ color: '#FFF', fontSize: 13, fontWeight: '900', letterSpacing: 3 }}>VIP ACCESS</Text>
+                <Text style={{ color: '#FFF', fontSize: 14, fontWeight: '900', letterSpacing: 4 }}>VIP ACCESS</Text>
             </View>
         </View>
     );
