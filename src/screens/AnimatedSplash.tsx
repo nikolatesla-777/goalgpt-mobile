@@ -155,20 +155,21 @@ export const AnimatedSplash: React.FC<AnimatedSplashProps> = ({ onComplete }) =>
                 resizeMode="cover"
             />
 
-            {/* 1. Dark Gradient Overlay (60% opacity to let image show subtly) */}
+            {/* 1. Dark Gradient Overlay (Darker #191A19 Theme) */}
             <LinearGradient
-                colors={['rgba(10, 31, 20, 0.75)', 'rgba(7, 26, 18, 0.85)', 'rgba(4, 13, 8, 0.95)']}
+                // User suggested #191A19 (rgb(25, 26, 25)). using varying opacities.
+                colors={['rgba(25, 26, 25, 0.80)', 'rgba(25, 26, 25, 0.90)', 'rgba(15, 15, 15, 0.98)']}
                 style={StyleSheet.absoluteFill}
                 start={{ x: 0.5, y: 0 }}
                 end={{ x: 0.5, y: 1 }}
             />
 
-            {/* 2. Subtle center glow */}
+            {/* 2. Very subtle center glow (reduced opacity) */}
             <LinearGradient
-                colors={['rgba(75, 196, 30, 0.06)', 'transparent']}
+                colors={['rgba(75, 196, 30, 0.03)', 'transparent']}
                 style={StyleSheet.absoluteFill}
-                start={{ x: 0.5, y: 0.35 }}
-                end={{ x: 0.5, y: 0.85 }}
+                start={{ x: 0.5, y: 0.4 }}
+                end={{ x: 0.5, y: 0.8 }}
             />
 
             {/* 4. Center Content */}
