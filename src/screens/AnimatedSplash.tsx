@@ -1,8 +1,8 @@
 /**
  * AnimatedSplash
  *
- * High-tech animated splash screen (Expo Go compatible).
- * Uses only Reanimated + LinearGradient (no Skia).
+ * High-tech animated splash screen (Expo Go 100% compatible).
+ * Uses React Native's built-in Animated API (no Reanimated).
  *
  * Features:
  * - Dark Green Gradient Background
@@ -12,20 +12,9 @@
  * - AI Pulse Rings around Logo
  */
 
-import React, { useEffect } from 'react';
-import { View, StyleSheet, Dimensions, Image, Text } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, StyleSheet, Dimensions, Image, Animated, Easing } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import Animated, {
-    useSharedValue,
-    useAnimatedStyle,
-    withTiming,
-    withDelay,
-    withRepeat,
-    withSequence,
-    withSpring,
-    runOnJS,
-    Easing,
-} from 'react-native-reanimated';
 
 const { width, height } = Dimensions.get('window');
 
@@ -45,61 +34,120 @@ interface AnimatedSplashProps {
 // ============================================================================
 
 export const AnimatedSplash: React.FC<AnimatedSplashProps> = ({ onComplete }) => {
-    // Animation States
-    const logoScale = useSharedValue(0.85);
-    const logoOpacity = useSharedValue(0);
-    const textOpacity = useSharedValue(0);
-    const scanLineX = useSharedValue(-40);
-    const containerOpacity = useSharedValue(1);
+    // Animation Values (React Native's built-in Animated)
+    const logoScale = useRef(new Animated.Value(0.85)).current;
+    const logoOpacity = useRef(new Animated.Value(0)).current;
+    const textOpacity = useRef(new Animated.Value(0)).current;
+    const scanLineX = useRef(new Animated.Value(-40)).current;
+    const containerOpacity = useRef(new Animated.Value(1)).current;
+
+    // Pulse ring animations
+    const ring1Scale = useRef(new Animated.Value(0.8)).current;
+    const ring1Opacity = useRef(new Animated.Value(0.6)).current;
+    const ring2Scale = useRef(new Animated.Value(0.8)).current;
+    const ring2Opacity = useRef(new Animated.Value(0.6)).current;
 
     useEffect(() => {
         // 1. Logo Entrance
-        logoOpacity.value = withTiming(1, { duration: 800 });
-        logoScale.value = withSpring(1, { damping: 12 });
+        Animated.parallel([
+            Animated.timing(logoOpacity, {
+                toValue: 1,
+                duration: 800,
+                useNativeDriver: true,
+            }),
+            Animated.spring(logoScale, {
+                toValue: 1,
+                friction: 8,
+                tension: 40,
+                useNativeDriver: true,
+            }),
+        ]).start();
 
-        // 2. Text Reveal
-        textOpacity.value = withDelay(400, withTiming(1, { duration: 600 }));
+        // 2. Text Reveal (delayed)
+        Animated.timing(textOpacity, {
+            toValue: 1,
+            duration: 600,
+            delay: 400,
+            useNativeDriver: true,
+        }).start();
 
-        // 3. Scan Line Loop (continuous left-to-right)
-        scanLineX.value = withDelay(
-            800,
-            withRepeat(
-                withTiming(120, { duration: 1200, easing: Easing.inOut(Easing.ease) }),
-                -1, // Infinite repeat
-                true // Reverse
-            )
+        // 3. Scan Line Loop
+        const scanAnimation = Animated.loop(
+            Animated.sequence([
+                Animated.timing(scanLineX, {
+                    toValue: 120,
+                    duration: 1200,
+                    easing: Easing.inOut(Easing.ease),
+                    useNativeDriver: true,
+                }),
+                Animated.timing(scanLineX, {
+                    toValue: -40,
+                    duration: 1200,
+                    easing: Easing.inOut(Easing.ease),
+                    useNativeDriver: true,
+                }),
+            ])
         );
+        setTimeout(() => scanAnimation.start(), 800);
 
-        // 4. Exit after animation duration
-        const timer = setTimeout(() => {
-            containerOpacity.value = withTiming(0, { duration: 300 }, (finished) => {
-                if (finished) runOnJS(onComplete)();
+        // 4. Pulse Ring 1
+        const pulseRing1 = Animated.loop(
+            Animated.parallel([
+                Animated.timing(ring1Scale, {
+                    toValue: 1.8,
+                    duration: 2000,
+                    easing: Easing.out(Easing.ease),
+                    useNativeDriver: true,
+                }),
+                Animated.timing(ring1Opacity, {
+                    toValue: 0,
+                    duration: 2000,
+                    easing: Easing.out(Easing.ease),
+                    useNativeDriver: true,
+                }),
+            ])
+        );
+        pulseRing1.start();
+
+        // 5. Pulse Ring 2 (delayed)
+        setTimeout(() => {
+            const pulseRing2 = Animated.loop(
+                Animated.parallel([
+                    Animated.timing(ring2Scale, {
+                        toValue: 1.8,
+                        duration: 2000,
+                        easing: Easing.out(Easing.ease),
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(ring2Opacity, {
+                        toValue: 0,
+                        duration: 2000,
+                        easing: Easing.out(Easing.ease),
+                        useNativeDriver: true,
+                    }),
+                ])
+            );
+            pulseRing2.start();
+        }, 1000);
+
+        // 6. Exit after animation duration
+        const exitTimer = setTimeout(() => {
+            Animated.timing(containerOpacity, {
+                toValue: 0,
+                duration: 300,
+                useNativeDriver: true,
+            }).start(() => {
+                onComplete();
             });
         }, ANIMATION_DURATION);
 
-        return () => clearTimeout(timer);
+        return () => {
+            clearTimeout(exitTimer);
+        };
     }, []);
 
-    // Animated Styles
-    const animatedLogoStyle = useAnimatedStyle(() => ({
-        opacity: logoOpacity.value,
-        transform: [{ scale: logoScale.value }],
-    }));
-
-    const animatedTextStyle = useAnimatedStyle(() => ({
-        opacity: textOpacity.value,
-    }));
-
-    const animatedScanLineStyle = useAnimatedStyle(() => ({
-        transform: [{ translateX: scanLineX.value }],
-    }));
-
-    const animatedContainerStyle = useAnimatedStyle(() => ({
-        opacity: containerOpacity.value,
-    }));
-
     return (
-        <Animated.View style={[styles.container, animatedContainerStyle]}>
+        <Animated.View style={[styles.container, { opacity: containerOpacity }]}>
             {/* 1. Gradient Background */}
             <LinearGradient
                 colors={BG_COLORS}
@@ -128,70 +176,62 @@ export const AnimatedSplash: React.FC<AnimatedSplashProps> = ({ onComplete }) =>
             <View style={styles.centerContent}>
                 {/* Logo with Pulse Rings */}
                 <View style={styles.logoWrapper}>
-                    <PulseRing delay={0} />
-                    <PulseRing delay={1000} />
+                    {/* Pulse Ring 1 */}
+                    <Animated.View
+                        style={[
+                            styles.pulseRing,
+                            {
+                                transform: [{ scale: ring1Scale }],
+                                opacity: ring1Opacity,
+                            },
+                        ]}
+                    />
+                    {/* Pulse Ring 2 */}
+                    <Animated.View
+                        style={[
+                            styles.pulseRing,
+                            {
+                                transform: [{ scale: ring2Scale }],
+                                opacity: ring2Opacity,
+                            },
+                        ]}
+                    />
 
                     <Animated.Image
                         source={require('../../assets/images/splash-logo.png')}
-                        style={[styles.logo, animatedLogoStyle]}
+                        style={[
+                            styles.logo,
+                            {
+                                opacity: logoOpacity,
+                                transform: [{ scale: logoScale }],
+                            },
+                        ]}
                         resizeMode="contain"
                     />
                 </View>
 
                 {/* Title */}
-                <Animated.Text style={[styles.title, animatedTextStyle]}>
+                <Animated.Text style={[styles.title, { opacity: textOpacity }]}>
                     GoalGPT
                 </Animated.Text>
 
                 {/* Subtitle with Scan Bar */}
                 <View style={styles.poweredWrapper}>
-                    <Animated.Text style={[styles.subtitle, animatedTextStyle]}>
+                    <Animated.Text style={[styles.subtitle, { opacity: textOpacity }]}>
                         POWERED BY AI
                     </Animated.Text>
                     <View style={styles.scanTrack}>
-                        <Animated.View style={[styles.scanBar, animatedScanLineStyle]} />
+                        <Animated.View
+                            style={[
+                                styles.scanBar,
+                                { transform: [{ translateX: scanLineX }] },
+                            ]}
+                        />
                     </View>
                 </View>
             </View>
         </Animated.View>
     );
-};
-
-// ============================================================================
-// PULSE RING COMPONENT
-// ============================================================================
-
-const PulseRing = ({ delay }: { delay: number }) => {
-    const ringScale = useSharedValue(0.8);
-    const ringOpacity = useSharedValue(0.6);
-
-    useEffect(() => {
-        // Infinite pulsing animation
-        ringScale.value = withDelay(
-            delay,
-            withRepeat(
-                withTiming(1.8, { duration: 2000, easing: Easing.out(Easing.ease) }),
-                -1, // Infinite
-                false
-            )
-        );
-
-        ringOpacity.value = withDelay(
-            delay,
-            withRepeat(
-                withTiming(0, { duration: 2000, easing: Easing.out(Easing.ease) }),
-                -1,
-                false
-            )
-        );
-    }, []);
-
-    const style = useAnimatedStyle(() => ({
-        transform: [{ scale: ringScale.value }],
-        opacity: ringOpacity.value,
-    }));
-
-    return <Animated.View style={[styles.pulseRing, style]} />;
 };
 
 // ============================================================================
