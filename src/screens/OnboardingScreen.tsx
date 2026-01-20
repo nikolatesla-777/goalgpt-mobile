@@ -113,6 +113,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
         {/* Animated Tech Illustration */}
         <View style={styles.illustrationContainer}>
           <TechIllustration slideId={slide.id} />
+          {/* <Text style={{ color: 'white', fontSize: 40 }}>ICON</Text> */}
         </View>
 
         {/* Title */}

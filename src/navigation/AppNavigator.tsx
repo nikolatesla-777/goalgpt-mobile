@@ -31,7 +31,7 @@ import analyticsService from '../services/analytics.service';
 
 // Auth Screens - Lazy Loaded
 const SplashScreen = lazy(() => import('../screens/SplashScreen').then(m => ({ default: m.SplashScreen })));
-const OnboardingScreen = lazy(() => import('../screens/OnboardingScreen').then(m => ({ default: m.OnboardingScreen })));
+const OnboardingScreen = lazy(() => import('../screens/OnboardingScreen')); // Simplified to use default export
 const LoginScreen = lazy(() => import('../screens/LoginScreen').then(m => ({ default: m.LoginScreen })));
 const RegisterScreen = lazy(() => import('../screens/RegisterScreen').then(m => ({ default: m.RegisterScreen })));
 
