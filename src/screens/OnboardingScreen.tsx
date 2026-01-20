@@ -1,10 +1,3 @@
-/**
- * OnboardingScreen
- *
- * 4-slide onboarding carousel
- * Master Plan compliant - Authentication Layer
- */
-
 import React, { useState, useRef } from 'react';
 import {
   View,
@@ -15,10 +8,13 @@ import {
   Dimensions,
   NativeScrollEvent,
   NativeSyntheticEvent,
+  Image,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Button } from '../components/atoms/Button';
 import { useTheme } from '../theme/ThemeProvider';
 import { typography, spacing } from '../constants/tokens';
+import { TechIllustration } from '../components/onboarding/TechIllustration';
 
 // ============================================================================
 // TYPES
@@ -28,7 +24,6 @@ interface OnboardingSlide {
   id: number;
   title: string;
   description: string;
-  illustration: string;
 }
 
 export interface OnboardingScreenProps {
@@ -43,7 +38,7 @@ export interface OnboardingScreenProps {
 // CONSTANTS
 // ============================================================================
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const SLIDES: OnboardingSlide[] = [
   {
@@ -51,28 +46,24 @@ const SLIDES: OnboardingSlide[] = [
     title: 'Welcome to GoalGPT',
     description:
       'AI-powered football predictions that help you make smarter betting decisions.',
-    illustration: '⚽🤖',
   },
   {
     id: 2,
     title: 'Real-Time AI Analysis',
     description:
       'Our advanced AI analyzes matches in real-time and provides instant predictions.',
-    illustration: '📊⚡',
   },
   {
     id: 3,
     title: 'AI Bots with 80%+ Accuracy',
     description:
       'Multiple specialized AI bots working 24/7 to find the best betting opportunities.',
-    illustration: '🤖💯',
   },
   {
     id: 4,
     title: 'Unlock Premium Features',
     description:
       'Get access to exclusive AI bots, unlimited predictions, and expert analysis.',
-    illustration: '👑💎',
   },
 ];
 
@@ -119,9 +110,9 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
   const renderSlide = (slide: OnboardingSlide) => {
     return (
       <View key={slide.id} style={styles.slide}>
-        {/* Illustration */}
+        {/* Animated Tech Illustration */}
         <View style={styles.illustrationContainer}>
-          <Text style={styles.illustration}>{slide.illustration}</Text>
+          <TechIllustration slideId={slide.id} />
         </View>
 
         {/* Title */}
@@ -161,6 +152,30 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
 
   return (
     <View style={styles.container}>
+      {/* 1. Background Image (Data Center Theme) */}
+      <Image
+        source={require('../../assets/images/splash-stadium.jpg')}
+        style={[StyleSheet.absoluteFill, styles.bgImage]}
+        resizeMode="cover"
+      />
+
+      {/* 2. Dark Overlay for readability */}
+      <LinearGradient
+        colors={['rgba(7, 26, 18, 0.85)', 'rgba(7, 26, 18, 0.95)', '#071A12']}
+        style={StyleSheet.absoluteFill}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 1 }}
+      />
+
+      {/* 3. Subtle Green Glow from bottom */}
+      <LinearGradient
+        colors={['transparent', 'rgba(75, 196, 30, 0.1)']}
+        style={StyleSheet.absoluteFill}
+        start={{ x: 0.5, y: 0.5 }}
+        end={{ x: 0.5, y: 1 }}
+        pointerEvents="none"
+      />
+
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={handleSkip} activeOpacity={0.7}>
@@ -189,16 +204,23 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
         {/* Pagination Dots */}
         {renderPaginationDots()}
 
-        {/* Next/Get Started Button */}
-        <Button
-          variant="primary"
-          size="large"
-          fullWidth
+        {/* Next/Get Started Button (Neon Green) */}
+        <TouchableOpacity
+          activeOpacity={0.8}
           onPress={handleNext}
-          style={styles.nextButton}
+          style={styles.nextButtonContainer}
         >
-          {isLastSlide ? 'Get Started' : 'Next'}
-        </Button>
+          <LinearGradient
+            colors={['#4BC41E', '#3AA614']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.nextButtonGradient}
+          >
+            <Text style={styles.nextButtonText}>
+              {isLastSlide ? 'GET STARTED' : 'NEXT'}
+            </Text>
+          </LinearGradient>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -211,7 +233,12 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: '#071A12', // Fallback color
+  },
+  bgImage: {
+    width: '100%',
+    height: '100%',
+    opacity: 0.4, // Dim background image
   },
   header: {
     flexDirection: 'row',
@@ -220,16 +247,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 60,
     paddingBottom: 20,
+    zIndex: 10,
   },
   skipButton: {
     fontFamily: typography.fonts.ui.medium,
     fontSize: 15,
-    color: '#8E8E93',
+    color: 'rgba(255, 255, 255, 0.6)',
   },
   pageIndicator: {
     fontFamily: typography.fonts.mono.regular,
     fontSize: 13,
-    color: '#8E8E93',
+    color: 'rgba(255, 255, 255, 0.4)',
   },
   scrollView: {
     flex: 1,
@@ -238,21 +266,16 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 30,
+    paddingBottom: 40, // Adjusts center balance
   },
   illustrationContainer: {
     width: 300,
     height: 300,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 48,
-    backgroundColor: 'rgba(75, 196, 30, 0.1)',
-    borderRadius: 150,
-    borderWidth: 2,
-    borderColor: 'rgba(75, 196, 30, 0.3)',
-  },
-  illustration: {
-    fontSize: 120,
+    marginBottom: 40,
+    // No background here, animation handles it
   },
   title: {
     fontFamily: typography.fonts.ui.bold,
@@ -261,25 +284,28 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 16,
     lineHeight: 34,
+    textShadowColor: 'rgba(75, 196, 30, 0.3)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 10,
   },
   description: {
     fontFamily: typography.fonts.ui.regular,
-    fontSize: 15,
-    color: '#8E8E93',
+    fontSize: 16,
+    color: 'rgba(255, 255, 255, 0.7)',
     textAlign: 'center',
-    lineHeight: 22,
-    paddingHorizontal: 20,
+    lineHeight: 24,
+    paddingHorizontal: 10,
   },
   footer: {
     paddingHorizontal: 20,
-    paddingBottom: 40,
+    paddingBottom: 50,
   },
   paginationDots: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 24,
+    gap: 12,
+    marginBottom: 30,
   },
   dot: {
     width: 8,
@@ -289,18 +315,31 @@ const styles = StyleSheet.create({
   },
   dotActive: {
     backgroundColor: '#4BC41E',
+    width: 24, // Elongated active dot
     shadowColor: '#4BC41E',
-    shadowOpacity: 0.8,
-    shadowRadius: 4,
+    shadowOpacity: 1,
+    shadowRadius: 8,
     shadowOffset: { width: 0, height: 0 },
   },
-  nextButton: {
-    marginTop: 0,
+  nextButtonContainer: {
+    width: '100%',
+    shadowColor: '#4BC41E',
+    shadowOpacity: 0.5,
+    shadowRadius: 15,
+    shadowOffset: { width: 0, height: 4 },
+  },
+  nextButtonGradient: {
+    paddingVertical: 18,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  nextButtonText: {
+    fontFamily: typography.fonts.ui.bold,
+    fontSize: 16,
+    color: '#FFFFFF',
+    letterSpacing: 1,
   },
 });
-
-// ============================================================================
-// EXPORT
-// ============================================================================
 
 export default OnboardingScreen;
