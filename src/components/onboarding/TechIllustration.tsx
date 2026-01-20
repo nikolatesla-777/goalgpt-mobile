@@ -10,7 +10,8 @@ import {
     Shield,
     Zap,
     Network,
-    Users
+    Users,
+    Bot
 } from 'lucide-react-native';
 
 const ICON_SIZE = 120;
