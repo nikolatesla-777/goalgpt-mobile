@@ -55,9 +55,9 @@ const SLIDES: OnboardingSlide[] = [
   },
   {
     id: 3,
-    title: 'AI Bots with 80%+ Accuracy',
+    title: 'AI Signal Engine',
     description:
-      'Multiple specialized AI bots working 24/7 to find the best betting opportunities.',
+      'Stats, momentum and events combine into a single match score.',
   },
   {
     id: 4,

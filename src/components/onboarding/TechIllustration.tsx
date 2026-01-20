@@ -22,7 +22,7 @@ const ACCENT_COLOR = '#4BC41E';
 const SECONDARY_COLOR = '#4BC41E';
 
 // ============================================================================
-// SCENE 1: WELCOME / AI CORE (Welcome to GoalGPT)
+// SCENE 1: WELCOME / AI CORE
 // A central "brain" pulsing, with orbiting data nodes
 // ============================================================================
 const Scene1 = () => {
@@ -90,23 +90,20 @@ const Scene1 = () => {
 };
 
 // ============================================================================
-// SCENE 2: LIVE MATCH SCANNER (Replaced Real-Time Analytics)
+// SCENE 2: LIVE MATCH SCANNER
 // Sophisticated Radar Scanner detecting signals and goals
 // ============================================================================
 const Scene2 = () => {
     // Animation Values
     const scanRotation = useRef(new Animated.Value(0)).current;
-    // Blips represent found matches/signals
     const blip1Scale = useRef(new Animated.Value(0)).current;
     const blip1Opacity = useRef(new Animated.Value(0)).current;
-
     const blip2Scale = useRef(new Animated.Value(0)).current;
     const blip2Opacity = useRef(new Animated.Value(0)).current;
-
     const gridOpacity = useRef(new Animated.Value(0.3)).current;
 
     useEffect(() => {
-        // 1. Radar Rotation (Infinite) - simulates scanning
+        // 1. Radar Rotation (Infinite)
         Animated.loop(
             Animated.timing(scanRotation, {
                 toValue: 1,
@@ -116,7 +113,7 @@ const Scene2 = () => {
             })
         ).start();
 
-        // 2. Pulse Grid Background - gives "live data" feel
+        // 2. Pulse Grid Background
         Animated.loop(
             Animated.sequence([
                 Animated.timing(gridOpacity, { toValue: 0.6, duration: 1500, useNativeDriver: true }),
@@ -124,25 +121,22 @@ const Scene2 = () => {
             ])
         ).start();
 
-        // 3. Signal Blip Animation Helper
+        // 3. Signal Blips
         const pulseBlip = (scale: Animated.Value, opacity: Animated.Value, delay: number) => {
             return Animated.loop(
                 Animated.sequence([
-                    Animated.delay(delay), // Wait for scanner to pass
+                    Animated.delay(delay),
                     Animated.parallel([
-                        // Appear rapidly
                         Animated.timing(scale, { toValue: 1, duration: 400, easing: Easing.out(Easing.back(1.5)), useNativeDriver: true }),
                         Animated.timing(opacity, { toValue: 1, duration: 200, useNativeDriver: true })
                     ]),
-                    Animated.delay(1000), // Stay visible
-                    // Fade out
+                    Animated.delay(1000),
                     Animated.timing(opacity, { toValue: 0, duration: 600, useNativeDriver: true }),
-                    Animated.timing(scale, { toValue: 0, duration: 0, useNativeDriver: true }) // Reset
+                    Animated.timing(scale, { toValue: 0, duration: 0, useNativeDriver: true })
                 ])
             );
         };
 
-        // Start blips at different intervals
         pulseBlip(blip1Scale, blip1Opacity, 500).start();
         pulseBlip(blip2Scale, blip2Opacity, 2000).start();
 
@@ -155,25 +149,20 @@ const Scene2 = () => {
 
     return (
         <View style={styles.sceneContainer}>
-            {/* Background Grid - Data Feel */}
             <Animated.View style={{ opacity: gridOpacity, position: 'absolute' }}>
-                {/* Using Activity icon as a grid abstraction, heavily scaled */}
                 <Activity size={220} color={SECONDARY_COLOR} strokeWidth={0.5} style={{ opacity: 0.2 }} />
             </Animated.View>
 
-            {/* Static Radar Rings */}
             <View style={[styles.orbitContainer, { width: 180, height: 180, borderRadius: 90, borderColor: 'rgba(75, 196, 30, 0.3)', borderWidth: 1 }]} />
             <View style={[styles.orbitContainer, { width: 100, height: 100, borderRadius: 50, borderColor: 'rgba(75, 196, 30, 0.5)', borderWidth: 1 }]} />
             <View style={{ width: 4, height: 4, borderRadius: 2, backgroundColor: ACCENT_COLOR, position: 'absolute' }} />
 
-            {/* Central Hub Icon */}
             <View style={{ backgroundColor: 'rgba(7, 26, 18, 0.8)', padding: 10, borderRadius: 20, borderWidth: 1, borderColor: ACCENT_COLOR }}>
                 <Database size={32} color={ACCENT_COLOR} />
             </View>
 
-            {/* Rotating Scanner Beam Container */}
             <Animated.View style={[
-                styles.radarContainer, // Needs to be absolute and centered
+                styles.radarContainer,
                 {
                     position: 'absolute',
                     width: 200,
@@ -183,22 +172,19 @@ const Scene2 = () => {
                     transform: [{ rotate: spin }]
                 }
             ]}>
-                {/* The Beam itself - Gradient fading out */}
                 <LinearGradient
                     colors={['rgba(75, 196, 30, 0.5)', 'transparent']}
                     style={{
                         position: 'absolute',
                         top: 0,
-                        left: 100, // Start from center (width/2)
-                        width: 100, // Extends to edge
-                        height: 40, // Height of the fan
-                        transform: [{ translateY: 100 }, { rotate: '-90deg' }, { translateX: 50 }, { translateY: -20 }] // Complex transform to align fan cone, simplified via layout usually but absolute is easier here
+                        left: 100,
+                        width: 100,
+                        height: 40,
+                        transform: [{ translateY: 100 }, { rotate: '-90deg' }, { translateX: 50 }, { translateY: -20 }]
                     }}
                     start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }} // Gradient direction
+                    end={{ x: 1, y: 1 }}
                 />
-
-                {/* Simple line beam */}
                 <View style={{
                     position: 'absolute',
                     top: 100,
@@ -212,7 +198,6 @@ const Scene2 = () => {
                 }} />
             </Animated.View>
 
-            {/* Detected Signal 1: "MATCH FOUND" */}
             <Animated.View style={[
                 styles.blip,
                 { top: 60, right: 40, transform: [{ scale: blip1Scale }], opacity: blip1Opacity }
@@ -223,7 +208,6 @@ const Scene2 = () => {
                 </View>
             </Animated.View>
 
-            {/* Detected Signal 2: "GOAL!" */}
             <Animated.View style={[
                 styles.blip,
                 { bottom: 70, left: 50, transform: [{ scale: blip2Scale }], opacity: blip2Opacity }
@@ -238,67 +222,111 @@ const Scene2 = () => {
 };
 
 // ============================================================================
-// SCENE 3: HIGH ACCURACY (Target Locking)
-// Target locking on
+// SCENE 3: AI SIGNAL ENGINE (New Request)
+// Momentum bars, Drop-down notification, WON effect
 // ============================================================================
 const Scene3 = () => {
-    const rotateAnim = useRef(new Animated.Value(0)).current;
-    const scaleAnim = useRef(new Animated.Value(1.5)).current;
-    const opacityAnim = useRef(new Animated.Value(0)).current;
+    // 1. Momentum Bars (Fluctuating)
+    const bar1Height = useRef(new Animated.Value(20)).current;
+    const bar2Height = useRef(new Animated.Value(40)).current;
+    const bar3Height = useRef(new Animated.Value(30)).current;
+    const bar4Height = useRef(new Animated.Value(60)).current;
+
+    // 2. Notification Drop
+    const notifY = useRef(new Animated.Value(-100)).current;
+    const notifOpacity = useRef(new Animated.Value(0)).current;
+
+    // 3. WON Effect
+    const wonScale = useRef(new Animated.Value(0)).current;
+    const wonOpacity = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
-        Animated.loop(
-            Animated.timing(rotateAnim, {
-                toValue: 1,
-                duration: 2000,
-                easing: Easing.inOut(Easing.cubic),
-                useNativeDriver: true
-            })
-        ).start();
-
-        Animated.loop(
-            Animated.sequence([
-                Animated.parallel([
-                    Animated.timing(scaleAnim, { toValue: 1, duration: 800, easing: Easing.out(Easing.exp), useNativeDriver: true }),
-                    Animated.timing(opacityAnim, { toValue: 1, duration: 400, useNativeDriver: true })
-                ]),
-                Animated.delay(800),
-                Animated.parallel([
-                    Animated.timing(scaleAnim, { toValue: 1.5, duration: 0, useNativeDriver: true }),
-                    Animated.timing(opacityAnim, { toValue: 0, duration: 400, useNativeDriver: true })
+        // --- 1. Bar Fluctuations (Infinite) ---
+        const fluctuate = (anim: Animated.Value, min: number, max: number, duration: number) => {
+            Animated.loop(
+                Animated.sequence([
+                    Animated.timing(anim, { toValue: max, duration: duration, easing: Easing.inOut(Easing.ease), useNativeDriver: false }),
+                    Animated.timing(anim, { toValue: min, duration: duration, easing: Easing.inOut(Easing.ease), useNativeDriver: false })
                 ])
-            ])
-        ).start();
+            ).start();
+        };
+
+        fluctuate(bar1Height, 20, 50, 800);
+        fluctuate(bar2Height, 30, 70, 1100);
+        fluctuate(bar3Height, 40, 90, 900);
+        fluctuate(bar4Height, 30, 80, 1300);
+
+        // --- 2. Sequence: Drop Notif -> WON Effect -> Reset ---
+        const playSequence = () => {
+            Animated.sequence([
+                Animated.delay(500),
+
+                // Step A: Notification Drops
+                Animated.parallel([
+                    Animated.timing(notifY, { toValue: 0, duration: 600, easing: Easing.bounce, useNativeDriver: true }),
+                    Animated.timing(notifOpacity, { toValue: 1, duration: 400, useNativeDriver: true })
+                ]),
+
+                Animated.delay(800),
+
+                // Step B: WON Effect Pops
+                Animated.parallel([
+                    Animated.timing(wonScale, { toValue: 1, duration: 400, easing: Easing.back(2), useNativeDriver: true }),
+                    Animated.timing(wonOpacity, { toValue: 1, duration: 300, useNativeDriver: true })
+                ]),
+
+                Animated.delay(2000),
+
+                // Step C: Reset All (Fade out)
+                Animated.parallel([
+                    Animated.timing(notifOpacity, { toValue: 0, duration: 400, useNativeDriver: true }),
+                    Animated.timing(wonOpacity, { toValue: 0, duration: 400, useNativeDriver: true }),
+                ]),
+
+                // Reset Values instantly
+                Animated.parallel([
+                    Animated.timing(notifY, { toValue: -100, duration: 0, useNativeDriver: true }),
+                    Animated.timing(wonScale, { toValue: 0, duration: 0, useNativeDriver: true }),
+                ])
+
+            ]).start(() => playSequence()); // Loop sequence
+        };
+
+        playSequence();
 
     }, []);
 
-    const spin = rotateAnim.interpolate({
-        inputRange: [0, 1],
-        outputRange: ['0deg', '90deg']
-    });
-
-    const targetOpacity = scaleAnim.interpolate({
-        inputRange: [1, 1.5],
-        outputRange: [1, 0.5]
-    });
-
-    const lockOpacity = scaleAnim.interpolate({
-        inputRange: [1, 1.1],
-        outputRange: [1, 0]
-    });
-
     return (
         <View style={styles.sceneContainer}>
-            <Animated.View style={{ opacity: targetOpacity }}>
-                <Bot size={100} color={ACCENT_COLOR} />
+            {/* Background Momentum Bars */}
+            <View style={{ flexDirection: 'row', alignItems: 'flex-end', height: 120, gap: 12, marginBottom: 20 }}>
+                <Animated.View style={{ width: 16, backgroundColor: 'rgba(75, 196, 30, 0.4)', borderRadius: 4, height: bar1Height }} />
+                <Animated.View style={{ width: 16, backgroundColor: 'rgba(75, 196, 30, 0.6)', borderRadius: 4, height: bar2Height }} />
+                <Animated.View style={{ width: 16, backgroundColor: 'rgba(75, 196, 30, 0.8)', borderRadius: 4, height: bar3Height }} />
+                <Animated.View style={{ width: 16, backgroundColor: ACCENT_COLOR, borderRadius: 4, height: bar4Height }} />
+            </View>
+
+            {/* Notification Card */}
+            <Animated.View style={[
+                styles.notifCard,
+                { transform: [{ translateY: notifY }], opacity: notifOpacity }
+            ]}>
+                <Bot size={20} color={ACCENT_COLOR} />
+                <View style={{ marginLeft: 10 }}>
+                    <Text style={styles.notifTitle}>Goal Prediction</Text>
+                    <Text style={styles.notifSub}>Confidence: 92%</Text>
+                </View>
+                <View style={{ marginLeft: 'auto', backgroundColor: 'rgba(75, 196, 30, 0.2)', padding: 4, borderRadius: 4 }}>
+                    <Text style={{ color: ACCENT_COLOR, fontSize: 10, fontWeight: 'bold' }}>LIVE</Text>
+                </View>
             </Animated.View>
 
-            <Animated.View style={[styles.overlay, { transform: [{ rotate: spin }, { scale: scaleAnim }], opacity: opacityAnim }]}>
-                <Crosshair size={180} color="#FFFFFF" strokeWidth={1.5} />
-            </Animated.View>
-
-            <Animated.View style={[styles.lockBadge, { opacity: lockOpacity }]}>
-                <Check size={24} color="#000" />
+            {/* WON Effect Stamp */}
+            <Animated.View style={[
+                styles.wonBadge,
+                { transform: [{ scale: wonScale }, { rotate: '-10deg' }], opacity: wonOpacity }
+            ]}>
+                <Text style={styles.wonText}>WON</Text>
             </Animated.View>
         </View>
     );
@@ -429,5 +457,52 @@ const styles = StyleSheet.create({
         fontSize: 10,
         fontWeight: 'bold',
         fontFamily: 'monospace' // Or your app's mono font
+    },
+    // NEW STYLES FOR SIGNAL ENGINE SCENE (SCENE 3)
+    notifCard: {
+        position: 'absolute',
+        top: 40,
+        width: 220,
+        backgroundColor: '#0F291E',
+        borderRadius: 12,
+        padding: 12,
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: 'rgba(75, 196, 30, 0.3)',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.5,
+        shadowRadius: 8,
+        elevation: 10,
+    },
+    notifTitle: {
+        color: '#FFF',
+        fontSize: 14,
+        fontWeight: 'bold',
+    },
+    notifSub: {
+        color: 'rgba(255,255,255,0.6)',
+        fontSize: 11,
+    },
+    wonBadge: {
+        position: 'absolute',
+        bottom: 50,
+        backgroundColor: '#FFD700',
+        paddingHorizontal: 20,
+        paddingVertical: 8,
+        borderRadius: 8,
+        borderWidth: 2,
+        borderColor: '#FFF',
+        shadowColor: '#FFD700',
+        shadowOpacity: 0.8,
+        shadowRadius: 10,
+        elevation: 10,
+    },
+    wonText: {
+        color: '#000',
+        fontWeight: 'bold',
+        fontSize: 24,
+        letterSpacing: 2,
     }
 });
