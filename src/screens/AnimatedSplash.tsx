@@ -22,7 +22,7 @@ const { width, height } = Dimensions.get('window');
 // CONFIGURATION
 // ============================================================================
 
-const ANIMATION_DURATION = 2500; // ms
+const ANIMATION_DURATION = 4500; // ms (+2 seconds per user request)
 const BG_COLORS = ['#071A12', '#062016', '#030B07'] as const;
 
 interface AnimatedSplashProps {
