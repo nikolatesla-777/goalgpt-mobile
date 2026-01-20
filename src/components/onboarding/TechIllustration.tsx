@@ -313,7 +313,7 @@ const Scene4 = () => {
         { emoji: "🕵️‍♂️", bg: "#7C3AED" },
         { emoji: "👳‍♂️", bg: "#B45309" },
         { emoji: "👱‍♂️", bg: "#047857" },
-        { emoji: "🧢", bg: "#1D4ED8" },
+        { emoji: "👩", bg: "#BE185D" },
         { emoji: "👨‍🦱", bg: "#BE185D" },
     ];
 
@@ -398,10 +398,7 @@ const Scene4 = () => {
                 })}
             </Animated.View>
 
-            {/* Background Particles */}
-            <View style={{ position: 'absolute', opacity: 0.1 }}>
-                <Users size={250} color={ACCENT_COLOR} />
-            </View>
+
 
         </View>
     );
