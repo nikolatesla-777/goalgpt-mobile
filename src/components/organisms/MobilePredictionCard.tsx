@@ -55,201 +55,201 @@ export const MobilePredictionCard: React.FC<MobilePredictionCardProps> = ({
         // LIVE (2 = 1H, 4 = 2H)
         if (status === 2 || status === 4) {
             return (
-                <View style([styles.statusBadge, { backgroundColor: theme.colors.live, shadowColor: theme.colors.live }]) >
-          <View style={[styles.pulseDot, { backgroundColor: 'white' }]} />
-          <NeonText size="tiny" weight="black" color="white" style={styles.badgeText}>
-            LIVE {minute ? `${minute}'` : ''}
-          </NeonText>
-        </View >
-      );
-    }
-// HT
-if (status === 3) {
-    return (
-        <View style={[styles.statusBadge, { backgroundColor: 'rgba(245, 158, 11, 0.2)', borderColor: 'rgba(245, 158, 11, 0.3)', borderWidth: 1 }]}>
-            <NeonText size="tiny" weight="black" style={[styles.badgeText, { color: '#fbbf24' }]}>HT</NeonText>
-        </View>
-    );
-}
-// FT
-if (status === 8) {
-    return (
-        <View style={[styles.statusBadge, { backgroundColor: 'rgba(34, 197, 94, 0.1)', borderColor: 'rgba(34, 197, 94, 0.2)', borderWidth: 1 }]}>
-            <NeonText size="tiny" weight="black" style={[styles.badgeText, { color: theme.colors.success }]}>FT</NeonText>
-        </View>
-    );
-}
-// Not Started or Unknown
-if (status === 1 || !status) {
-    return (
-        <View style={[styles.statusBadge, { backgroundColor: 'rgba(59, 130, 246, 0.1)', borderColor: 'rgba(59, 130, 246, 0.2)', borderWidth: 1 }]}>
-            <NeonText size="tiny" weight="black" style={[styles.badgeText, { color: '#60a5fa' }]}>
-                {minute ? `${minute}'` : 'vs'}
-            </NeonText>
-        </View>
-    );
-}
-return null;
-  };
-
-return (
-    <TouchableOpacity
-        activeOpacity={0.9}
-        onPress={onPress}
-        style={[
-            styles.card,
-            {
-                backgroundColor: '#121212', // Slightly lighter than bg
-                borderColor: theme.colors.border,
-            }
-        ]}
-    >
-        {/* 1. Header: Bot Info */}
-        <View style={styles.header}>
-            <View style={styles.botRow}>
-                <View style={[styles.botIconConfig, { backgroundColor: 'rgba(34, 197, 94, 0.1)', borderColor: 'rgba(34, 197, 94, 0.2)' }]}>
-                    <Robot size={18} weight="fill" color={theme.colors.success} />
+                <View style={[styles.statusBadge, { backgroundColor: theme.colors.live, shadowColor: theme.colors.live }]}>
+                    <View style={[styles.pulseDot, { backgroundColor: 'white' }]} />
+                    <NeonText size="tiny" weight="black" color="white" style={styles.badgeText}>
+                        LIVE {minute ? `${minute}'` : ''}
+                    </NeonText>
                 </View>
-                <View style={styles.botInfo}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                        <NeonText size="small" weight="bold" color="white">
-                            {prediction.canonical_bot_name || 'AI Bot'}
+            );
+        }
+        // HT
+        if (status === 3) {
+            return (
+                <View style={[styles.statusBadge, { backgroundColor: 'rgba(245, 158, 11, 0.2)', borderColor: 'rgba(245, 158, 11, 0.3)', borderWidth: 1 }]}>
+                    <NeonText size="tiny" weight="black" style={[styles.badgeText, { color: '#fbbf24' }]}>HT</NeonText>
+                </View>
+            );
+        }
+        // FT
+        if (status === 8) {
+            return (
+                <View style={[styles.statusBadge, { backgroundColor: 'rgba(34, 197, 94, 0.1)', borderColor: 'rgba(34, 197, 94, 0.2)', borderWidth: 1 }]}>
+                    <NeonText size="tiny" weight="black" style={[styles.badgeText, { color: theme.colors.success }]}>FT</NeonText>
+                </View>
+            );
+        }
+        // Not Started or Unknown
+        if (status === 1 || !status) {
+            return (
+                <View style={[styles.statusBadge, { backgroundColor: 'rgba(59, 130, 246, 0.1)', borderColor: 'rgba(59, 130, 246, 0.2)', borderWidth: 1 }]}>
+                    <NeonText size="tiny" weight="black" style={[styles.badgeText, { color: '#60a5fa' }]}>
+                        {minute ? `${minute}'` : 'vs'}
+                    </NeonText>
+                </View>
+            );
+        }
+        return null;
+    };
+
+    return (
+        <TouchableOpacity
+            activeOpacity={0.9}
+            onPress={onPress}
+            style={[
+                styles.card,
+                {
+                    backgroundColor: '#121212', // Slightly lighter than bg
+                    borderColor: theme.colors.border,
+                }
+            ]}
+        >
+            {/* 1. Header: Bot Info */}
+            <View style={styles.header}>
+                <View style={styles.botRow}>
+                    <View style={[styles.botIconConfig, { backgroundColor: 'rgba(34, 197, 94, 0.1)', borderColor: 'rgba(34, 197, 94, 0.2)' }]}>
+                        <Robot size={18} weight="fill" color={theme.colors.success} />
+                    </View>
+                    <View style={styles.botInfo}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                            <NeonText size="small" weight="bold" color="white">
+                                {prediction.canonical_bot_name || 'AI Bot'}
+                            </NeonText>
+                            <Info size={14} weight="bold" color={theme.colors.text.tertiary} />
+                        </View>
+                        <NeonText size="tiny" weight="medium" style={{ color: theme.colors.text.tertiary, opacity: 0.8 }}>
+                            Başarı %{botWinRate}
                         </NeonText>
-                        <Info size={14} weight="bold" color={theme.colors.text.tertiary} />
                     </View>
-                    <NeonText size="tiny" weight="medium" style={{ color: theme.colors.text.tertiary, opacity: 0.8 }}>
-                        Başarı %{botWinRate}
-                    </NeonText>
-                </View>
-            </View>
-
-            <View style={styles.headerActions}>
-                {/* VIP Badge */}
-                <View style={[
-                    styles.typeBadge,
-                    isVip ? { backgroundColor: 'rgba(245, 158, 11, 0.15)', borderColor: 'rgba(245, 158, 11, 0.2)' }
-                        : { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
-                    { borderWidth: 1 }
-                ]}>
-                    <NeonText size="tiny" weight="black" style={{ color: isVip ? '#f59e0b' : theme.colors.text.secondary }}>
-                        {isVip ? 'VIP' : 'FREE'}
-                    </NeonText>
                 </View>
 
-                {/* Star/Fav */}
-                <TouchableOpacity onPress={onToggleFavorite} style={[styles.favButton, isFavorite && { backgroundColor: theme.colors.warning }]}>
-                    <Star size={14} weight={isFavorite ? 'fill' : 'bold'} color={isFavorite ? theme.colors.background : theme.colors.text.secondary} />
-                </TouchableOpacity>
-            </View>
-        </View>
-
-        <View style={[styles.divider, { backgroundColor: theme.colors.border }]} />
-
-        {/* 2. League Info */}
-        <View style={styles.leagueRow}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
-                {prediction.country_logo && (
-                    <Image source={{ uri: prediction.country_logo }} style={styles.countryFlag} resizeMode="contain" />
-                )}
-                <NeonText size="tiny" weight="bold" style={{ color: theme.colors.text.secondary, textTransform: 'uppercase', flex: 1 }} numberOfLines={1}>
-                    {prediction.league_name || 'Unknown League'}
-                </NeonText>
-            </View>
-            <NeonText size="tiny" weight="bold" style={{ color: theme.colors.text.tertiary }}>
-                {dateTimeString}
-            </NeonText>
-        </View>
-
-        <View style={[styles.divider, { backgroundColor: theme.colors.border }]} />
-
-        {/* 3. Match Info (Teams & Score) */}
-        <View style={styles.matchRow}>
-            {/* Home */}
-            <View style={styles.teamCol}>
-                {prediction.home_team_logo ? (
-                    <Image source={{ uri: prediction.home_team_logo }} style={styles.teamLogo} resizeMode="contain" />
-                ) : (
-                    <View style={styles.placeholderLogo} />
-                )}
-                <NeonText size="small" weight="bold" color="white" style={styles.teamName} numberOfLines={2}>
-                    {prediction.home_team_name}
-                </NeonText>
-            </View>
-
-            {/* Score Board */}
-            <View style={styles.scoreCol}>
-                <NeonText size="display" weight="black" color="white" style={{ fontSize: 28, lineHeight: 32 }}>
-                    {displayScore}
-                </NeonText>
-                {renderStatusBadge()}
-            </View>
-
-            {/* Away */}
-            <View style={styles.teamCol}>
-                {prediction.away_team_logo ? (
-                    <Image source={{ uri: prediction.away_team_logo }} style={styles.teamLogo} resizeMode="contain" />
-                ) : (
-                    <View style={styles.placeholderLogo} />
-                )}
-                <NeonText size="small" weight="bold" color="white" style={styles.teamName} numberOfLines={2}>
-                    {prediction.away_team_name}
-                </NeonText>
-            </View>
-        </View>
-
-        {/* 4. Footer: Prediction & Result */}
-        <View style={[styles.footer, { backgroundColor: '#181818', borderColor: theme.colors.border }]}>
-            {/* Decoration Glows */}
-            {isWinner && <View style={[styles.glowOverlay, { backgroundColor: theme.colors.success }]} />}
-            {isLoser && <View style={[styles.glowOverlay, { backgroundColor: theme.colors.error }]} />}
-
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, zIndex: 1 }}>
-                <View style={[styles.predIconCircle, { backgroundColor: '#222', borderColor: theme.colors.border }]}>
-                    <Robot size={16} weight="regular" color={theme.colors.text.tertiary} />
-                </View>
-                <View>
-                    <NeonText size="tiny" weight="bold" style={{ color: theme.colors.text.tertiary, textTransform: 'uppercase', fontSize: 9 }}>
-                        AI Tahmini
-                    </NeonText>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                        <NeonText size="medium" weight="black" color="white">
-                            {prediction.prediction}
+                <View style={styles.headerActions}>
+                    {/* VIP Badge */}
+                    <View style={[
+                        styles.typeBadge,
+                        isVip ? { backgroundColor: 'rgba(245, 158, 11, 0.15)', borderColor: 'rgba(245, 158, 11, 0.2)' }
+                            : { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
+                        { borderWidth: 1 }
+                    ]}>
+                        <NeonText size="tiny" weight="black" style={{ color: isVip ? '#f59e0b' : theme.colors.text.secondary }}>
+                            {isVip ? 'VIP' : 'FREE'}
                         </NeonText>
-                        {(prediction.minute_at_prediction || prediction.score_at_prediction) && (
-                            <View style={styles.contextBadge}>
-                                <Clock size={10} weight="fill" color="#f87171" style={{ marginRight: 2 }} />
-                                <NeonText size="tiny" weight="bold" style={{ color: '#f87171', fontSize: 9 }}>
-                                    {prediction.minute_at_prediction}' | {prediction.score_at_prediction || '0-0'}
-                                </NeonText>
-                            </View>
-                        )}
                     </View>
+
+                    {/* Star/Fav */}
+                    <TouchableOpacity onPress={onToggleFavorite} style={[styles.favButton, isFavorite && { backgroundColor: theme.colors.warning }]}>
+                        <Star size={14} weight={isFavorite ? 'fill' : 'bold'} color={isFavorite ? theme.colors.background : theme.colors.text.secondary} />
+                    </TouchableOpacity>
                 </View>
             </View>
 
-            {/* Result Badge */}
-            <View style={{ marginLeft: 'auto', zIndex: 1 }}>
-                {isPending && (
-                    <View style={[styles.resultBadge, { backgroundColor: '#222', borderColor: theme.colors.border }]}>
-                        <NeonText size="tiny" weight="bold" style={{ color: theme.colors.text.secondary, textTransform: 'uppercase' }}>Bekliyor</NeonText>
-                    </View>
-                )}
-                {isWinner && (
-                    <View style={[styles.resultBadge, { backgroundColor: theme.colors.success, paddingHorizontal: 12, borderWidth: 0, shadowColor: theme.colors.success, shadowOpacity: 0.3, shadowRadius: 8, shadowOffset: { width: 0, height: 4 } }]}>
-                        <Trophy size={12} weight="fill" color="#000" style={{ marginRight: 4 }} />
-                        <NeonText size="tiny" weight="black" style={{ color: '#000', textTransform: 'uppercase' }}>WIN</NeonText>
-                    </View>
-                )}
-                {isLoser && (
-                    <View style={[styles.resultBadge, { backgroundColor: 'rgba(239, 68, 68, 0.1)', borderColor: 'rgba(239, 68, 68, 0.2)' }]}>
-                        <WarningCircle size={12} weight="fill" color={theme.colors.error} style={{ marginRight: 4 }} />
-                        <NeonText size="tiny" weight="black" style={{ color: theme.colors.error, textTransform: 'uppercase' }}>LOSE</NeonText>
-                    </View>
-                )}
+            <View style={[styles.divider, { backgroundColor: theme.colors.border }]} />
+
+            {/* 2. League Info */}
+            <View style={styles.leagueRow}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+                    {prediction.country_logo && (
+                        <Image source={{ uri: prediction.country_logo }} style={styles.countryFlag} resizeMode="contain" />
+                    )}
+                    <NeonText size="tiny" weight="bold" style={{ color: theme.colors.text.secondary, textTransform: 'uppercase', flex: 1 }} numberOfLines={1}>
+                        {prediction.league_name || 'Unknown League'}
+                    </NeonText>
+                </View>
+                <NeonText size="tiny" weight="bold" style={{ color: theme.colors.text.tertiary }}>
+                    {dateTimeString}
+                </NeonText>
             </View>
-        </View>
-    </TouchableOpacity>
-);
+
+            <View style={[styles.divider, { backgroundColor: theme.colors.border }]} />
+
+            {/* 3. Match Info (Teams & Score) */}
+            <View style={styles.matchRow}>
+                {/* Home */}
+                <View style={styles.teamCol}>
+                    {prediction.home_team_logo ? (
+                        <Image source={{ uri: prediction.home_team_logo }} style={styles.teamLogo} resizeMode="contain" />
+                    ) : (
+                        <View style={styles.placeholderLogo} />
+                    )}
+                    <NeonText size="small" weight="bold" color="white" style={styles.teamName} numberOfLines={2}>
+                        {prediction.home_team_name}
+                    </NeonText>
+                </View>
+
+                {/* Score Board */}
+                <View style={styles.scoreCol}>
+                    <NeonText size="display" weight="black" color="white" style={{ fontSize: 28, lineHeight: 32 }}>
+                        {displayScore}
+                    </NeonText>
+                    {renderStatusBadge()}
+                </View>
+
+                {/* Away */}
+                <View style={styles.teamCol}>
+                    {prediction.away_team_logo ? (
+                        <Image source={{ uri: prediction.away_team_logo }} style={styles.teamLogo} resizeMode="contain" />
+                    ) : (
+                        <View style={styles.placeholderLogo} />
+                    )}
+                    <NeonText size="small" weight="bold" color="white" style={styles.teamName} numberOfLines={2}>
+                        {prediction.away_team_name}
+                    </NeonText>
+                </View>
+            </View>
+
+            {/* 4. Footer: Prediction & Result */}
+            <View style={[styles.footer, { backgroundColor: '#181818', borderColor: theme.colors.border }]}>
+                {/* Decoration Glows */}
+                {isWinner && <View style={[styles.glowOverlay, { backgroundColor: theme.colors.success }]} />}
+                {isLoser && <View style={[styles.glowOverlay, { backgroundColor: theme.colors.error }]} />}
+
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, zIndex: 1 }}>
+                    <View style={[styles.predIconCircle, { backgroundColor: '#222', borderColor: theme.colors.border }]}>
+                        <Robot size={16} weight="regular" color={theme.colors.text.tertiary} />
+                    </View>
+                    <View>
+                        <NeonText size="tiny" weight="bold" style={{ color: theme.colors.text.tertiary, textTransform: 'uppercase', fontSize: 9 }}>
+                            AI Tahmini
+                        </NeonText>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                            <NeonText size="medium" weight="black" color="white">
+                                {prediction.prediction}
+                            </NeonText>
+                            {(prediction.minute_at_prediction || prediction.score_at_prediction) && (
+                                <View style={styles.contextBadge}>
+                                    <Clock size={10} weight="fill" color="#f87171" style={{ marginRight: 2 }} />
+                                    <NeonText size="tiny" weight="bold" style={{ color: '#f87171', fontSize: 9 }}>
+                                        {prediction.minute_at_prediction}' | {prediction.score_at_prediction || '0-0'}
+                                    </NeonText>
+                                </View>
+                            )}
+                        </View>
+                    </View>
+                </View>
+
+                {/* Result Badge */}
+                <View style={{ marginLeft: 'auto', zIndex: 1 }}>
+                    {isPending && (
+                        <View style={[styles.resultBadge, { backgroundColor: '#222', borderColor: theme.colors.border }]}>
+                            <NeonText size="tiny" weight="bold" style={{ color: theme.colors.text.secondary, textTransform: 'uppercase' }}>Bekliyor</NeonText>
+                        </View>
+                    )}
+                    {isWinner && (
+                        <View style={[styles.resultBadge, { backgroundColor: theme.colors.success, paddingHorizontal: 12, borderWidth: 0, shadowColor: theme.colors.success, shadowOpacity: 0.3, shadowRadius: 8, shadowOffset: { width: 0, height: 4 } }]}>
+                            <Trophy size={12} weight="fill" color="#000" style={{ marginRight: 4 }} />
+                            <NeonText size="tiny" weight="black" style={{ color: '#000', textTransform: 'uppercase' }}>WIN</NeonText>
+                        </View>
+                    )}
+                    {isLoser && (
+                        <View style={[styles.resultBadge, { backgroundColor: 'rgba(239, 68, 68, 0.1)', borderColor: 'rgba(239, 68, 68, 0.2)' }]}>
+                            <WarningCircle size={12} weight="fill" color={theme.colors.error} style={{ marginRight: 4 }} />
+                            <NeonText size="tiny" weight="black" style={{ color: theme.colors.error, textTransform: 'uppercase' }}>LOSE</NeonText>
+                        </View>
+                    )}
+                </View>
+            </View>
+        </TouchableOpacity>
+    );
 };
 
 const styles = StyleSheet.create({
