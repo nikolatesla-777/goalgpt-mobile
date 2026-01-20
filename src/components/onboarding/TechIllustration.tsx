@@ -1,12 +1,13 @@
 import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Animated, Easing } from 'react-native';
+import { View, StyleSheet, Animated, Easing, Text } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import {
     Brain,
     Activity,
     ScanLine,
     BarChart2,
     Crosshair,
-    Bot, // Using Bot instead of Target for better visibility
+    Bot,
     Check,
     Crown,
     Gem,
@@ -21,7 +22,7 @@ const ACCENT_COLOR = '#4BC41E';
 const SECONDARY_COLOR = '#4BC41E';
 
 // ============================================================================
-// SCENE 1: WELCOME / AI CORE
+// SCENE 1: WELCOME / AI CORE (Welcome to GoalGPT)
 // A central "brain" pulsing, with orbiting data nodes
 // ============================================================================
 const Scene1 = () => {
@@ -30,7 +31,6 @@ const Scene1 = () => {
     const rotateAnim = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
-        // Pulse Scale
         Animated.loop(
             Animated.sequence([
                 Animated.timing(scaleAnim, { toValue: 1.1, duration: 1500, useNativeDriver: true, easing: Easing.inOut(Easing.ease) }),
@@ -38,7 +38,6 @@ const Scene1 = () => {
             ])
         ).start();
 
-        // Pulse Opacity
         Animated.loop(
             Animated.sequence([
                 Animated.timing(opacityAnim, { toValue: 1, duration: 1000, useNativeDriver: true }),
@@ -46,7 +45,6 @@ const Scene1 = () => {
             ])
         ).start();
 
-        // Rotation
         Animated.loop(
             Animated.timing(rotateAnim, {
                 toValue: 1,
@@ -92,53 +90,155 @@ const Scene1 = () => {
 };
 
 // ============================================================================
-// SCENE 2: REAL-TIME ANALYTICS
-// Scan line moving over chart
+// SCENE 2: LIVE MATCH SCANNER (Replaced Real-Time Analytics)
+// Sophisticated Radar Scanner detecting signals and goals
 // ============================================================================
 const Scene2 = () => {
-    const scanY = useRef(new Animated.Value(-50)).current;
-    const chartOpacity = useRef(new Animated.Value(0.6)).current;
+    // Animation Values
+    const scanRotation = useRef(new Animated.Value(0)).current;
+    // Blips represent found matches/signals
+    const blip1Scale = useRef(new Animated.Value(0)).current;
+    const blip1Opacity = useRef(new Animated.Value(0)).current;
+
+    const blip2Scale = useRef(new Animated.Value(0)).current;
+    const blip2Opacity = useRef(new Animated.Value(0)).current;
+
+    const gridOpacity = useRef(new Animated.Value(0.3)).current;
 
     useEffect(() => {
-        // Scan Line
+        // 1. Radar Rotation (Infinite) - simulates scanning
         Animated.loop(
-            Animated.timing(scanY, {
-                toValue: 150,
-                duration: 2000,
+            Animated.timing(scanRotation, {
+                toValue: 1,
+                duration: 3000,
                 easing: Easing.linear,
                 useNativeDriver: true
             })
         ).start();
 
-        // Chart flicker
+        // 2. Pulse Grid Background - gives "live data" feel
         Animated.loop(
             Animated.sequence([
-                Animated.timing(chartOpacity, { toValue: 1, duration: 500, useNativeDriver: true }),
-                Animated.timing(chartOpacity, { toValue: 0.6, duration: 500, useNativeDriver: true })
+                Animated.timing(gridOpacity, { toValue: 0.6, duration: 1500, useNativeDriver: true }),
+                Animated.timing(gridOpacity, { toValue: 0.3, duration: 1500, useNativeDriver: true })
             ])
         ).start();
+
+        // 3. Signal Blip Animation Helper
+        const pulseBlip = (scale: Animated.Value, opacity: Animated.Value, delay: number) => {
+            return Animated.loop(
+                Animated.sequence([
+                    Animated.delay(delay), // Wait for scanner to pass
+                    Animated.parallel([
+                        // Appear rapidly
+                        Animated.timing(scale, { toValue: 1, duration: 400, easing: Easing.out(Easing.back(1.5)), useNativeDriver: true }),
+                        Animated.timing(opacity, { toValue: 1, duration: 200, useNativeDriver: true })
+                    ]),
+                    Animated.delay(1000), // Stay visible
+                    // Fade out
+                    Animated.timing(opacity, { toValue: 0, duration: 600, useNativeDriver: true }),
+                    Animated.timing(scale, { toValue: 0, duration: 0, useNativeDriver: true }) // Reset
+                ])
+            );
+        };
+
+        // Start blips at different intervals
+        pulseBlip(blip1Scale, blip1Opacity, 500).start();
+        pulseBlip(blip2Scale, blip2Opacity, 2000).start();
+
     }, []);
+
+    const spin = scanRotation.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0deg', '360deg']
+    });
 
     return (
         <View style={styles.sceneContainer}>
-            <Animated.View style={{ opacity: chartOpacity }}>
-                <BarChart2 size={140} color={ACCENT_COLOR} />
+            {/* Background Grid - Data Feel */}
+            <Animated.View style={{ opacity: gridOpacity, position: 'absolute' }}>
+                {/* Using Activity icon as a grid abstraction, heavily scaled */}
+                <Activity size={220} color={SECONDARY_COLOR} strokeWidth={0.5} style={{ opacity: 0.2 }} />
             </Animated.View>
 
-            <View style={styles.overlay}>
-                {/* Masking container for scan line */}
-                <View style={{ width: 160, height: 160, overflow: 'hidden' }}>
-                    <Animated.View style={[styles.scanLine, { transform: [{ translateY: scanY }] }]}>
-                        <ScanLine size={160} color="#FFFFFF" strokeWidth={1} />
-                    </Animated.View>
-                </View>
+            {/* Static Radar Rings */}
+            <View style={[styles.orbitContainer, { width: 180, height: 180, borderRadius: 90, borderColor: 'rgba(75, 196, 30, 0.3)', borderWidth: 1 }]} />
+            <View style={[styles.orbitContainer, { width: 100, height: 100, borderRadius: 50, borderColor: 'rgba(75, 196, 30, 0.5)', borderWidth: 1 }]} />
+            <View style={{ width: 4, height: 4, borderRadius: 2, backgroundColor: ACCENT_COLOR, position: 'absolute' }} />
+
+            {/* Central Hub Icon */}
+            <View style={{ backgroundColor: 'rgba(7, 26, 18, 0.8)', padding: 10, borderRadius: 20, borderWidth: 1, borderColor: ACCENT_COLOR }}>
+                <Database size={32} color={ACCENT_COLOR} />
             </View>
+
+            {/* Rotating Scanner Beam Container */}
+            <Animated.View style={[
+                styles.radarContainer, // Needs to be absolute and centered
+                {
+                    position: 'absolute',
+                    width: 200,
+                    height: 200,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    transform: [{ rotate: spin }]
+                }
+            ]}>
+                {/* The Beam itself - Gradient fading out */}
+                <LinearGradient
+                    colors={['rgba(75, 196, 30, 0.5)', 'transparent']}
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 100, // Start from center (width/2)
+                        width: 100, // Extends to edge
+                        height: 40, // Height of the fan
+                        transform: [{ translateY: 100 }, { rotate: '-90deg' }, { translateX: 50 }, { translateY: -20 }] // Complex transform to align fan cone, simplified via layout usually but absolute is easier here
+                    }}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }} // Gradient direction
+                />
+
+                {/* Simple line beam */}
+                <View style={{
+                    position: 'absolute',
+                    top: 100,
+                    left: 100,
+                    width: 100,
+                    height: 2,
+                    backgroundColor: ACCENT_COLOR,
+                    shadowColor: ACCENT_COLOR,
+                    shadowRadius: 5,
+                    shadowOpacity: 1
+                }} />
+            </Animated.View>
+
+            {/* Detected Signal 1: "MATCH FOUND" */}
+            <Animated.View style={[
+                styles.blip,
+                { top: 60, right: 40, transform: [{ scale: blip1Scale }], opacity: blip1Opacity }
+            ]}>
+                <View style={styles.blipCore} />
+                <View style={styles.blipTag}>
+                    <Text style={styles.blipText}>MATCH FOUND</Text>
+                </View>
+            </Animated.View>
+
+            {/* Detected Signal 2: "GOAL!" */}
+            <Animated.View style={[
+                styles.blip,
+                { bottom: 70, left: 50, transform: [{ scale: blip2Scale }], opacity: blip2Opacity }
+            ]}>
+                <View style={[styles.blipCore, { backgroundColor: '#FFD700', shadowColor: '#FFD700' }]} />
+                <View style={[styles.blipTag, { borderColor: '#FFD700' }]}>
+                    <Text style={[styles.blipText, { color: '#FFD700' }]}>GOAL DETECTED</Text>
+                </View>
+            </Animated.View>
         </View>
     );
 };
 
 // ============================================================================
-// SCENE 3: HIGH ACCURACY
+// SCENE 3: HIGH ACCURACY (Target Locking)
 // Target locking on
 // ============================================================================
 const Scene3 = () => {
@@ -147,7 +247,6 @@ const Scene3 = () => {
     const opacityAnim = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
-        // Rotate Crosshair
         Animated.loop(
             Animated.timing(rotateAnim, {
                 toValue: 1,
@@ -157,17 +256,13 @@ const Scene3 = () => {
             })
         ).start();
 
-        // Lock-on Effect sequence
         Animated.loop(
             Animated.sequence([
-                // Zoom in
                 Animated.parallel([
                     Animated.timing(scaleAnim, { toValue: 1, duration: 800, easing: Easing.out(Easing.exp), useNativeDriver: true }),
                     Animated.timing(opacityAnim, { toValue: 1, duration: 400, useNativeDriver: true })
                 ]),
-                // Hold
                 Animated.delay(800),
-                // Reset
                 Animated.parallel([
                     Animated.timing(scaleAnim, { toValue: 1.5, duration: 0, useNativeDriver: true }),
                     Animated.timing(opacityAnim, { toValue: 0, duration: 400, useNativeDriver: true })
@@ -182,13 +277,11 @@ const Scene3 = () => {
         outputRange: ['0deg', '90deg']
     });
 
-    // Interpolate scale for target opacity
     const targetOpacity = scaleAnim.interpolate({
         inputRange: [1, 1.5],
         outputRange: [1, 0.5]
     });
 
-    // Interpolate scale for lock badge opacity
     const lockOpacity = scaleAnim.interpolate({
         inputRange: [1, 1.1],
         outputRange: [1, 0]
@@ -204,7 +297,6 @@ const Scene3 = () => {
                 <Crosshair size={180} color="#FFFFFF" strokeWidth={1.5} />
             </Animated.View>
 
-            {/* "Lock" confirmation */}
             <Animated.View style={[styles.lockBadge, { opacity: lockOpacity }]}>
                 <Check size={24} color="#000" />
             </Animated.View>
@@ -213,7 +305,7 @@ const Scene3 = () => {
 };
 
 // ============================================================================
-// SCENE 4: PREMIUM
+// SCENE 4: PREMIUM (Unlock)
 // Glowing Crown
 // ============================================================================
 const Scene4 = () => {
@@ -234,7 +326,6 @@ const Scene4 = () => {
                 <Crown size={120} color="#FFD700" fill="rgba(255, 215, 0, 0.2)" strokeWidth={2} />
             </Animated.View>
 
-            {/* Sparkles */}
             <View style={{ position: 'absolute', top: -30, right: -20 }}>
                 <Gem size={30} color={ACCENT_COLOR} />
             </View>
@@ -274,6 +365,8 @@ const styles = StyleSheet.create({
         borderRadius: 130,
         borderWidth: 1,
         borderColor: 'rgba(75, 196, 30, 0.2)',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     orbitNode: {
         position: 'absolute',
@@ -294,19 +387,47 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    scanLine: {
-        width: 160,
-        height: 2,
-        backgroundColor: ACCENT_COLOR,
-        shadowColor: ACCENT_COLOR,
-        shadowOpacity: 1,
-        shadowRadius: 10,
-    },
     lockBadge: {
         position: 'absolute',
         bottom: 80,
         backgroundColor: ACCENT_COLOR,
         padding: 4,
         borderRadius: 20,
+    },
+    // NEW STYLES FOR SCANNER SCENE
+    radarContainer: {
+        // Defines the rotating layer
+    },
+    radarBeam: {
+        // Gradient cone styles
+    },
+    blip: {
+        position: 'absolute',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    blipCore: {
+        width: 12,
+        height: 12,
+        borderRadius: 6,
+        backgroundColor: ACCENT_COLOR,
+        shadowColor: ACCENT_COLOR,
+        shadowOpacity: 1,
+        shadowRadius: 10,
+        marginBottom: 4,
+    },
+    blipTag: {
+        backgroundColor: 'rgba(0,0,0,0.7)',
+        paddingHorizontal: 6,
+        paddingVertical: 2,
+        borderRadius: 4,
+        borderWidth: 1,
+        borderColor: ACCENT_COLOR,
+    },
+    blipText: {
+        color: ACCENT_COLOR,
+        fontSize: 10,
+        fontWeight: 'bold',
+        fontFamily: 'monospace' // Or your app's mono font
     }
 });

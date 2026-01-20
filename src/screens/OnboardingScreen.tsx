@@ -49,9 +49,9 @@ const SLIDES: OnboardingSlide[] = [
   },
   {
     id: 2,
-    title: 'Real-Time AI Analysis',
+    title: 'Live Match Scanner',
     description:
-      'Our advanced AI analyzes matches in real-time and provides instant predictions.',
+      'We detect qualifying matches in real-time and surface goal signals.',
   },
   {
     id: 3,
