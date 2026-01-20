@@ -99,7 +99,11 @@ const Stack = createStackNavigator<RootStackParamList>();
 // AUTH STACK NAVIGATOR
 // ============================================================================
 
-const AuthStackNavigator = () => {
+interface AuthStackNavigatorProps {
+  onSessionComplete?: () => void;
+}
+
+const AuthStackNavigator = ({ onSessionComplete }: AuthStackNavigatorProps) => {
   return (
     <AuthStack.Navigator
       screenOptions={{
@@ -129,8 +133,9 @@ const AuthStackNavigator = () => {
           <Suspense fallback={<LoadingFallback />}>
             <LoginScreen
               onLoginSuccess={() => {
-                // AuthContext will handle state update
+                // Mark session onboarding as complete, then auth state change will show main app
                 console.log('Login successful');
+                onSessionComplete?.();
               }}
               onNavigateToRegister={() => navigation.navigate('Register')}
               onForgotPassword={() => {
@@ -153,8 +158,9 @@ const AuthStackNavigator = () => {
           <Suspense fallback={<LoadingFallback />}>
             <RegisterScreen
               onRegisterSuccess={() => {
-                // AuthContext will handle state update
+                // Mark session onboarding as complete after registration too
                 console.log('Register successful');
+                onSessionComplete?.();
               }}
               onNavigateToLogin={() => navigation.navigate('Login')}
               onSocialAuth={(provider) => {
@@ -416,6 +422,10 @@ export const AppNavigator = () => {
   // Controls the custom Animated Splash visibility
   const [showSplash, setShowSplash] = useState(true);
 
+  // Tracks if user has completed onboarding THIS SESSION
+  // This resets on every app launch, ensuring onboarding is shown each time
+  const [sessionOnboardingComplete, setSessionOnboardingComplete] = useState(false);
+
   // Track navigation state changes
   // NOTE: Temporarily disabled - needs to be inside NavigationContainer
   // useNavigationTracking();
@@ -489,16 +499,22 @@ export const AppNavigator = () => {
     return <NavigationLoadingScreen message="Initializing..." />;
   }
 
+  // 3. Navigation logic:
+  // - If session onboarding NOT complete: always show AuthStackNavigator (Onboarding -> Login)
+  // - If session onboarding complete AND authenticated: show RootStackNavigator (main app)
+  // - If session onboarding complete but NOT authenticated: show AuthStackNavigator (Login)
+  const showMainApp = sessionOnboardingComplete && auth.isAuthenticated;
+
   return (
     <NavigationContainer
       ref={navigationRef}
       linking={LINKING_CONFIG}
       onReady={() => setIsReady(true)}
     >
-      {auth.isAuthenticated ? (
+      {showMainApp ? (
         <RootStackNavigator />
       ) : (
-        <AuthStackNavigator />
+        <AuthStackNavigator onSessionComplete={() => setSessionOnboardingComplete(true)} />
       )}
     </NavigationContainer>
   );
