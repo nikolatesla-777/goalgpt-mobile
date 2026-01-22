@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   ScrollView,
@@ -9,6 +9,8 @@ import {
   NativeScrollEvent,
   NativeSyntheticEvent,
   Image,
+  Animated,
+  Easing,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Button } from '../components/atoms/Button';
@@ -84,6 +86,28 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
   const { theme } = useTheme();
   const scrollViewRef = useRef<ScrollView>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Animation Refs
+  const glowAnim = useRef(new Animated.Value(0)).current;
+  const buttonScale = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    // Pulse the bottom glow
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(glowAnim, { toValue: 1, duration: 2500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+        Animated.timing(glowAnim, { toValue: 0, duration: 2500, easing: Easing.inOut(Easing.ease), useNativeDriver: true })
+      ])
+    ).start();
+
+    // Subtle button pulse
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(buttonScale, { toValue: 1.02, duration: 1500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+        Animated.timing(buttonScale, { toValue: 1, duration: 1500, easing: Easing.inOut(Easing.ease), useNativeDriver: true })
+      ])
+    ).start();
+  }, []);
 
   // ============================================================================
   // HANDLERS
@@ -174,14 +198,25 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
         end={{ x: 0.5, y: 1 }}
       />
 
-      {/* 3. Subtle Green Glow from bottom */}
-      <LinearGradient
-        colors={['transparent', 'rgba(75, 196, 30, 0.1)']}
-        style={StyleSheet.absoluteFill}
-        start={{ x: 0.5, y: 0.5 }}
-        end={{ x: 0.5, y: 1 }}
+      <Animated.View
         pointerEvents="none"
-      />
+        style={[
+          StyleSheet.absoluteFill,
+          {
+            opacity: glowAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0.05, 0.15]
+            })
+          }
+        ]}
+      >
+        <LinearGradient
+          colors={['transparent', '#4BC41E']}
+          style={StyleSheet.absoluteFill}
+          start={{ x: 0.5, y: 0.6 }}
+          end={{ x: 0.5, y: 1 }}
+        />
+      </Animated.View>
 
       {/* Header */}
       <View style={styles.header}>
@@ -212,22 +247,23 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
         {renderPaginationDots()}
 
         {/* Next/Get Started Button (Neon Green) */}
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={handleNext}
-          style={styles.nextButtonContainer}
-        >
-          <LinearGradient
-            colors={['#4BC41E', '#3AA614']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.nextButtonGradient}
+        <Animated.View style={[styles.nextButtonContainer, { transform: [{ scale: buttonScale }] }]}>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={handleNext}
           >
-            <Text style={styles.nextButtonText}>
-              {isLastSlide ? 'GET STARTED' : 'NEXT'}
-            </Text>
-          </LinearGradient>
-        </TouchableOpacity>
+            <LinearGradient
+              colors={['#4BC41E', '#3AA614']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.nextButtonGradient}
+            >
+              <Text style={styles.nextButtonText}>
+                {isLastSlide ? 'GET STARTED' : 'NEXT'}
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </Animated.View>
       </View>
     </View>
   );
@@ -322,11 +358,12 @@ const styles = StyleSheet.create({
   },
   dotActive: {
     backgroundColor: '#4BC41E',
-    width: 24, // Elongated active dot
+    width: 28, // Elongated active dot
     shadowColor: '#4BC41E',
     shadowOpacity: 1,
-    shadowRadius: 8,
+    shadowRadius: 12,
     shadowOffset: { width: 0, height: 0 },
+    elevation: 10,
   },
   nextButtonContainer: {
     width: '100%',

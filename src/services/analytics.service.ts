@@ -29,6 +29,7 @@ import {
   ScreenNames,
 } from '../types/analytics.types';
 import { addBreadcrumb } from '../config/sentry.config';
+import logger from '../utils/logger';
 
 // ============================================================================
 // ANALYTICS INSTANCE
@@ -51,20 +52,20 @@ let eventCount = 0;
 export function initAnalytics(firebaseApp: any): void {
   // Firebase Analytics is web-only - not supported on React Native
   if (Platform.OS !== 'web') {
-    console.log('⚠️ Firebase Analytics not supported on native platforms');
+    logger.debug('⚠️ Firebase Analytics not supported on native platforms');
     return;
   }
 
   if (!env.enableAnalytics) {
-    console.log('⚠️ Analytics disabled via feature flag');
+    logger.debug('⚠️ Analytics disabled via feature flag');
     return;
   }
 
   try {
     analytics = getAnalytics(firebaseApp);
-    console.log('✅ Firebase Analytics initialized');
+    logger.debug('✅ Firebase Analytics initialized');
   } catch (error) {
-    console.error('❌ Failed to initialize Firebase Analytics:', error);
+    logger.error('❌ Failed to initialize Firebase Analytics:', error);
   }
 }
 
@@ -179,7 +180,7 @@ export function trackEvent(eventName: AnalyticsEventName | string, params?: Even
 
     // Log to console in debug mode
     if (analyticsConfig.debug) {
-      console.log('📊 Analytics Event:', eventName, cleanParams);
+      logger.debug('📊 Analytics Event:', eventName, cleanParams);
     }
 
     // Add Sentry breadcrumb
@@ -194,7 +195,7 @@ export function trackEvent(eventName: AnalyticsEventName | string, params?: Even
     // }
 
   } catch (error) {
-    console.error('❌ Failed to log event:', eventName, error);
+    logger.error('❌ Failed to log event:', eventName, error);
   }
 }
 
@@ -225,7 +226,7 @@ export function startSession(): void {
   });
 
   if (analyticsConfig.debug) {
-    console.log('🎯 Session started:', currentSessionId);
+    logger.debug('🎯 Session started:', currentSessionId);
   }
 }
 
@@ -245,7 +246,7 @@ export function endSession(): void {
   });
 
   if (analyticsConfig.debug) {
-    console.log('🎯 Session ended:', currentSessionId, `Duration: ${sessionDuration}ms`);
+    logger.debug('🎯 Session ended:', currentSessionId, `Duration: ${sessionDuration}ms`);
   }
 
   currentSessionId = null;
@@ -312,7 +313,7 @@ export function trackScreenView(screenName: string, params?: Partial<ScreenViewP
   screenStartTime = Date.now();
 
   if (analyticsConfig.debug) {
-    console.log(`📱 Screen viewed: ${screenName} (previous: ${currentScreen || 'none'})`);
+    logger.debug(`📱 Screen viewed: ${screenName} (previous: ${currentScreen || 'none'})`);
   }
 }
 
@@ -514,7 +515,7 @@ export function trackAPICall(
 
   // Log slow API calls
   if (duration > PERFORMANCE_THRESHOLDS.API_VERY_SLOW) {
-    console.warn(`⚠️ Very slow API call: ${endpoint} (${duration}ms)`);
+    logger.warn(`⚠️ Very slow API call: ${endpoint} (${duration}ms)`);
   }
 }
 
@@ -537,7 +538,7 @@ export function trackScreenLoad(screenName: string, duration: number): void {
   trackEvent(AnalyticsEvents.SCREEN_LOAD_COMPLETED, params);
 
   if (duration > PERFORMANCE_THRESHOLDS.SCREEN_LOAD_VERY_SLOW) {
-    console.warn(`⚠️ Very slow screen load: ${screenName} (${duration}ms)`);
+    logger.warn(`⚠️ Very slow screen load: ${screenName} (${duration}ms)`);
   }
 }
 
@@ -560,7 +561,7 @@ export function trackAppStartup(duration: number, coldStart: boolean): void {
   trackEvent(AnalyticsEvents.APP_STARTUP_COMPLETED, params);
 
   if (duration > PERFORMANCE_THRESHOLDS.STARTUP_VERY_SLOW) {
-    console.warn(`⚠️ Very slow app startup: ${duration}ms (cold: ${coldStart})`);
+    logger.warn(`⚠️ Very slow app startup: ${duration}ms (cold: ${coldStart})`);
   }
 }
 
@@ -578,7 +579,7 @@ export function trackErrorEvent(params: ErrorParams): void {
 
   // Also log to console in development
   if (isDev) {
-    console.error('🚨 Error tracked:', params);
+    logger.error('🚨 Error tracked:', params);
   }
 }
 
@@ -647,7 +648,7 @@ export function trackNotificationPermission(granted: boolean): void {
 /**
  * Log login event
  */
-export function trackLogin(method: 'google' | 'apple' | 'phone'): void {
+export function trackLogin(method: 'email' | 'google' | 'apple' | 'phone'): void {
   trackEvent(StandardEvents.LOGIN, {
     method,
   });
@@ -656,7 +657,7 @@ export function trackLogin(method: 'google' | 'apple' | 'phone'): void {
 /**
  * Log sign up event
  */
-export function trackSignUp(method: 'google' | 'apple' | 'phone'): void {
+export function trackSignUp(method: 'email' | 'google' | 'apple' | 'phone'): void {
   trackEvent(StandardEvents.SIGN_UP, {
     method,
   });

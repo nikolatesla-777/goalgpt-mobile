@@ -17,7 +17,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { spacing, typography } from '../constants/tokens';
+import { spacing, typography, colors } from '../constants/tokens';
 import type { NotificationSettings } from '../types/notification.types';
 import * as NotificationService from '../services/notification.service';
 
@@ -144,7 +144,7 @@ export const NotificationSettingsScreen: React.FC<NotificationSettingsScreenProp
     return (
       <SafeAreaView style={styles.safeArea} edges={['top']}>
         <View style={styles.centerContent}>
-          <ActivityIndicator size="large" color="#4BC41E" />
+          <ActivityIndicator size="large" color={colors.brand.primary} />
           <Text style={styles.loadingText}>Loading settings...</Text>
         </View>
       </SafeAreaView>
@@ -200,8 +200,8 @@ export const NotificationSettingsScreen: React.FC<NotificationSettingsScreenProp
               <Switch
                 value={settings.enabled}
                 onValueChange={(value) => handleToggleSetting('enabled', value)}
-                trackColor={{ false: '#3e3e3e', true: '#4BC41E' }}
-                thumbColor="#f4f3f4"
+                trackColor={{ false: colors.neutral.mediumGray, true: colors.brand.primary }}
+                thumbColor={colors.neutral.white}
                 disabled={isSaving || permissionStatus !== 'granted'}
               />
             </View>
@@ -219,8 +219,8 @@ export const NotificationSettingsScreen: React.FC<NotificationSettingsScreenProp
               <Switch
                 value={settings.matchStart}
                 onValueChange={(value) => handleToggleSetting('matchStart', value)}
-                trackColor={{ false: '#3e3e3e', true: '#4BC41E' }}
-                thumbColor="#f4f3f4"
+                trackColor={{ false: colors.neutral.mediumGray, true: colors.brand.primary }}
+                thumbColor={colors.neutral.white}
                 disabled={isSaving || !settings.enabled}
               />
             </View>
@@ -233,8 +233,8 @@ export const NotificationSettingsScreen: React.FC<NotificationSettingsScreenProp
               <Switch
                 value={settings.goals}
                 onValueChange={(value) => handleToggleSetting('goals', value)}
-                trackColor={{ false: '#3e3e3e', true: '#4BC41E' }}
-                thumbColor="#f4f3f4"
+                trackColor={{ false: colors.neutral.mediumGray, true: colors.brand.primary }}
+                thumbColor={colors.neutral.white}
                 disabled={isSaving || !settings.enabled}
               />
             </View>
@@ -247,8 +247,8 @@ export const NotificationSettingsScreen: React.FC<NotificationSettingsScreenProp
               <Switch
                 value={settings.matchEnd}
                 onValueChange={(value) => handleToggleSetting('matchEnd', value)}
-                trackColor={{ false: '#3e3e3e', true: '#4BC41E' }}
-                thumbColor="#f4f3f4"
+                trackColor={{ false: colors.neutral.mediumGray, true: colors.brand.primary }}
+                thumbColor={colors.neutral.white}
                 disabled={isSaving || !settings.enabled}
               />
             </View>
@@ -266,8 +266,8 @@ export const NotificationSettingsScreen: React.FC<NotificationSettingsScreenProp
               <Switch
                 value={settings.predictionResults}
                 onValueChange={(value) => handleToggleSetting('predictionResults', value)}
-                trackColor={{ false: '#3e3e3e', true: '#4BC41E' }}
-                thumbColor="#f4f3f4"
+                trackColor={{ false: colors.neutral.mediumGray, true: colors.brand.primary }}
+                thumbColor={colors.neutral.white}
                 disabled={isSaving || !settings.enabled}
               />
             </View>
@@ -285,8 +285,8 @@ export const NotificationSettingsScreen: React.FC<NotificationSettingsScreenProp
               <Switch
                 value={settings.notifyFavorites}
                 onValueChange={(value) => handleToggleSetting('notifyFavorites', value)}
-                trackColor={{ false: '#3e3e3e', true: '#4BC41E' }}
-                thumbColor="#f4f3f4"
+                trackColor={{ false: colors.neutral.mediumGray, true: colors.brand.primary }}
+                thumbColor={colors.neutral.white}
                 disabled={isSaving || !settings.enabled}
               />
             </View>
@@ -304,8 +304,8 @@ export const NotificationSettingsScreen: React.FC<NotificationSettingsScreenProp
               <Switch
                 value={settings.sound}
                 onValueChange={(value) => handleToggleSetting('sound', value)}
-                trackColor={{ false: '#3e3e3e', true: '#4BC41E' }}
-                thumbColor="#f4f3f4"
+                trackColor={{ false: colors.neutral.mediumGray, true: colors.brand.primary }}
+                thumbColor={colors.neutral.white}
                 disabled={isSaving || !settings.enabled}
               />
             </View>
@@ -318,8 +318,8 @@ export const NotificationSettingsScreen: React.FC<NotificationSettingsScreenProp
               <Switch
                 value={settings.vibration}
                 onValueChange={(value) => handleToggleSetting('vibration', value)}
-                trackColor={{ false: '#3e3e3e', true: '#4BC41E' }}
-                thumbColor="#f4f3f4"
+                trackColor={{ false: colors.neutral.mediumGray, true: colors.brand.primary }}
+                thumbColor={colors.neutral.white}
                 disabled={isSaving || !settings.enabled}
               />
             </View>
@@ -359,7 +359,7 @@ export const NotificationSettingsScreen: React.FC<NotificationSettingsScreenProp
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: colors.neutral.black,
   },
   container: {
     flex: 1,
@@ -378,17 +378,17 @@ const styles = StyleSheet.create({
   },
   backIcon: {
     fontSize: 28,
-    color: '#FFFFFF',
+    color: colors.neutral.white,
   },
   backText: {
     fontFamily: typography.fonts.ui.semibold,
     fontSize: 17,
-    color: '#FFFFFF',
+    color: colors.neutral.white,
   },
   headerTitle: {
     fontFamily: typography.fonts.ui.bold,
     fontSize: 28,
-    color: '#FFFFFF',
+    color: colors.neutral.white,
   },
   scrollView: {
     flex: 1,
@@ -425,7 +425,7 @@ const styles = StyleSheet.create({
   permissionTitle: {
     fontFamily: typography.fonts.ui.semibold,
     fontSize: typography.fontSize.button.medium,
-    color: '#FFFFFF',
+    color: colors.neutral.white,
     marginBottom: 4,
   },
   permissionSubtitle: {
@@ -434,7 +434,7 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.7)',
   },
   enableButton: {
-    backgroundColor: '#4BC41E',
+    backgroundColor: colors.brand.primary,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
     borderRadius: 8,
@@ -442,7 +442,7 @@ const styles = StyleSheet.create({
   enableButtonText: {
     fontFamily: typography.fonts.ui.semibold,
     fontSize: typography.fontSize.button.small,
-    color: '#FFFFFF',
+    color: colors.neutral.white,
   },
   section: {
     marginTop: spacing.lg,
@@ -472,7 +472,7 @@ const styles = StyleSheet.create({
   settingTitle: {
     fontFamily: typography.fonts.ui.semibold,
     fontSize: typography.fontSize.button.medium,
-    color: '#FFFFFF',
+    color: colors.neutral.white,
     marginBottom: 4,
   },
   settingSubtitle: {
@@ -483,7 +483,7 @@ const styles = StyleSheet.create({
   testButton: {
     backgroundColor: 'rgba(75, 196, 30, 0.2)',
     borderWidth: 1,
-    borderColor: '#4BC41E',
+    borderColor: colors.brand.primary,
     borderRadius: 12,
     padding: spacing.md,
     alignItems: 'center',
@@ -491,7 +491,7 @@ const styles = StyleSheet.create({
   testButtonText: {
     fontFamily: typography.fonts.ui.semibold,
     fontSize: typography.fontSize.button.medium,
-    color: '#4BC41E',
+    color: colors.brand.primary,
   },
   infoText: {
     fontFamily: typography.fonts.ui.regular,

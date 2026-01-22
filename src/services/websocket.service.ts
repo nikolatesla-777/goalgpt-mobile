@@ -16,6 +16,7 @@ import type {
   WebSocketEventHandlers,
   WebSocketEventType,
 } from '../types/websocket.types';
+import logger from '../utils/logger';
 
 export class WebSocketService {
   private ws: WebSocket | null = null;
@@ -56,7 +57,7 @@ export class WebSocketService {
    */
   public connect(): void {
     if (this.ws?.readyState === WebSocket.OPEN || this.isConnecting) {
-      console.log('🔌 WebSocket already connected or connecting');
+      logger.debug('🔌 WebSocket already connected or connecting');
       return;
     }
 
@@ -64,7 +65,7 @@ export class WebSocketService {
     this.shouldReconnect = true;
 
     try {
-      console.log('🔌 Connecting to WebSocket:', this.config.url);
+      logger.debug('🔌 Connecting to WebSocket:', this.config.url);
       this.ws = new WebSocket(this.config.url);
 
       this.ws.onopen = this.handleOpen.bind(this);
@@ -72,7 +73,7 @@ export class WebSocketService {
       this.ws.onerror = this.handleError.bind(this);
       this.ws.onclose = this.handleClose.bind(this);
     } catch (error) {
-      console.error('❌ WebSocket connection error:', error);
+      logger.error('❌ WebSocket connection error:', error);
       this.isConnecting = false;
       this.scheduleReconnect();
     }
@@ -82,7 +83,7 @@ export class WebSocketService {
    * Disconnect from WebSocket server
    */
   public disconnect(): void {
-    console.log('🔌 Disconnecting from WebSocket');
+    logger.debug('🔌 Disconnecting from WebSocket');
     this.shouldReconnect = false;
     this.clearTimers();
 
@@ -109,7 +110,7 @@ export class WebSocketService {
    * Handle WebSocket open event
    */
   private handleOpen(): void {
-    console.log('✅ WebSocket connected');
+    logger.debug('✅ WebSocket connected');
     this.isConnecting = false;
     this.reconnectAttempts = 0;
     this.startHeartbeat();
@@ -122,11 +123,11 @@ export class WebSocketService {
   private handleMessage(event: MessageEvent): void {
     try {
       const message: WebSocketMessage = JSON.parse(event.data);
-      console.log('📩 WebSocket message:', message.type);
+      logger.debug('📩 WebSocket message:', message.type);
 
       this.handleEventMessage(message);
     } catch (error) {
-      console.error('❌ Failed to parse WebSocket message:', error);
+      logger.error('❌ Failed to parse WebSocket message:', error);
     }
   }
 
@@ -134,7 +135,7 @@ export class WebSocketService {
    * Handle WebSocket error
    */
   private handleError(event: Event): void {
-    console.error('❌ WebSocket error:', event);
+    logger.error('❌ WebSocket error:', event);
     this.isConnecting = false;
 
     if (this.eventHandlers.onError) {
@@ -146,7 +147,7 @@ export class WebSocketService {
    * Handle WebSocket close
    */
   private handleClose(event: CloseEvent): void {
-    console.log('🔌 WebSocket closed:', event.code, event.reason);
+    logger.debug('🔌 WebSocket closed:', event.code, event.reason);
     this.isConnecting = false;
     this.clearTimers();
     this.notifyConnectionChange(false);
@@ -168,7 +169,7 @@ export class WebSocketService {
 
     // Validate data exists
     if (!data) {
-      console.warn('⚠️ WebSocket message missing data:', type);
+      logger.warn('⚠️ WebSocket message missing data:', type);
       return;
     }
 
@@ -216,7 +217,7 @@ export class WebSocketService {
         break;
 
       default:
-        console.warn('⚠️ Unknown WebSocket event type:', type);
+        logger.warn('⚠️ Unknown WebSocket event type:', type);
     }
   }
 
@@ -229,7 +230,7 @@ export class WebSocketService {
    */
   private scheduleReconnect(): void {
     if (this.reconnectAttempts >= this.config.maxReconnectAttempts) {
-      console.error('❌ Max reconnect attempts reached');
+      logger.error('❌ Max reconnect attempts reached');
       this.notifyConnectionChange(false);
       return;
     }
@@ -242,7 +243,7 @@ export class WebSocketService {
       30000 // Max 30 seconds
     );
 
-    console.log(
+    logger.debug(
       `🔄 Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts}/${this.config.maxReconnectAttempts})`
     );
 
@@ -290,14 +291,14 @@ export class WebSocketService {
    */
   public send(message: { type: string; data: any }): void {
     if (!this.isConnected()) {
-      console.warn('⚠️ WebSocket not connected, cannot send message');
+      logger.warn('⚠️ WebSocket not connected, cannot send message');
       return;
     }
 
     try {
       this.ws?.send(JSON.stringify(message));
     } catch (error) {
-      console.error('❌ Failed to send WebSocket message:', error);
+      logger.error('❌ Failed to send WebSocket message:', error);
     }
   }
 

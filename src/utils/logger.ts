@@ -25,31 +25,31 @@ class Logger {
   /**
    * Debug logs - only in development
    */
-  debug(message: string, context?: LogContext): void {
+  debug(message: string, ...args: any[]): void {
     if (this.isDevelopment) {
-      console.log(`[DEBUG] ${message}`, context || '');
+      console.log(`[DEBUG] ${message}`, ...args);
     }
   }
 
   /**
    * Info logs - development and staging
    */
-  info(message: string, context?: LogContext): void {
+  info(message: string, ...args: any[]): void {
     if (!this.isProduction) {
-      console.log(`[INFO] ${message}`, context || '');
+      console.log(`[INFO] ${message}`, ...args);
     }
   }
 
   /**
    * Warning logs - all environments, sent to Sentry in production
    */
-  warn(message: string, context?: LogContext): void {
-    console.warn(`[WARN] ${message}`, context || '');
+  warn(message: string, ...args: any[]): void {
+    console.warn(`[WARN] ${message}`, ...args);
 
     if (this.isProduction) {
       Sentry.captureMessage(message, {
         level: 'warning',
-        extra: context,
+        extra: args.length > 0 ? { data: args } : undefined,
       });
     }
   }
@@ -57,13 +57,16 @@ class Logger {
   /**
    * Error logs - all environments, always sent to Sentry
    */
-  error(message: string, error?: Error, context?: LogContext): void {
-    console.error(`[ERROR] ${message}`, error || '', context || '');
+  error(message: string, ...args: any[]): void {
+    console.error(`[ERROR] ${message}`, ...args);
 
-    Sentry.captureException(error || new Error(message), {
+    // Find the first Error object in args, or create a new one
+    const errorObj = args.find((arg) => arg instanceof Error) || new Error(message);
+
+    Sentry.captureException(errorObj, {
       extra: {
         message,
-        ...context,
+        data: args.filter((arg) => !(arg instanceof Error)),
       },
     });
   }
@@ -129,4 +132,7 @@ class Logger {
 export const logger = new Logger();
 
 // Export class for testing
-export default Logger;
+export { Logger };
+
+// Default export is the singleton instance
+export default logger;

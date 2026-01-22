@@ -112,8 +112,11 @@ export const NeonText: React.FC<NeonTextProps> = ({
     }
   };
 
-  // Get shadow based on glow intensity
+  // Get shadow based on glow intensity - DISABLED as per user request
   const getShadowStyle = () => {
+    return {}; // No shadow/glow
+
+    /* Original Glow Logic preserved for reference or future rollback
     const colorValue = getColorValue();
 
     switch (glow) {
@@ -142,6 +145,7 @@ export const NeonText: React.FC<NeonTextProps> = ({
           textShadowRadius: 12,
         };
     }
+    */
   };
 
   // Get font family based on type

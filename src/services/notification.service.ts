@@ -22,6 +22,7 @@ import type {
   NOTIFICATION_STORAGE_KEYS,
   DEFAULT_NOTIFICATION_SETTINGS,
 } from '../types/notification.types';
+import logger from '../utils/logger';
 
 // ============================================================================
 // STORAGE KEYS
@@ -55,7 +56,7 @@ export async function requestPermissions(): Promise<NotificationPermissionStatus
   try {
     // Check if physical device (not simulator)
     if (!Device.isDevice) {
-      console.warn('⚠️ Push notifications only work on physical devices');
+      logger.warn('⚠️ Push notifications only work on physical devices');
       return 'denied';
     }
 
@@ -73,14 +74,14 @@ export async function requestPermissions(): Promise<NotificationPermissionStatus
 
     // Map to our status type
     if (finalStatus === 'granted') {
-      console.log('✅ Notification permissions granted');
+      logger.debug('✅ Notification permissions granted');
       return 'granted';
     } else {
-      console.log('❌ Notification permissions denied');
+      logger.debug('❌ Notification permissions denied');
       return 'denied';
     }
   } catch (error) {
-    console.error('❌ Failed to request permissions:', error);
+    logger.error('❌ Failed to request permissions:', error);
     return 'denied';
   }
 }
@@ -101,7 +102,7 @@ export async function getPermissionStatus(): Promise<NotificationPermissionStatu
 
     return 'undetermined';
   } catch (error) {
-    console.error('❌ Failed to get permission status:', error);
+    logger.error('❌ Failed to get permission status:', error);
     return 'undetermined';
   }
 }
@@ -148,9 +149,9 @@ async function sendTokenToBackend(token: string): Promise<void> {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
-    console.log('✅ Token registered with backend');
+    logger.debug('✅ Token registered with backend');
   } catch (error) {
-    console.error('❌ Failed to register token with backend:', error);
+    logger.error('❌ Failed to register token with backend:', error);
     // Don't throw - token is still saved locally
   }
 }
@@ -161,17 +162,17 @@ async function sendTokenToBackend(token: string): Promise<void> {
 export async function getExpoPushToken(): Promise<string | null> {
   try {
     if (!Device.isDevice) {
-      console.warn('⚠️ Push tokens only work on physical devices');
+      logger.warn('⚠️ Push tokens only work on physical devices');
       return null;
     }
 
     // Get project ID from constants
     const projectId = Constants.expoConfig?.extra?.eas?.projectId ||
-                     Constants.easConfig?.projectId;
+      Constants.easConfig?.projectId;
 
     if (!projectId) {
-      console.warn('⚠️ Expo project ID not configured');
-      console.warn('Add projectId to app.json under expo.extra.eas.projectId');
+      logger.warn('⚠️ Expo project ID not configured');
+      logger.warn('Add projectId to app.json under expo.extra.eas.projectId');
       return null;
     }
 
@@ -181,7 +182,7 @@ export async function getExpoPushToken(): Promise<string | null> {
     });
 
     const token = tokenData.data;
-    console.log('✅ Expo push token:', token);
+    logger.debug('✅ Expo push token:', token);
 
     // Save token
     const pushToken: PushToken = {
@@ -198,7 +199,7 @@ export async function getExpoPushToken(): Promise<string | null> {
 
     return token;
   } catch (error) {
-    console.error('❌ Failed to get push token:', error);
+    logger.error('❌ Failed to get push token:', error);
     return null;
   }
 }
@@ -214,7 +215,7 @@ export async function getStoredPushToken(): Promise<PushToken | null> {
     const token: PushToken = JSON.parse(data);
     return token;
   } catch (error) {
-    console.error('❌ Failed to get stored token:', error);
+    logger.error('❌ Failed to get stored token:', error);
     return null;
   }
 }
@@ -256,7 +257,7 @@ export async function loadNotificationSettings(): Promise<NotificationSettings> 
     const settings: NotificationSettings = JSON.parse(data);
     return settings;
   } catch (error) {
-    console.error('❌ Failed to load notification settings:', error);
+    logger.error('❌ Failed to load notification settings:', error);
     return {
       enabled: true,
       matchStart: true,
@@ -280,9 +281,9 @@ export async function saveNotificationSettings(settings: NotificationSettings): 
   try {
     const data = JSON.stringify(settings);
     await AsyncStorage.setItem(STORAGE_KEY_SETTINGS, data);
-    console.log('✅ Notification settings saved');
+    logger.debug('✅ Notification settings saved');
   } catch (error) {
-    console.error('❌ Failed to save notification settings:', error);
+    logger.error('❌ Failed to save notification settings:', error);
     throw error;
   }
 }
@@ -341,13 +342,13 @@ export async function shouldNotify(type: NotificationType): Promise<boolean> {
     if (start < end) {
       // Same day range (e.g., 22:00 - 08:00 next day doesn't work here, need special handling)
       if (currentTime >= start && currentTime < end) {
-        console.log('⏰ Quiet hours active, notification suppressed');
+        logger.debug('⏰ Quiet hours active, notification suppressed');
         return false;
       }
     } else {
       // Overnight range (e.g., 22:00 - 08:00)
       if (currentTime >= start || currentTime < end) {
-        console.log('⏰ Quiet hours active, notification suppressed');
+        logger.debug('⏰ Quiet hours active, notification suppressed');
         return false;
       }
     }
@@ -371,7 +372,7 @@ export async function scheduleLocalNotification(
     // Check if should notify
     const should = await shouldNotify(payload.data.type);
     if (!should) {
-      console.log('⏭️ Notification skipped based on settings');
+      logger.debug('⏭️ Notification skipped based on settings');
       return null;
     }
 
@@ -390,10 +391,10 @@ export async function scheduleLocalNotification(
       trigger: delaySeconds > 0 ? { seconds: delaySeconds } : null,
     });
 
-    console.log('✅ Local notification scheduled:', id);
+    logger.debug('✅ Local notification scheduled:', id);
     return id;
   } catch (error) {
-    console.error('❌ Failed to schedule notification:', error);
+    logger.error('❌ Failed to schedule notification:', error);
     return null;
   }
 }
@@ -404,9 +405,9 @@ export async function scheduleLocalNotification(
 export async function cancelNotification(notificationId: string): Promise<void> {
   try {
     await Notifications.cancelScheduledNotificationAsync(notificationId);
-    console.log('✅ Notification cancelled:', notificationId);
+    logger.debug('✅ Notification cancelled:', notificationId);
   } catch (error) {
-    console.error('❌ Failed to cancel notification:', error);
+    logger.error('❌ Failed to cancel notification:', error);
   }
 }
 
@@ -416,9 +417,9 @@ export async function cancelNotification(notificationId: string): Promise<void> 
 export async function cancelAllNotifications(): Promise<void> {
   try {
     await Notifications.cancelAllScheduledNotificationsAsync();
-    console.log('✅ All notifications cancelled');
+    logger.debug('✅ All notifications cancelled');
   } catch (error) {
-    console.error('❌ Failed to cancel all notifications:', error);
+    logger.error('❌ Failed to cancel all notifications:', error);
   }
 }
 
@@ -555,7 +556,7 @@ export async function setBadgeCount(count: number): Promise<void> {
   try {
     await Notifications.setBadgeCountAsync(count);
   } catch (error) {
-    console.error('❌ Failed to set badge count:', error);
+    logger.error('❌ Failed to set badge count:', error);
   }
 }
 

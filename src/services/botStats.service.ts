@@ -29,7 +29,8 @@ export const getBotStats = async (): Promise<BotStat[]> => {
 
         // Endpoint might need adjustment based on real backend routes
         // Assuming /api/stats/bots exists based on web usage
-        const response = await apiClient.get<BotStatsResponse>('/stats/bots');
+        // Use the correct backend endpoint
+        const response = await apiClient.get<BotStatsResponse>('/api/predictions/stats/bots');
 
         if (response.data && response.data.bots) {
             statsCache = response.data.bots;

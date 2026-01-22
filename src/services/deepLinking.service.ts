@@ -18,6 +18,7 @@ import * as Linking from 'expo-linking';
 import { Platform } from 'react-native';
 import { addBreadcrumb } from '../config/sentry.config';
 import { trackEvent } from './analytics.service';
+import logger from '../utils/logger';
 
 // ============================================================================
 // TYPES
@@ -110,7 +111,7 @@ export function parseDeepLink(url: string): DeepLinkData | null {
     const { hostname, path, queryParams } = parsed;
 
     // Log parsed URL
-    console.log('🔗 Parsing deep link:', {
+    logger.debug('🔗 Parsing deep link:', {
       url,
       hostname,
       path,
@@ -192,13 +193,13 @@ export function parseDeepLink(url: string): DeepLinkData | null {
     }
 
     // Unknown link
-    console.warn('⚠️ Unknown deep link format:', url);
+    logger.warn('⚠️ Unknown deep link format:', url);
     return {
       type: 'unknown',
       params: { url },
     };
   } catch (error) {
-    console.error('❌ Failed to parse deep link:', error);
+    logger.error('❌ Failed to parse deep link:', error);
     return null;
   }
 }
@@ -274,7 +275,7 @@ export function handleDeepLink(
     const linkData = parseDeepLink(url);
 
     if (!linkData) {
-      console.warn('⚠️ Could not parse deep link:', url);
+      logger.warn('⚠️ Could not parse deep link:', url);
       return false;
     }
 
@@ -294,7 +295,7 @@ export function handleDeepLink(
     // Navigate based on link type
     return navigateFromDeepLink(linkData, navigationRef, isAuthenticated);
   } catch (error) {
-    console.error('❌ Failed to handle deep link:', error);
+    logger.error('❌ Failed to handle deep link:', error);
     return false;
   }
 }
@@ -308,7 +309,7 @@ function navigateFromDeepLink(
   isAuthenticated: boolean
 ): boolean {
   if (!navigationRef) {
-    console.warn('⚠️ Navigation ref not available');
+    logger.warn('⚠️ Navigation ref not available');
     return false;
   }
 
@@ -373,7 +374,7 @@ function navigateFromDeepLink(
         return true;
     }
   } catch (error) {
-    console.error('❌ Failed to navigate from deep link:', error);
+    logger.error('❌ Failed to navigate from deep link:', error);
     return false;
   }
 
@@ -391,7 +392,7 @@ export function addDeepLinkListener(
   handler: (url: string) => void
 ): Linking.URLListener {
   const listener = ({ url }: { url: string }) => {
-    console.log('🔗 Deep link received:', url);
+    logger.debug('🔗 Deep link received:', url);
     handler(url);
   };
 
@@ -409,7 +410,7 @@ export async function getInitialDeepLink(): Promise<string | null> {
     const url = await Linking.getInitialURL();
 
     if (url) {
-      console.log('🔗 Initial deep link:', url);
+      logger.debug('🔗 Initial deep link:', url);
 
       // Track analytics
       trackEvent('deep_link_initial', { url });
@@ -420,7 +421,7 @@ export async function getInitialDeepLink(): Promise<string | null> {
 
     return url;
   } catch (error) {
-    console.error('❌ Failed to get initial deep link:', error);
+    logger.error('❌ Failed to get initial deep link:', error);
     return null;
   }
 }
@@ -433,7 +434,7 @@ export async function canOpenURL(url: string): Promise<boolean> {
     const supported = await Linking.canOpenURL(url);
     return supported;
   } catch (error) {
-    console.error('❌ Failed to check if URL can be opened:', error);
+    logger.error('❌ Failed to check if URL can be opened:', error);
     return false;
   }
 }
@@ -453,11 +454,11 @@ export async function openURL(url: string): Promise<boolean> {
 
       return true;
     } else {
-      console.warn(`⚠️ Cannot open URL: ${url}`);
+      logger.warn(`⚠️ Cannot open URL: ${url}`);
       return false;
     }
   } catch (error) {
-    console.error('❌ Failed to open URL:', error);
+    logger.error('❌ Failed to open URL:', error);
     return false;
   }
 }

@@ -66,10 +66,10 @@ export interface Theme {
 export const darkTheme: Theme = {
   mode: 'dark',
   colors: {
-    // Base - Premium Dark (Slate)
-    background: '#0f172a',           // Slate 900 (Main BG)
-    surface: '#1e293b',              // Slate 800 (Card BG / Header)
-    overlay: 'rgba(15, 23, 42, 0.8)', // Slate 900 with opacity
+    // Base - Premium Dark (Pure Black/Dark Grey)
+    background: '#050505',           // Almost Black (Main BG)
+    surface: '#121212',              // Dark Grey (Card BG / Header)
+    overlay: 'rgba(5, 5, 5, 0.8)',   // Dark overlay
 
     // Text
     text: {
@@ -80,8 +80,8 @@ export const darkTheme: Theme = {
     },
 
     // Brand
-    primary: '#3b82f6',              // Blue 500 (Web Active Tab)
-    primaryGlow: 'rgba(59, 130, 246, 0.3)',
+    primary: '#4BC41E',              // Neon Green (GoalGPT Brand)
+    primaryGlow: 'rgba(75, 196, 30, 0.4)',
 
     // Semantic
     success: '#22c55e',              // Green 500
@@ -97,7 +97,7 @@ export const darkTheme: Theme = {
     vip: '#f59e0b',
 
     // Borders
-    border: '#334155',               // Slate 700 (Subtle borders)
+    border: 'rgba(23, 80, 61, 0.5)', // Dark Green (Forest) @ 50% opacity
     divider: '#1e293b',              // Slate 800
   },
   typography,

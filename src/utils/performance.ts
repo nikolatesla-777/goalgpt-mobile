@@ -9,6 +9,7 @@
 
 import { useEffect, useRef } from 'react';
 import { isDev } from '../config/env';
+import logger from './logger';
 
 // ============================================================================
 // TYPES
@@ -61,7 +62,7 @@ class PerformanceTracker {
 
     // Log slow renders (>16ms = below 60fps)
     if (renderTime > 16) {
-      console.warn(
+      logger.warn(
         `⚠️ Slow render detected: ${componentName} took ${renderTime.toFixed(2)}ms`
       );
     }
@@ -171,7 +172,7 @@ export function useWhyDidYouUpdate(componentName: string, props: Record<string, 
       });
 
       if (Object.keys(changedProps).length > 0) {
-        console.log(`🔄 ${componentName} re-rendered. Changed props:`, changedProps);
+        logger.debug(`🔄 ${componentName} re-rendered. Changed props:`, changedProps);
       }
     }
 
@@ -190,7 +191,7 @@ export function useRenderCount(componentName: string): number {
   renderCount.current += 1;
 
   if (isDev && renderCount.current > 10) {
-    console.warn(
+    logger.warn(
       `⚠️ ${componentName} has rendered ${renderCount.current} times. Consider optimization.`
     );
   }
@@ -209,7 +210,7 @@ export function useMountEffect(
 ): void {
   useEffect(() => {
     const mountTime = performance.now();
-    console.log(`🟢 ${componentName} mounted at ${mountTime.toFixed(2)}ms`);
+    logger.debug(`🟢 ${componentName} mounted at ${mountTime.toFixed(2)}ms`);
 
     if (onMount) {
       onMount();
@@ -218,7 +219,7 @@ export function useMountEffect(
     return () => {
       const unmountTime = performance.now();
       const lifetime = unmountTime - mountTime;
-      console.log(`🔴 ${componentName} unmounted after ${lifetime.toFixed(2)}ms`);
+      logger.debug(`🔴 ${componentName} unmounted after ${lifetime.toFixed(2)}ms`);
 
       if (onUnmount) {
         onUnmount();
@@ -242,7 +243,7 @@ export function measureTime<T>(name: string, fn: () => T): T {
   const duration = end - start;
 
   if (isDev) {
-    console.log(`⏱️ ${name} took ${duration.toFixed(2)}ms`);
+    logger.debug(`⏱️ ${name} took ${duration.toFixed(2)}ms`);
   }
 
   return result;
@@ -258,7 +259,7 @@ export async function measureTimeAsync<T>(name: string, fn: () => Promise<T>): P
   const duration = end - start;
 
   if (isDev) {
-    console.log(`⏱️ ${name} took ${duration.toFixed(2)}ms`);
+    logger.debug(`⏱️ ${name} took ${duration.toFixed(2)}ms`);
   }
 
   return result;
@@ -270,7 +271,7 @@ export async function measureTimeAsync<T>(name: string, fn: () => Promise<T>): P
 export function mark(name: string): void {
   if (isDev) {
     performance.mark(name);
-    console.log(`📍 Performance mark: ${name}`);
+    logger.debug(`📍 Performance mark: ${name}`);
   }
 }
 
@@ -282,11 +283,11 @@ export function measure(name: string, startMark: string, endMark: string): numbe
 
   try {
     performance.measure(name, startMark, endMark);
-    const measure = performance.getEntriesByName(name)[0] as PerformanceMeasure;
-    console.log(`📏 ${name}: ${measure.duration.toFixed(2)}ms`);
-    return measure.duration;
+    const measureEntry = performance.getEntriesByName(name)[0] as PerformanceMeasure;
+    logger.debug(`📏 ${name}: ${measureEntry.duration.toFixed(2)}ms`);
+    return measureEntry.duration;
   } catch (error) {
-    console.error(`❌ Failed to measure ${name}:`, error);
+    logger.error(`❌ Failed to measure ${name}:`, error);
     return null;
   }
 }
@@ -317,9 +318,9 @@ export function logMemoryUsage(): void {
     const totalMB = (totalJSHeapSize / 1024 / 1024).toFixed(2);
     const limitMB = (jsHeapSizeLimit / 1024 / 1024).toFixed(2);
 
-    console.log(`💾 Memory: ${usedMB}MB / ${totalMB}MB (Limit: ${limitMB}MB)`);
+    logger.debug(`💾 Memory: ${usedMB}MB / ${totalMB}MB (Limit: ${limitMB}MB)`);
   } else {
-    console.log('💾 Memory API not available');
+    logger.debug('💾 Memory API not available');
   }
 }
 

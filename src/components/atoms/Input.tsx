@@ -18,6 +18,7 @@ import {
 } from 'react-native';
 import { useTheme } from '../../theme/ThemeProvider';
 import { typography, spacing, borderRadius } from '../../constants/tokens';
+import { Ionicons } from '@expo/vector-icons';
 
 // ============================================================================
 // TYPES
@@ -114,9 +115,7 @@ export const Input: React.FC<InputProps> = ({
             autoCorrect: false,
           },
           rightIcon: (
-            <Text style={{ fontSize: 18 }}>
-              {showPassword ? '👁️' : '👁️‍🗨️'}
-            </Text>
+            <Ionicons name={showPassword ? 'eye-outline' : 'eye-off-outline'} size={20} color="#8E8E93" />
           ),
           onRightIconPress: () => setShowPassword(!showPassword),
         };
@@ -125,9 +124,9 @@ export const Input: React.FC<InputProps> = ({
           textInputProps: {
             autoCapitalize: 'none' as const,
           },
-          leftIcon: <Text style={{ fontSize: 18 }}>🔍</Text>,
+          leftIcon: <Ionicons name="search-outline" size={20} color="#8E8E93" />,
           rightIcon: value ? (
-            <Text style={{ fontSize: 16 }}>✕</Text>
+            <Ionicons name="close-circle-outline" size={18} color="#8E8E93" />
           ) : null,
         };
       case 'email':
@@ -137,14 +136,14 @@ export const Input: React.FC<InputProps> = ({
             autoCapitalize: 'none' as const,
             autoCorrect: false,
           },
-          leftIcon: <Text style={{ fontSize: 16 }}>✉️</Text>,
+          leftIcon: <Ionicons name="mail-outline" size={20} color="#8E8E93" />,
         };
       case 'phone':
         return {
           textInputProps: {
             keyboardType: 'phone-pad' as const,
           },
-          leftIcon: <Text style={{ fontSize: 16 }}>📱</Text>,
+          leftIcon: <Ionicons name="call-outline" size={20} color="#8E8E93" />,
         };
       default:
         return {
@@ -185,8 +184,8 @@ export const Input: React.FC<InputProps> = ({
     borderColor: error
       ? theme.colors.error
       : isFocused
-      ? theme.colors.primary
-      : 'rgba(255, 255, 255, 0.1)', // More visible border
+        ? theme.colors.primary
+        : 'rgba(255, 255, 255, 0.1)', // More visible border
     paddingHorizontal: spacing.md,
     minHeight: 52,
     ...(isFocused && {

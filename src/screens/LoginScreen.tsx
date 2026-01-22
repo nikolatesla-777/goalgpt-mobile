@@ -15,8 +15,12 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  Image,
+  ImageBackground,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 import { Button } from '../components/atoms/Button';
 import { EmailInput, PasswordInput } from '../components/atoms/Input';
 import { useTheme } from '../theme/ThemeProvider';
@@ -89,121 +93,141 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
   // ============================================================================
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
-      <KeyboardAvoidingView
+    <ImageBackground
+      source={require('../../assets/images/matrix-background.png')}
+      style={styles.container}
+      resizeMode="cover"
+    >
+      <LinearGradient
+        colors={['rgba(0,0,0,0.85)', '#0A2E16']} // Overlay gradient: very dark (85%) to dark green
+        start={{ x: 0.5, y: 0.1 }}
+        end={{ x: 0.5, y: 1 }}
         style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={0}
       >
-        {/* Back Button */}
-        {onBack && (
-          <View style={styles.header}>
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={onBack}
-              activeOpacity={0.7}
+        <SafeAreaView style={styles.safeArea} edges={['top']}>
+          <KeyboardAvoidingView
+            style={styles.container}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            keyboardVerticalOffset={0}
+          >
+            {/* Back Button */}
+            {onBack && (
+              <View style={styles.header}>
+                <TouchableOpacity
+                  style={styles.backButton}
+                  onPress={onBack}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
+                  <Text style={styles.backText}>Back</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+            <ScrollView
+              contentContainerStyle={styles.scrollContent}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+              bounces={false}
             >
-              <Text style={styles.backIcon}>←</Text>
-              <Text style={styles.backText}>Back</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+              {/* Logo */}
+              <View style={styles.logoContainer}>
+                <View style={styles.logoWrapper}>
+                  <Image
+                    source={require('../../assets/images/goalgpt-logo-new.png')}
+                    style={styles.logoImage}
+                    resizeMode="contain"
+                  />
+                </View>
+              </View>
 
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-          bounces={false}
-        >
-          {/* Logo */}
-          <View style={styles.logoContainer}>
-            <Text style={styles.logo}>⚽</Text>
-          </View>
+              {/* Title */}
+              <Text style={styles.title}>Welcome Back</Text>
 
-        {/* Title */}
-        <Text style={styles.title}>Welcome Back</Text>
+              {/* Email Input */}
+              <EmailInput
+                label="Email"
+                placeholder="Enter your email"
+                value={email}
+                onChangeText={setEmail}
+                autoCapitalize="none"
+                error={auth.error ? undefined : undefined}
+              />
 
-        {/* Email Input */}
-        <EmailInput
-          label="Email or Username"
-          placeholder="Enter your email"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-        />
+              {/* Password Input */}
+              <PasswordInput
+                label="Password"
+                placeholder="Enter your password"
+                value={password}
+                onChangeText={setPassword}
+              />
 
-        {/* Password Input */}
-        <PasswordInput
-          label="Password"
-          placeholder="Enter your password"
-          value={password}
-          onChangeText={setPassword}
-        />
+              {/* Forgot Password */}
+              <TouchableOpacity onPress={onForgotPassword} activeOpacity={0.7}>
+                <Text style={styles.forgotPassword}>Forgot Password?</Text>
+              </TouchableOpacity>
 
-        {/* Forgot Password */}
-        <TouchableOpacity onPress={onForgotPassword} activeOpacity={0.7}>
-          <Text style={styles.forgotPassword}>Forgot Password?</Text>
-        </TouchableOpacity>
+              {/* Login Button */}
+              <Button
+                variant="primary"
+                size="large"
+                fullWidth
+                onPress={handleLogin}
+                disabled={!email || !password || auth.isLoading}
+                style={styles.loginButton}
+              >
+                {auth.isLoading ? 'Logging in...' : 'Log In'}
+              </Button>
 
-        {/* Login Button */}
-        <Button
-          variant="primary"
-          size="large"
-          fullWidth
-          onPress={handleLogin}
-          disabled={!email || !password || auth.isLoading}
-          style={styles.loginButton}
-        >
-          {auth.isLoading ? 'Logging in...' : 'Log In'}
-        </Button>
+              {/* Divider */}
+              <View style={styles.divider}>
+                <View style={styles.dividerLine} />
+                <Text style={styles.dividerText}>OR</Text>
+                <View style={styles.dividerLine} />
+              </View>
 
-        {/* Divider */}
-        <View style={styles.divider}>
-          <View style={styles.dividerLine} />
-          <Text style={styles.dividerText}>OR</Text>
-          <View style={styles.dividerLine} />
-        </View>
+              {/* Social Auth Buttons */}
+              <View style={styles.socialButtonGroup}>
+                <TouchableOpacity
+                  style={styles.socialButton}
+                  onPress={() => handleSocialAuth('google')}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons name="logo-google" size={20} color="#FFFFFF" />
+                  <Text style={styles.socialButtonText}>Continue with Google</Text>
+                </TouchableOpacity>
 
-        {/* Social Auth Buttons */}
-        <View style={styles.socialButtonGroup}>
-          <TouchableOpacity
-            style={styles.socialButton}
-            onPress={() => handleSocialAuth('google')}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.socialIcon}>🔴</Text>
-            <Text style={styles.socialButtonText}>Continue with Google</Text>
-          </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.socialButton}
+                  onPress={() => handleSocialAuth('apple')}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons name="logo-apple" size={20} color="#FFFFFF" />
+                  <Text style={styles.socialButtonText}>Continue with Apple</Text>
+                </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.socialButton}
-            onPress={() => handleSocialAuth('apple')}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.socialIcon}>🍎</Text>
-            <Text style={styles.socialButtonText}>Continue with Apple</Text>
-          </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.socialButton}
+                  onPress={() => handleSocialAuth('phone')}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons name="call-outline" size={20} color="#FFFFFF" />
+                  <Text style={styles.socialButtonText}>Continue with Phone</Text>
+                </TouchableOpacity>
+              </View>
 
-          <TouchableOpacity
-            style={styles.socialButton}
-            onPress={() => handleSocialAuth('phone')}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.socialIcon}>📱</Text>
-            <Text style={styles.socialButtonText}>Continue with Phone</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Sign Up Link */}
-        <View style={styles.signUpContainer}>
-          <Text style={styles.signUpText}>Don't have an account? </Text>
-          <TouchableOpacity onPress={onNavigateToRegister} activeOpacity={0.7}>
-            <Text style={styles.signUpLink}>Sign Up</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
-    </SafeAreaView>
+              {/* Sign Up Link */}
+              <View style={styles.signUpContainer}>
+                <Text style={styles.signUpText}>Don't have an account? </Text>
+                <TouchableOpacity onPress={onNavigateToRegister} activeOpacity={0.7}>
+                  <Text style={styles.signUpLink}>Sign Up</Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </SafeAreaView>
+      </LinearGradient>
+    </ImageBackground>
   );
 };
 
@@ -214,7 +238,6 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#000000',
   },
   container: {
     flex: 1,
@@ -246,8 +269,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 32,
   },
-  logo: {
-    fontSize: 80,
+  logoWrapper: {
+    width: 120,
+    height: 120,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#4BC41E',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 20,
+  },
+  logoImage: {
+    width: 100,
+    height: 100,
   },
   title: {
     fontFamily: typography.fonts.ui.bold,

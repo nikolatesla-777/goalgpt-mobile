@@ -5,6 +5,7 @@
 
 import { cache, CacheKeys } from './cache';
 import { AppState, AppStateStatus } from 'react-native';
+import { logger } from './logger';
 
 // ============================================================================
 // CACHE MANAGER
@@ -17,7 +18,7 @@ export const cacheManager = {
    */
   clearUserCache: async (): Promise<void> => {
     try {
-      console.log('🗑️ Clearing user cache...');
+      logger.debug('[Cache] Clearing user cache...');
 
       await Promise.all([
         cache.remove(CacheKeys.USER_STATS),
@@ -25,9 +26,9 @@ export const cacheManager = {
         cache.remove(CacheKeys.MATCHED_PREDICTIONS),
       ]);
 
-      console.log('✅ User cache cleared');
+      logger.debug('[Cache] User cache cleared');
     } catch (error) {
-      console.error('❌ Failed to clear user cache:', error);
+      logger.error('Failed to clear user cache:', error as Error);
     }
   },
 
@@ -37,13 +38,13 @@ export const cacheManager = {
    */
   clearMatchCache: async (): Promise<void> => {
     try {
-      console.log('🗑️ Clearing match cache...');
+      logger.debug('[Cache] Clearing match cache...');
 
       await cache.remove(CacheKeys.LIVE_MATCHES);
 
-      console.log('✅ Match cache cleared');
+      logger.debug('[Cache] Match cache cleared');
     } catch (error) {
-      console.error('❌ Failed to clear match cache:', error);
+      logger.error('Failed to clear match cache:', error as Error);
     }
   },
 
@@ -53,13 +54,13 @@ export const cacheManager = {
    */
   clearAllCache: async (): Promise<void> => {
     try {
-      console.log('🗑️ Clearing all cache...');
+      logger.debug('[Cache] Clearing all cache...');
 
       await cache.clearAll();
 
-      console.log('✅ All cache cleared');
+      logger.debug('[Cache] All cache cleared');
     } catch (error) {
-      console.error('❌ Failed to clear all cache:', error);
+      logger.error('Failed to clear all cache:', error as Error);
     }
   },
 
@@ -76,9 +77,9 @@ export const cacheManager = {
         cache.remove(CacheKeys.MATCH_PREDICTIONS(matchId)),
       ]);
 
-      console.log(`✅ Cache invalidated for match ${matchId}`);
+      logger.debug(`[Cache] Invalidated for match ${matchId}`);
     } catch (error) {
-      console.error(`❌ Failed to invalidate match cache for ${matchId}:`, error);
+      logger.error(`Failed to invalidate match cache for ${matchId}:`, error as Error);
     }
   },
 
@@ -93,9 +94,9 @@ export const cacheManager = {
         cache.remove(CacheKeys.TEAM_STANDINGS(teamId)),
       ]);
 
-      console.log(`✅ Cache invalidated for team ${teamId}`);
+      logger.debug(`[Cache] Invalidated for team ${teamId}`);
     } catch (error) {
-      console.error(`❌ Failed to invalidate team cache for ${teamId}:`, error);
+      logger.error(`Failed to invalidate team cache for ${teamId}:`, error as Error);
     }
   },
 
@@ -110,9 +111,9 @@ export const cacheManager = {
         cache.remove(CacheKeys.LEAGUE_STANDINGS(leagueId)),
       ]);
 
-      console.log(`✅ Cache invalidated for league ${leagueId}`);
+      logger.debug(`[Cache] Invalidated for league ${leagueId}`);
     } catch (error) {
-      console.error(`❌ Failed to invalidate league cache for ${leagueId}:`, error);
+      logger.error(`Failed to invalidate league cache for ${leagueId}:`, error as Error);
     }
   },
 };
@@ -131,7 +132,7 @@ export const setupAppStateCacheListener = (onForeground?: () => void): (() => vo
   const handleAppStateChange = (nextAppState: AppStateStatus) => {
     // App came to foreground
     if (previousState.match(/inactive|background/) && nextAppState === 'active') {
-      console.log('📱 App came to foreground');
+      logger.debug('[AppState] App came to foreground');
 
       // Optionally clear stale cache or trigger refresh
       // You can customize this behavior
@@ -142,7 +143,7 @@ export const setupAppStateCacheListener = (onForeground?: () => void): (() => vo
 
     // App went to background
     if (previousState === 'active' && nextAppState.match(/inactive|background/)) {
-      console.log('📱 App went to background');
+      logger.debug('[AppState] App went to background');
       // Optionally save state or pause operations
     }
 
@@ -176,7 +177,7 @@ export const getCacheStats = async (): Promise<{
       cacheKeys,
     };
   } catch (error) {
-    console.error('❌ Failed to get cache stats:', error);
+    logger.error('Failed to get cache stats:', error as Error);
     return {
       totalKeys: 0,
       cacheKeys: [],

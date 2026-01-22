@@ -8,6 +8,7 @@ import apiClient, { handleApiError } from '../api/client';
 import { API_ENDPOINTS } from '../constants/api';
 import type { PredictionItem } from '../components/organisms/PredictionsList';
 import type { PredictionResult, PredictionTier } from '../components/molecules/PredictionCard';
+import { logger } from '../utils/logger';
 
 // Raw Backend Interface (Matches Web)
 export interface AIPrediction {
@@ -47,10 +48,60 @@ export interface AIPrediction {
   access_type?: 'VIP' | 'PREMIUM' | 'FREE';
 }
 
+/**
+ * Raw prediction response from backend API
+ * Defines all possible fields that may be returned
+ */
+export interface RawPredictionResponse {
+  // Identifiers
+  id?: string;
+  external_id?: string;
+  match_id?: string;
+
+  // Timestamps
+  created_at?: string;
+
+  // Bot Info
+  bot_name?: string;
+  canonical_bot_name?: string;
+  overall_confidence?: number;
+
+  // Match Info
+  country_name?: string;
+  country_logo?: string;
+  league_name?: string;
+  competition_name?: string;
+  home_team_name?: string;
+  away_team_name?: string;
+  home_team_db_name?: string;
+  away_team_db_name?: string;
+  home_team_logo?: string;
+  away_team_logo?: string;
+
+  // Scores & Status
+  home_score_display?: number;
+  away_score_display?: number;
+  final_score?: string;
+  live_match_status?: number;
+  live_match_minute?: number;
+  match_minute?: number;
+  match_status_id?: number;
+
+  // Prediction
+  prediction?: string;
+  prediction_value?: string;
+  prediction_type?: string;
+  prediction_result?: 'winner' | 'loser' | 'pending' | 'void';
+  result?: 'won' | 'lost' | 'pending' | 'void';
+  score_at_prediction?: string;
+  minute_at_prediction?: number;
+  access_type?: 'VIP' | 'PREMIUM' | 'FREE';
+}
+
 export interface MatchedPredictionsResponse {
   success: boolean;
   data: {
-    predictions: any[];
+    predictions: RawPredictionResponse[];
     total: number;
     stats?: {
       totalPredictions: number;
@@ -60,20 +111,25 @@ export interface MatchedPredictionsResponse {
       winRate: number;
     };
   };
+  // Alternative structure (some endpoints return predictions directly)
+  predictions?: RawPredictionResponse[];
 }
 
 export interface MatchPredictionsResponse {
   success: boolean;
   data: {
-    predictions: any[];
+    predictions: RawPredictionResponse[];
     matchId: string | number;
   };
+  // Alternative structure
+  predictions?: RawPredictionResponse[];
 }
 
 /**
  * Transform backend prediction data to mobile app format
+ * @param pred - Raw prediction from API (properly typed)
  */
-function transformPrediction(pred: any): PredictionItem {
+function transformPrediction(pred: RawPredictionResponse): PredictionItem {
   // Map backend result to mobile app result
   const result: PredictionResult =
     pred.result === 'won' || pred.prediction_result === 'winner' ? 'win' :
@@ -112,8 +168,8 @@ function transformPrediction(pred: any): PredictionItem {
   }
 
   return {
-    id: pred.id || pred.external_id,
-    predictionId: pred.id || pred.external_id,
+    id: pred.id || pred.external_id || '',
+    predictionId: pred.id || pred.external_id || '',
     matchId: pred.match_id,
     bot: {
       id: botId,
@@ -158,13 +214,13 @@ export async function getMatchedPredictions(): Promise<PredictionItem[]> {
       API_ENDPOINTS.PREDICTIONS.MATCHED
     );
     const predictions = response.data.data?.predictions || response.data.predictions || [];
-    console.log('📊 First prediction from backend:', predictions[0]);
+    logger.debug('[Predictions] First prediction from backend:', { prediction: predictions[0] });
     const transformed = predictions.map(transformPrediction);
-    console.log('📊 First transformed prediction:', transformed[0]);
+    logger.debug('[Predictions] First transformed prediction:', { prediction: transformed[0] });
     return transformed;
   } catch (error) {
     const apiError = handleApiError(error);
-    console.error('❌ getMatchedPredictions error:', apiError.message);
+    logger.error('getMatchedPredictions error:', new Error(apiError.message));
     throw apiError;
   }
 }
@@ -182,7 +238,7 @@ export async function getPredictionsForMatch(matchId: string | number): Promise<
     return predictions.map(transformPrediction);
   } catch (error) {
     const apiError = handleApiError(error);
-    console.error('❌ getPredictionsForMatch error:', apiError.message);
+    logger.error('getPredictionsForMatch error:', new Error(apiError.message));
     throw apiError;
   }
 }
@@ -217,7 +273,7 @@ export async function getTopPredictions(limit: number = 10): Promise<PredictionI
     return topPredictions;
   } catch (error) {
     const apiError = handleApiError(error);
-    console.error('❌ getTopPredictions error:', apiError.message);
+    logger.error('getTopPredictions error:', new Error(apiError.message));
     throw apiError;
   }
 }
@@ -238,7 +294,7 @@ export async function getFreePredictions(limit: number = 5): Promise<PredictionI
     return freePredictions;
   } catch (error) {
     const apiError = handleApiError(error);
-    console.error('❌ getFreePredictions error:', apiError.message);
+    logger.error('getFreePredictions error:', new Error(apiError.message));
     throw apiError;
   }
 }

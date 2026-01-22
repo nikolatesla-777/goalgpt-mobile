@@ -15,8 +15,12 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  Image,
+  ImageBackground,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 import { Button } from '../components/atoms/Button';
 import { Input, EmailInput, PasswordInput } from '../components/atoms/Input';
 import { useTheme } from '../theme/ThemeProvider';
@@ -57,6 +61,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [referralCode, setReferralCode] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   // ============================================================================
@@ -98,7 +103,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
     if (!validateForm()) return;
 
     try {
-      await auth.signUpWithEmail(email, password, name);
+      await auth.signUpWithEmail(email, password, name, referralCode);
       // If successful, AuthContext will update state and trigger navigation
       onRegisterSuccess?.();
     } catch (error: any) {
@@ -116,146 +121,175 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
   // ============================================================================
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
-      <KeyboardAvoidingView
+    <ImageBackground
+      source={require('../../assets/images/matrix-background.png')}
+      style={styles.container}
+      resizeMode="cover"
+    >
+      <LinearGradient
+        colors={['rgba(0,0,0,0.85)', '#0A2E16']} // Overlay gradient: very dark (85%) to dark green
+        start={{ x: 0.5, y: 0.1 }}
+        end={{ x: 0.5, y: 1 }}
         style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={0}
       >
-        {/* Back Button */}
-        {onBack && (
-          <View style={styles.header}>
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={onBack}
-              activeOpacity={0.7}
+        <SafeAreaView style={styles.safeArea} edges={['top']}>
+          <KeyboardAvoidingView
+            style={styles.container}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            keyboardVerticalOffset={0}
+          >
+            {/* Back Button */}
+            {onBack && (
+              <View style={styles.header}>
+                <TouchableOpacity
+                  style={styles.backButton}
+                  onPress={onBack}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
+                  <Text style={styles.backText}>Back</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+            <ScrollView
+              contentContainerStyle={styles.scrollContent}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+              bounces={false}
             >
-              <Text style={styles.backIcon}>←</Text>
-              <Text style={styles.backText}>Back</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+              {/* Logo */}
+              <View style={styles.logoContainer}>
+                <View style={styles.logoWrapper}>
+                  <Image
+                    source={require('../../assets/images/goalgpt-logo-new.png')}
+                    style={styles.logoImage}
+                    resizeMode="contain"
+                  />
+                </View>
+              </View>
 
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-          bounces={false}
-        >
-          {/* Logo */}
-          <View style={styles.logoContainer}>
-            <Text style={styles.logo}>⚽</Text>
-          </View>
+              {/* Title */}
+              <Text style={styles.title}>Create Account</Text>
 
-        {/* Title */}
-        <Text style={styles.title}>Create Account</Text>
+              {/* Name Input */}
+              <Input
+                label="Full Name"
+                placeholder="Enter your name"
+                value={name}
+                onChangeText={setName}
+                error={errors.name}
+                leftIcon={<Ionicons name="person-outline" size={20} color="#8E8E93" />}
+              />
 
-        {/* Name Input */}
-        <Input
-          label="Full Name"
-          placeholder="Enter your name"
-          value={name}
-          onChangeText={setName}
-          error={errors.name}
-          leftIcon={<Text style={styles.inputIcon}>👤</Text>}
-        />
+              {/* Email Input */}
+              <EmailInput
+                label="Email"
+                placeholder="Enter your email"
+                value={email}
+                onChangeText={setEmail}
+                error={errors.email}
+              />
 
-        {/* Email Input */}
-        <EmailInput
-          label="Email"
-          placeholder="Enter your email"
-          value={email}
-          onChangeText={setEmail}
-          error={errors.email}
-        />
+              {/* Password Input */}
+              <PasswordInput
+                label="Password"
+                placeholder="Enter your password"
+                value={password}
+                onChangeText={setPassword}
+                error={errors.password}
+                helperText="Minimum 6 characters"
+              />
 
-        {/* Password Input */}
-        <PasswordInput
-          label="Password"
-          placeholder="Enter your password"
-          value={password}
-          onChangeText={setPassword}
-          error={errors.password}
-          helperText="Minimum 6 characters"
-        />
+              {/* Confirm Password Input */}
+              <PasswordInput
+                label="Confirm Password"
+                placeholder="Re-enter your password"
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                error={errors.confirmPassword}
+              />
 
-        {/* Confirm Password Input */}
-        <PasswordInput
-          label="Confirm Password"
-          placeholder="Re-enter your password"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          error={errors.confirmPassword}
-        />
+              {/* Optional Referral Code Input */}
+              <Input
+                label="Referral Code (Optional)"
+                placeholder="Partner Reference Code"
+                value={referralCode}
+                onChangeText={setReferralCode}
+                autoCapitalize="characters"
+                leftIcon={<Ionicons name="ticket-outline" size={20} color="#8E8E93" />}
+              />
 
-        {/* Terms & Conditions */}
-        <View style={styles.termsContainer}>
-          <Text style={styles.termsText}>
-            By signing up, you agree to our{' '}
-            <Text style={styles.termsLink}>Terms of Service</Text> and{' '}
-            <Text style={styles.termsLink}>Privacy Policy</Text>
-          </Text>
-        </View>
+              {/* Terms & Conditions */}
+              <View style={styles.termsContainer}>
+                <Text style={styles.termsText}>
+                  By signing up, you agree to our{' '}
+                  <Text style={styles.termsLink}>Terms of Service</Text> and{' '}
+                  <Text style={styles.termsLink}>Privacy Policy</Text>
+                </Text>
+              </View>
 
-        {/* Register Button */}
-        <Button
-          variant="primary"
-          size="large"
-          fullWidth
-          onPress={handleRegister}
-          disabled={!name || !email || !password || !confirmPassword || auth.isLoading}
-          style={styles.registerButton}
-        >
-          {auth.isLoading ? 'Creating Account...' : 'Sign Up'}
-        </Button>
+              {/* Register Button */}
+              <Button
+                variant="primary"
+                size="large"
+                fullWidth
+                onPress={handleRegister}
+                disabled={!name || !email || !password || !confirmPassword || auth.isLoading}
+                style={styles.registerButton}
+              >
+                {auth.isLoading ? 'Creating Account...' : 'Sign Up'}
+              </Button>
 
-        {/* Divider */}
-        <View style={styles.divider}>
-          <View style={styles.dividerLine} />
-          <Text style={styles.dividerText}>OR</Text>
-          <View style={styles.dividerLine} />
-        </View>
+              {/* Divider */}
+              <View style={styles.divider}>
+                <View style={styles.dividerLine} />
+                <Text style={styles.dividerText}>OR</Text>
+                <View style={styles.dividerLine} />
+              </View>
 
-        {/* Social Auth Buttons */}
-        <View style={styles.socialButtonGroup}>
-          <TouchableOpacity
-            style={styles.socialButton}
-            onPress={() => handleSocialAuth('google')}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.socialIcon}>🔴</Text>
-            <Text style={styles.socialButtonText}>Continue with Google</Text>
-          </TouchableOpacity>
+              {/* Social Auth Buttons */}
+              <View style={styles.socialButtonGroup}>
+                <TouchableOpacity
+                  style={styles.socialButton}
+                  onPress={() => handleSocialAuth('google')}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons name="logo-google" size={20} color="#FFFFFF" />
+                  <Text style={styles.socialButtonText}>Continue with Google</Text>
+                </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.socialButton}
-            onPress={() => handleSocialAuth('apple')}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.socialIcon}>🍎</Text>
-            <Text style={styles.socialButtonText}>Continue with Apple</Text>
-          </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.socialButton}
+                  onPress={() => handleSocialAuth('apple')}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons name="logo-apple" size={20} color="#FFFFFF" />
+                  <Text style={styles.socialButtonText}>Continue with Apple</Text>
+                </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.socialButton}
-            onPress={() => handleSocialAuth('phone')}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.socialIcon}>📱</Text>
-            <Text style={styles.socialButtonText}>Continue with Phone</Text>
-          </TouchableOpacity>
-        </View>
+                <TouchableOpacity
+                  style={styles.socialButton}
+                  onPress={() => handleSocialAuth('phone')}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons name="call-outline" size={20} color="#FFFFFF" />
+                  <Text style={styles.socialButtonText}>Continue with Phone</Text>
+                </TouchableOpacity>
+              </View>
 
-        {/* Login Link */}
-        <View style={styles.loginContainer}>
-          <Text style={styles.loginText}>Already have an account? </Text>
-          <TouchableOpacity onPress={onNavigateToLogin} activeOpacity={0.7}>
-            <Text style={styles.loginLink}>Log In</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
-    </SafeAreaView>
+              {/* Sign In Link */}
+              <View style={styles.signUpContainer}>
+                <Text style={styles.signUpText}>Already have an account? </Text>
+                <TouchableOpacity onPress={onNavigateToLogin} activeOpacity={0.7}>
+                  <Text style={styles.signUpLink}>Log In</Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </SafeAreaView>
+      </LinearGradient>
+    </ImageBackground>
   );
 };
 
@@ -266,7 +300,6 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#000000',
   },
   container: {
     flex: 1,
@@ -298,8 +331,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 32,
   },
-  logo: {
-    fontSize: 80,
+  logoWrapper: {
+    width: 120,
+    height: 120,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#4BC41E',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 20,
+  },
+  logoImage: {
+    width: 100,
+    height: 100,
   },
   title: {
     fontFamily: typography.fonts.ui.bold,
@@ -367,17 +411,17 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#FFFFFF',
   },
-  loginContainer: {
+  signUpContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  loginText: {
+  signUpText: {
     fontFamily: typography.fonts.ui.regular,
     fontSize: 14,
     color: '#8E8E93',
   },
-  loginLink: {
+  signUpLink: {
     fontFamily: typography.fonts.ui.semibold,
     fontSize: 14,
     color: '#4BC41E',

@@ -13,6 +13,7 @@ import type {
   TeamFavorite,
   FAVORITES_STORAGE_KEY,
 } from '../types/favorites.types';
+import { logger } from '../utils/logger';
 
 // ============================================================================
 // STORAGE KEY
@@ -45,7 +46,7 @@ export async function loadFavorites(): Promise<FavoritesStorage> {
     const parsed: FavoritesStorage = JSON.parse(data);
     return parsed;
   } catch (error) {
-    console.error('❌ Failed to load favorites:', error);
+    logger.error('Failed to load favorites:', error as Error);
     return DEFAULT_STORAGE;
   }
 }
@@ -61,9 +62,9 @@ export async function saveFavorites(favorites: FavoritesStorage): Promise<void> 
       lastUpdated: new Date().toISOString(),
     });
     await AsyncStorage.setItem(STORAGE_KEY, data);
-    console.log('✅ Favorites saved');
+    logger.debug('[Favorites] Saved');
   } catch (error) {
-    console.error('❌ Failed to save favorites:', error);
+    logger.error('Failed to save favorites:', error as Error);
     throw error;
   }
 }
@@ -84,7 +85,7 @@ export async function addMatchFavorite(
     // Check if already favorited
     const exists = favorites.matches.find((m) => m.matchId === match.matchId);
     if (exists) {
-      console.log('⚠️ Match already favorited');
+      logger.debug('[Favorites] Match already favorited');
       return exists;
     }
 
@@ -102,10 +103,10 @@ export async function addMatchFavorite(
     // Save
     await saveFavorites(favorites);
 
-    console.log('✅ Match added to favorites:', match.matchId);
+    logger.debug('[Favorites] Match added:', { matchId: match.matchId });
     return newFavorite;
   } catch (error) {
-    console.error('❌ Failed to add match favorite:', error);
+    logger.error('Failed to add match favorite:', error as Error);
     throw error;
   }
 }
@@ -123,9 +124,9 @@ export async function removeMatchFavorite(matchId: string | number): Promise<voi
     // Save
     await saveFavorites(favorites);
 
-    console.log('✅ Match removed from favorites:', matchId);
+    logger.debug('[Favorites] Match removed:', { matchId });
   } catch (error) {
-    console.error('❌ Failed to remove match favorite:', error);
+    logger.error('Failed to remove match favorite:', error as Error);
     throw error;
   }
 }
@@ -138,7 +139,7 @@ export async function isMatchFavorited(matchId: string | number): Promise<boolea
     const favorites = await loadFavorites();
     return favorites.matches.some((m) => m.matchId === matchId);
   } catch (error) {
-    console.error('❌ Failed to check match favorite:', error);
+    logger.error('Failed to check match favorite:', error as Error);
     return false;
   }
 }
@@ -151,7 +152,7 @@ export async function getMatchFavorites(): Promise<MatchFavorite[]> {
     const favorites = await loadFavorites();
     return favorites.matches;
   } catch (error) {
-    console.error('❌ Failed to get match favorites:', error);
+    logger.error('Failed to get match favorites:', error as Error);
     return [];
   }
 }
@@ -172,7 +173,7 @@ export async function addPredictionFavorite(
     // Check if already favorited
     const exists = favorites.predictions.find((p) => p.predictionId === prediction.predictionId);
     if (exists) {
-      console.log('⚠️ Prediction already favorited');
+      logger.debug('[Favorites] Prediction already favorited');
       return exists;
     }
 
@@ -190,10 +191,10 @@ export async function addPredictionFavorite(
     // Save
     await saveFavorites(favorites);
 
-    console.log('✅ Prediction added to favorites:', prediction.predictionId);
+    logger.debug('[Favorites] Prediction added:', { predictionId: prediction.predictionId });
     return newFavorite;
   } catch (error) {
-    console.error('❌ Failed to add prediction favorite:', error);
+    logger.error('Failed to add prediction favorite:', error as Error);
     throw error;
   }
 }
@@ -211,9 +212,9 @@ export async function removePredictionFavorite(predictionId: string | number): P
     // Save
     await saveFavorites(favorites);
 
-    console.log('✅ Prediction removed from favorites:', predictionId);
+    logger.debug('[Favorites] Prediction removed:', { predictionId });
   } catch (error) {
-    console.error('❌ Failed to remove prediction favorite:', error);
+    logger.error('Failed to remove prediction favorite:', error as Error);
     throw error;
   }
 }
@@ -226,7 +227,7 @@ export async function isPredictionFavorited(predictionId: string | number): Prom
     const favorites = await loadFavorites();
     return favorites.predictions.some((p) => p.predictionId === predictionId);
   } catch (error) {
-    console.error('❌ Failed to check prediction favorite:', error);
+    logger.error('Failed to check prediction favorite:', error as Error);
     return false;
   }
 }
@@ -239,7 +240,7 @@ export async function getPredictionFavorites(): Promise<PredictionFavorite[]> {
     const favorites = await loadFavorites();
     return favorites.predictions;
   } catch (error) {
-    console.error('❌ Failed to get prediction favorites:', error);
+    logger.error('Failed to get prediction favorites:', error as Error);
     return [];
   }
 }
@@ -260,7 +261,7 @@ export async function addTeamFavorite(
     // Check if already favorited
     const exists = favorites.teams.find((t) => t.teamId === team.teamId);
     if (exists) {
-      console.log('⚠️ Team already favorited');
+      logger.debug('[Favorites] Team already favorited');
       return exists;
     }
 
@@ -278,10 +279,10 @@ export async function addTeamFavorite(
     // Save
     await saveFavorites(favorites);
 
-    console.log('✅ Team added to favorites:', team.teamId);
+    logger.debug('[Favorites] Team added:', { teamId: team.teamId });
     return newFavorite;
   } catch (error) {
-    console.error('❌ Failed to add team favorite:', error);
+    logger.error('Failed to add team favorite:', error as Error);
     throw error;
   }
 }
@@ -299,9 +300,9 @@ export async function removeTeamFavorite(teamId: string | number): Promise<void>
     // Save
     await saveFavorites(favorites);
 
-    console.log('✅ Team removed from favorites:', teamId);
+    logger.debug('[Favorites] Team removed:', { teamId });
   } catch (error) {
-    console.error('❌ Failed to remove team favorite:', error);
+    logger.error('Failed to remove team favorite:', error as Error);
     throw error;
   }
 }
@@ -314,7 +315,7 @@ export async function isTeamFavorited(teamId: string | number): Promise<boolean>
     const favorites = await loadFavorites();
     return favorites.teams.some((t) => t.teamId === teamId);
   } catch (error) {
-    console.error('❌ Failed to check team favorite:', error);
+    logger.error('Failed to check team favorite:', error as Error);
     return false;
   }
 }
@@ -327,7 +328,7 @@ export async function getTeamFavorites(): Promise<TeamFavorite[]> {
     const favorites = await loadFavorites();
     return favorites.teams;
   } catch (error) {
-    console.error('❌ Failed to get team favorites:', error);
+    logger.error('Failed to get team favorites:', error as Error);
     return [];
   }
 }
@@ -342,9 +343,9 @@ export async function getTeamFavorites(): Promise<TeamFavorite[]> {
 export async function clearAllFavorites(): Promise<void> {
   try {
     await AsyncStorage.removeItem(STORAGE_KEY);
-    console.log('✅ All favorites cleared');
+    logger.debug('[Favorites] All cleared');
   } catch (error) {
-    console.error('❌ Failed to clear favorites:', error);
+    logger.error('Failed to clear favorites:', error as Error);
     throw error;
   }
 }
@@ -357,9 +358,9 @@ export async function clearMatchFavorites(): Promise<void> {
     const favorites = await loadFavorites();
     favorites.matches = [];
     await saveFavorites(favorites);
-    console.log('✅ Match favorites cleared');
+    logger.debug('[Favorites] Match favorites cleared');
   } catch (error) {
-    console.error('❌ Failed to clear match favorites:', error);
+    logger.error('Failed to clear match favorites:', error as Error);
     throw error;
   }
 }
@@ -372,9 +373,9 @@ export async function clearPredictionFavorites(): Promise<void> {
     const favorites = await loadFavorites();
     favorites.predictions = [];
     await saveFavorites(favorites);
-    console.log('✅ Prediction favorites cleared');
+    logger.debug('[Favorites] Prediction favorites cleared');
   } catch (error) {
-    console.error('❌ Failed to clear prediction favorites:', error);
+    logger.error('Failed to clear prediction favorites:', error as Error);
     throw error;
   }
 }
@@ -387,9 +388,9 @@ export async function clearTeamFavorites(): Promise<void> {
     const favorites = await loadFavorites();
     favorites.teams = [];
     await saveFavorites(favorites);
-    console.log('✅ Team favorites cleared');
+    logger.debug('[Favorites] Team favorites cleared');
   } catch (error) {
-    console.error('❌ Failed to clear team favorites:', error);
+    logger.error('Failed to clear team favorites:', error as Error);
     throw error;
   }
 }

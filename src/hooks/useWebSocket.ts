@@ -5,8 +5,9 @@
  * Automatically manages connection lifecycle
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { getWebSocketService, WebSocketService } from '../services/websocket.service';
+import { logger } from '../utils/logger';
 import type {
   WebSocketEventHandlers,
   MatchUpdateEvent,
@@ -53,6 +54,18 @@ export function useWebSocket(options: UseWebSocketOptions = {}): UseWebSocketRet
   // Ref for WebSocket service
   const wsServiceRef = useRef<WebSocketService | null>(null);
 
+  // ============================================================================
+  // STABILITY FIX: Use refs for handlers to prevent infinite effect loops
+  // ============================================================================
+  const handlersRef = useRef(handlers);
+  handlersRef.current = handlers;
+
+  // Stable matchIds key for dependency comparison (prevents re-subscribe on every render)
+  const matchIdsKey = useMemo(() =>
+    [...matchIds].sort().join(','),
+    [matchIds]
+  );
+
   // Initialize WebSocket service
   useEffect(() => {
     if (!autoConnect) return;
@@ -60,30 +73,30 @@ export function useWebSocket(options: UseWebSocketOptions = {}): UseWebSocketRet
     const wsService = getWebSocketService();
     wsServiceRef.current = wsService;
 
-    // Internal event handlers
+    // Internal event handlers - use handlersRef.current for stable reference
     const internalHandlers: WebSocketEventHandlers = {
       onMatchUpdate: (event: MatchUpdateEvent) => {
         if (!event || !event.matchId) {
-          console.warn('⚠️ Invalid match update event:', event);
+          logger.warn('Invalid match update event', { event });
           return;
         }
 
-        console.log('📊 Match update:', event.matchId);
+        logger.websocket('Match update', { matchId: event.matchId });
         setMatchUpdates((prev) => {
           const updated = new Map(prev);
           updated.set(event.matchId, event);
           return updated;
         });
-        handlers.onMatchUpdate?.(event);
+        handlersRef.current.onMatchUpdate?.(event);
       },
 
       onMatchScore: (event: MatchScoreEvent) => {
         if (!event || !event.matchId) {
-          console.warn('⚠️ Invalid score update event:', event);
+          logger.warn('Invalid score update event', { event });
           return;
         }
 
-        console.log('⚽ Score update:', event.matchId, `${event.homeScore}-${event.awayScore}`);
+        logger.websocket('Score update', { matchId: event.matchId, score: `${event.homeScore}-${event.awayScore}` });
         setMatchUpdates((prev) => {
           const updated = new Map(prev);
           const existing = updated.get(event.matchId);
@@ -97,16 +110,16 @@ export function useWebSocket(options: UseWebSocketOptions = {}): UseWebSocketRet
           });
           return updated;
         });
-        handlers.onMatchScore?.(event);
+        handlersRef.current.onMatchScore?.(event);
       },
 
       onMatchStatus: (event: MatchStatusEvent) => {
         if (!event || !event.matchId) {
-          console.warn('⚠️ Invalid status update event:', event);
+          logger.warn('Invalid status update event', { event });
           return;
         }
 
-        console.log('🔄 Status update:', event.matchId, event.status);
+        logger.websocket('Status update', { matchId: event.matchId, status: event.status });
         setMatchUpdates((prev) => {
           const updated = new Map(prev);
           const existing = updated.get(event.matchId);
@@ -119,38 +132,37 @@ export function useWebSocket(options: UseWebSocketOptions = {}): UseWebSocketRet
           });
           return updated;
         });
-        handlers.onMatchStatus?.(event);
+        handlersRef.current.onMatchStatus?.(event);
       },
 
       onMatchEvent: (event: MatchEventData) => {
         if (!event || !event.matchId) {
-          console.warn('⚠️ Invalid match event:', event);
+          logger.warn('Invalid match event', { event });
           return;
         }
 
-        console.log('🎯 Match event:', event.matchId, event.eventType);
+        logger.websocket('Match event', { matchId: event.matchId, eventType: event.eventType });
         setLastEvent(event);
-        handlers.onMatchEvent?.(event);
+        handlersRef.current.onMatchEvent?.(event);
       },
 
       onMatchStats: (event) => {
         if (!event || !event.matchId) {
-          console.warn('⚠️ Invalid stats update event:', event);
+          logger.warn('Invalid stats update event', { event });
           return;
         }
 
-        console.log('📈 Stats update:', event.matchId);
-        handlers.onMatchStats?.(event);
+        logger.websocket('Stats update', { matchId: event.matchId });
+        handlersRef.current.onMatchStats?.(event);
       },
 
       onMinuteUpdate: (event: MinuteUpdateEvent) => {
-        // Validate event data
         if (!event || !event.matchId) {
-          console.warn('⚠️ Invalid minute update event:', event);
+          logger.warn('Invalid minute update event', { event });
           return;
         }
 
-        console.log('⏱️ Minute update:', event.matchId, `${event.minute}'`);
+        logger.websocket('Minute update', { matchId: event.matchId, minute: event.minute });
         setMatchUpdates((prev) => {
           const updated = new Map(prev);
           const existing = updated.get(event.matchId);
@@ -162,43 +174,45 @@ export function useWebSocket(options: UseWebSocketOptions = {}): UseWebSocketRet
           });
           return updated;
         });
-        handlers.onMinuteUpdate?.(event);
+        handlersRef.current.onMinuteUpdate?.(event);
       },
 
       onPredictionUpdate: (event) => {
-        console.log('🤖 Prediction update:', event.predictionId);
-        handlers.onPredictionUpdate?.(event);
+        logger.websocket('Prediction update', { predictionId: event.predictionId });
+        handlersRef.current.onPredictionUpdate?.(event);
       },
 
       onConnectionChange: (event: ConnectionStatusEvent) => {
-        console.log('🔌 Connection status:', event.connected ? 'Connected' : 'Disconnected');
+        logger.websocket('Connection status', { connected: event.connected });
         setIsConnected(event.connected);
         setIsReconnecting(event.reconnecting || false);
-        handlers.onConnectionChange?.(event);
+        handlersRef.current.onConnectionChange?.(event);
       },
 
       onError: (err: Error) => {
-        console.error('❌ WebSocket error:', err.message);
+        logger.error('WebSocket error', err);
         setError(err);
-        handlers.onError?.(err);
+        handlersRef.current.onError?.(err);
       },
     };
 
     // Register handlers
     wsService.on(internalHandlers);
 
-    // Subscribe to initial matches
-    if (matchIds.length > 0 && wsService.isConnected()) {
-      wsService.subscribeToMatches(matchIds);
+    // Subscribe to initial matches using stable key
+    const currentMatchIds = matchIdsKey.split(',').filter(Boolean);
+    if (currentMatchIds.length > 0 && wsService.isConnected()) {
+      wsService.subscribeToMatches(currentMatchIds);
     }
 
     // Cleanup on unmount
     return () => {
-      if (matchIds.length > 0) {
-        wsService.unsubscribeFromMatches(matchIds);
+      if (currentMatchIds.length > 0) {
+        wsService.unsubscribeFromMatches(currentMatchIds);
       }
     };
-  }, [autoConnect, matchIds, handlers]);
+  }, [autoConnect, matchIdsKey]); // ✅ FIXED: Removed 'handlers' from deps, using handlersRef instead
+
 
   // Send message
   const send = useCallback((message: { type: string; data: any }) => {
@@ -207,13 +221,13 @@ export function useWebSocket(options: UseWebSocketOptions = {}): UseWebSocketRet
 
   // Subscribe to matches
   const subscribeToMatches = useCallback((ids: (string | number)[]) => {
-    console.log('📡 Subscribing to matches:', ids);
+    logger.websocket('Subscribing to matches', { ids });
     wsServiceRef.current?.subscribeToMatches(ids);
   }, []);
 
   // Unsubscribe from matches
   const unsubscribeFromMatches = useCallback((ids: (string | number)[]) => {
-    console.log('📡 Unsubscribing from matches:', ids);
+    logger.websocket('Unsubscribing from matches', { ids });
     wsServiceRef.current?.unsubscribeFromMatches(ids);
   }, []);
 

@@ -24,6 +24,7 @@ import {
 import { NavigationLoadingScreen } from '../components/NavigationLoadingScreen';
 import { useNavigationTracking } from '../hooks/useScreenTracking';
 import analyticsService from '../services/analytics.service';
+import { logger } from '../utils/logger';
 
 // ============================================================================
 // LAZY LOADED SCREENS (Code Splitting)
@@ -36,7 +37,8 @@ const LoginScreen = lazy(() => import('../screens/LoginScreen').then(m => ({ def
 const RegisterScreen = lazy(() => import('../screens/RegisterScreen').then(m => ({ default: m.RegisterScreen })));
 
 // Main App Screens - Lazy Loaded
-const HomeScreen = lazy(() => import('../screens/HomeScreen').then(m => ({ default: m.HomeScreen })));
+// HomeScreen is eager loaded now (see top of file or added import)
+// const HomeScreen = lazy(() => import('../screens/HomeScreen').then(m => ({ default: m.HomeScreen })));
 // Updated LiveScreen import logic to point to the new LivescoreScreen implementation
 const LiveMatchesScreen = lazy(() => import('../screens/live/LiveScreen'));
 const PredictionsScreen = lazy(() => import('../screens/predictions/PredictionsScreen'));
@@ -45,20 +47,39 @@ const StoreScreen = lazy(() => import('../screens/StoreScreen').then(m => ({ def
 const ProfileScreen = lazy(() => import('../screens/ProfileScreen').then(m => ({ default: m.ProfileScreen })));
 const BotDetailScreen = lazy(() => import('../screens/BotDetailScreen').then(m => ({ default: m.BotDetailScreen })));
 const LegalScreen = lazy(() => import('../screens/LegalScreen'));
+// Eager load BlogDetailScreen for now or lazy load it logic
+const BlogDetailScreen = lazy(() => import('../screens/BlogDetailScreen').then(m => ({ default: m.BlogDetailScreen })));
+const BlogListScreen = lazy(() => import('../screens/BlogListScreen').then(m => ({ default: m.BlogListScreen })));
+// Container components (fetch data from context/API instead of hardcoded props)
+const ProfileScreenContainer = lazy(() => import('../screens/ProfileScreenContainer').then(m => ({ default: m.ProfileScreenContainer })));
+const BotDetailScreenContainer = lazy(() => import('../screens/BotDetailScreenContainer').then(m => ({ default: m.BotDetailScreenContainer })));
+const DailyRewardsScreen = lazy(() => import('../screens/DailyRewardsScreen').then(m => ({ default: m.DailyRewardsScreen })));
 // Animated Splash - Imported directly for speed/reliablity, code split ok too but we need it fast
 import AnimatedSplash from '../screens/AnimatedSplash';
 
-// Mock Data (for Bot Detail only - other screens use real API)
-import { mockPredictions } from '../services/mockData';
+// Mock Data - Only imported in DEV mode for Bot Detail fallback
+const getMockPredictions = async () => {
+  if (__DEV__) {
+    const { mockPredictions } = await import('../services/mockData');
+    return mockPredictions;
+  }
+  return [];
+};
+
+// Eager load HomeScreen
+import { HomeScreen } from '../screens/HomeScreen';
 
 // ============================================================================
 // LOADING FALLBACK COMPONENT
 // ============================================================================
 
+// ============================================================================
+// LOADING FALLBACK COMPONENT
+// ============================================================================
+
+// Use the premium NavigationLoadingScreen instead of inline fallback
 const LoadingFallback = () => (
-  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0A0E27' }}>
-    <ActivityIndicator size="large" color="#6C5CE7" />
-  </View>
+  <NavigationLoadingScreen message="Loading..." />
 );
 
 // ============================================================================
@@ -76,7 +97,10 @@ export type RootStackParamList = {
   MainTabs: undefined;
   MatchDetail: { matchId: string | number };
   BotDetail: { botId: number };
+  BlogDetail: { post: any; slug?: string };
+  BlogList: undefined;
   Legal: undefined;
+  DailyRewards: undefined;
 };
 
 export type MainTabsParamList = {
@@ -134,16 +158,16 @@ const AuthStackNavigator = ({ onSessionComplete }: AuthStackNavigatorProps) => {
             <LoginScreen
               onLoginSuccess={() => {
                 // Mark session onboarding as complete, then auth state change will show main app
-                console.log('Login successful');
+                logger.info('Login successful');
                 onSessionComplete?.();
               }}
               onNavigateToRegister={() => navigation.navigate('Register')}
               onForgotPassword={() => {
-                console.log('Forgot password');
+                logger.info('Forgot password');
                 // In future: navigate to forgot password screen
               }}
               onSocialAuth={(provider) => {
-                console.log('Social auth:', provider);
+                logger.info('Social auth:', { provider });
                 // In future: implement social auth
               }}
               onBack={() => navigation.goBack()}
@@ -159,12 +183,12 @@ const AuthStackNavigator = ({ onSessionComplete }: AuthStackNavigatorProps) => {
             <RegisterScreen
               onRegisterSuccess={() => {
                 // Mark session onboarding as complete after registration too
-                console.log('Register successful');
+                logger.info('Register successful');
                 onSessionComplete?.();
               }}
               onNavigateToLogin={() => navigation.navigate('Login')}
               onSocialAuth={(provider) => {
-                console.log('Social auth:', provider);
+                logger.info('Social auth:', { provider });
                 // In future: implement social auth
               }}
               onBack={() => navigation.goBack()}
@@ -189,34 +213,7 @@ const MainTabsNavigator = () => {
       }}
     >
       {/* Home Tab */}
-      <Tab.Screen name="Home">
-        {({ navigation }) => (
-          <Suspense fallback={<LoadingFallback />}>
-            <HomeScreen
-              onMatchPress={(matchId) => {
-                // Navigate to match detail (stack screen)
-                const parent = navigation.getParent();
-                if (parent) {
-                  parent.navigate('MatchDetail', { matchId });
-                }
-              }}
-              onPredictionPress={(predictionId) => {
-                console.log('Prediction pressed:', predictionId);
-                // Navigate to predictions tab
-                navigation.navigate('Predictions');
-              }}
-              onSeeAllMatches={() => {
-                // Navigate to live matches tab
-                navigation.navigate('LiveMatches');
-              }}
-              onSeeAllPredictions={() => {
-                // Navigate to predictions tab
-                navigation.navigate('Predictions');
-              }}
-            />
-          </Suspense>
-        )}
-      </Tab.Screen>
+      <Tab.Screen name="Home" component={HomeScreen} />
 
       {/* Live Matches Tab */}
       <Tab.Screen name="LiveMatches">
@@ -259,10 +256,10 @@ const MainTabsNavigator = () => {
             <StoreScreen
               currentPlan="free"
               onSelectPlan={(planId) => {
-                console.log('Plan selected:', planId);
+                logger.info('Plan selected:', { planId });
               }}
               onPurchase={(planId) => {
-                console.log('Purchase initiated:', planId);
+                logger.info('Purchase initiated:', { planId });
                 // In future: integrate payment
               }}
             />
@@ -272,48 +269,16 @@ const MainTabsNavigator = () => {
 
       {/* Profile Tab */}
       <Tab.Screen name="Profile">
-        {({ navigation }) => (
-          <Suspense fallback={<LoadingFallback />}>
-            <ProfileScreen
-              profile={{
-                id: '1',
-                name: 'Utku Bozbay',
-                email: 'utku@goalgpt.com',
-                vipStatus: 'free',
-                dayCounter: 47,
-                stats: {
-                  totalPredictions: 234,
-                  winRate: 78.5,
-                  currentStreak: 12,
-                  level: 8,
-                  xp: 1250,
-                  xpToNextLevel: 2000,
-                },
-                badges: ['🏆', '🔥', '⭐', '💎', '🎯'],
-                favoriteTeams: ['Barcelona', 'Real Madrid', 'Man United'],
-              }}
-              onEditProfile={() => {
-                console.log('Edit profile');
-              }}
-              onSettings={() => {
-                console.log('Settings');
-              }}
-              onLogout={() => {
-                console.log('Logout');
-              }}
-              onNavigate={(section) => {
-                console.log('Navigate to:', section);
-                // Navigate to Legal screen when legal section is selected
-                if (section === 'legal') {
-                  const parent = navigation.getParent();
-                  if (parent) {
-                    parent.navigate('Legal');
-                  }
-                }
-              }}
-            />
-          </Suspense>
-        )}
+        {({ navigation }) => {
+          // Use ProfileScreenContainer to get user data from auth context
+          return (
+            <Suspense fallback={<LoadingFallback />}>
+              <ProfileScreenContainer
+                navigation={navigation}
+              />
+            </Suspense>
+          );
+        }}
       </Tab.Screen>
     </Tab.Navigator>
   );
@@ -336,8 +301,13 @@ const RootStackNavigator = () => {
       {/* Match Detail */}
       <Stack.Screen name="MatchDetail">
         {({ route, navigation }) => {
-          // @ts-ignore - route params typing
-          const { matchId } = route.params;
+          const params = route.params as RootStackParamList['MatchDetail'];
+          const matchId = params?.matchId;
+
+          if (!matchId) {
+            navigation.goBack();
+            return null;
+          }
 
           return (
             <Suspense fallback={<LoadingFallback />}>
@@ -353,48 +323,45 @@ const RootStackNavigator = () => {
       {/* Bot Detail */}
       <Stack.Screen name="BotDetail">
         {({ route, navigation }) => {
-          // @ts-ignore - route params typing
-          const { botId } = route.params;
+          const params = route.params as RootStackParamList['BotDetail'];
+          const botId = params?.botId;
 
-          // Mock bot data
-          const mockBot = {
-            id: botId,
-            name: `Bot ${botId}`,
-            description: 'AI-powered football prediction bot',
-            icon: '🤖',
-            totalPredictions: 450,
-            successRate: 74.2,
-            stats: {
-              today: { total: 12, wins: 9, rate: 75 },
-              yesterday: { total: 15, wins: 11, rate: 73.3 },
-              monthly: { total: 234, wins: 174, rate: 74.4 },
-              all: { total: 450, wins: 334, rate: 74.2 },
-            },
-          };
-
-          const mockOtherBots = [
-            { id: 2, name: 'Bot 2', icon: '🎯', successRate: 68.5, totalPredictions: 320 },
-            { id: 3, name: 'Bot 3', icon: '⚡', successRate: 71.2, totalPredictions: 280 },
-            { id: 4, name: 'Bot 4', icon: '🔥', successRate: 76.8, totalPredictions: 390 },
-          ];
+          if (!botId) {
+            navigation.goBack();
+            return null;
+          }
 
           return (
             <Suspense fallback={<LoadingFallback />}>
-              <BotDetailScreen
-                bot={mockBot}
-                otherBots={mockOtherBots}
-                predictions={mockPredictions}
-                onBotSelect={(newBotId) => {
-                  navigation.push('BotDetail', { botId: newBotId });
-                }}
-                onPredictionPress={(predictionId) => {
-                  console.log('Prediction pressed:', predictionId);
-                }}
-                onBack={() => navigation.goBack()}
+              <BotDetailScreenContainer
+                botId={botId}
+                navigation={navigation}
               />
             </Suspense>
           );
         }}
+      </Stack.Screen>
+
+      {/* Blog Detail */}
+      <Stack.Screen name="BlogDetail">
+        {({ route, navigation }) => {
+          const params = route.params as RootStackParamList['BlogDetail'];
+          // BlogDetailScreen handles missing params internally
+          return (
+            <Suspense fallback={<LoadingFallback />}>
+              <BlogDetailScreen />
+            </Suspense>
+          );
+        }}
+      </Stack.Screen>
+
+      {/* Blog List Screen */}
+      <Stack.Screen name="BlogList">
+        {() => (
+          <Suspense fallback={<LoadingFallback />}>
+            <BlogListScreen />
+          </Suspense>
+        )}
       </Stack.Screen>
 
       {/* Legal Screen */}
@@ -402,6 +369,15 @@ const RootStackNavigator = () => {
         {() => (
           <Suspense fallback={<LoadingFallback />}>
             <LegalScreen />
+          </Suspense>
+        )}
+      </Stack.Screen>
+
+      {/* Daily Rewards Screen */}
+      <Stack.Screen name="DailyRewards">
+        {({ navigation }) => (
+          <Suspense fallback={<LoadingFallback />}>
+            <DailyRewardsScreen onBack={() => navigation.goBack()} />
           </Suspense>
         )}
       </Stack.Screen>
@@ -442,7 +418,7 @@ export const AppNavigator = () => {
     const checkInitialUrl = async () => {
       const url = await getInitialDeepLink();
       if (url) {
-        console.log('🔗 Initial deep link detected:', url);
+        logger.info('Initial deep link detected:', { url });
         setInitialUrl(url);
       }
       setIsReady(true);
@@ -454,7 +430,7 @@ export const AppNavigator = () => {
   // Listen for deep links (app is running)
   useEffect(() => {
     const subscription = addDeepLinkListener((url) => {
-      console.log('🔗 Deep link received:', url);
+      logger.info('Deep link received:', { url });
 
       // Track deep link
       analyticsService.trackDeepLink(url, 'unknown', undefined, 'app_running');
@@ -474,7 +450,7 @@ export const AppNavigator = () => {
     if (isReady && initialUrl && navigationRef.current) {
       // Small delay to ensure navigation is fully mounted
       setTimeout(() => {
-        console.log('🔗 Processing initial deep link:', initialUrl);
+        logger.info('Processing initial deep link:', { url: initialUrl });
 
         // Track initial deep link
         analyticsService.trackDeepLink(initialUrl, 'unknown', undefined, 'cold_start');

@@ -36,9 +36,14 @@ export const StatsBoard: React.FC<StatsBoardProps> = ({
         <View style={styles.container}>
             {/* Header Row: Title + Date Toggles */}
             <View style={styles.headerRow}>
-                <NeonText size="medium" weight="bold" color="white" glow="small">
-                    Win Rate
-                </NeonText>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    <View style={styles.iconBox}>
+                        <ChartLineUp size={18} color="#4ade80" weight="fill" />
+                    </View>
+                    <NeonText size="medium" weight="bold" color="white" glow="small">
+                        Win Rate
+                    </NeonText>
+                </View>
 
                 <View style={[styles.toggleContainer, { borderColor: theme.colors.border, backgroundColor: theme.colors.surface }]}>
                     {(['today', 'yesterday', 'month'] as const).map((filter) => {
@@ -75,7 +80,7 @@ export const StatsBoard: React.FC<StatsBoardProps> = ({
                     <View style={[styles.iconCircle, { backgroundColor: theme.colors.success, shadowColor: theme.colors.success }]}>
                         <Target size={16} weight="bold" color={theme.colors.background} />
                     </View>
-                    <NeonText size="large" weight="black" color="white">
+                    <NeonText size="large" weight="bold" color="white">
                         {totalPredictions}
                     </NeonText>
                     <NeonText size="small" weight="bold" style={{ color: theme.colors.text.tertiary, fontSize: 10, textTransform: 'uppercase' }}>
@@ -91,7 +96,7 @@ export const StatsBoard: React.FC<StatsBoardProps> = ({
                     <View style={[styles.iconCircle, { backgroundColor: '#111', borderColor: theme.colors.success, borderWidth: 1 }]}>
                         <Trophy size={16} weight="fill" color={theme.colors.success} />
                     </View>
-                    <NeonText size="large" weight="black" style={{ color: theme.colors.success }}>
+                    <NeonText size="large" weight="bold" style={{ color: theme.colors.success }}>
                         {totalWins}
                     </NeonText>
                     <NeonText size="small" weight="bold" style={{ color: theme.colors.success, fontSize: 10, textTransform: 'uppercase', opacity: 0.7 }}>
@@ -104,7 +109,7 @@ export const StatsBoard: React.FC<StatsBoardProps> = ({
                     <View style={[styles.iconCircle, { backgroundColor: 'rgba(59, 130, 246, 0.1)' }]}>
                         <ChartLineUp size={16} weight="bold" color="#3b82f6" />
                     </View>
-                    <NeonText size="large" weight="black" color="white">
+                    <NeonText size="large" weight="bold" color="white">
                         %{winRate}
                     </NeonText>
                     <NeonText size="small" weight="bold" style={{ color: theme.colors.text.tertiary, fontSize: 10, textTransform: 'uppercase' }}>
@@ -163,5 +168,15 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.2,
         shadowRadius: 8,
+    },
+    iconBox: {
+        width: 32,
+        height: 32,
+        borderRadius: 10,
+        backgroundColor: 'rgba(74, 222, 128, 0.1)', // #4ade80 with opacity
+        borderWidth: 1,
+        borderColor: 'rgba(74, 222, 128, 0.2)',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 });

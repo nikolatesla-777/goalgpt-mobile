@@ -15,7 +15,9 @@ import {
     Crown,
     Gem,
     Sparkles,
-    Star
+    Star,
+    Trophy,
+    ShieldCheck
 } from 'lucide-react-native';
 
 const ICON_SIZE = 120;
@@ -29,6 +31,7 @@ const Scene1 = () => {
     const scaleAnim = useRef(new Animated.Value(1)).current;
     const opacityAnim = useRef(new Animated.Value(0.5)).current;
     const rotateAnim = useRef(new Animated.Value(0)).current;
+    const floatAnim = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
         Animated.loop(
@@ -53,6 +56,13 @@ const Scene1 = () => {
                 useNativeDriver: true
             })
         ).start();
+
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(floatAnim, { toValue: 1, duration: 2000, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+                Animated.timing(floatAnim, { toValue: 0, duration: 2000, easing: Easing.inOut(Easing.ease), useNativeDriver: true })
+            ])
+        ).start();
     }, []);
 
     const spin = rotateAnim.interpolate({
@@ -60,24 +70,34 @@ const Scene1 = () => {
         outputRange: ['0deg', '360deg']
     });
 
+    const counterSpin = rotateAnim.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0deg', '-360deg']
+    });
+
+    const translateY = floatAnim.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, -10]
+    });
+
     return (
         <View style={styles.sceneContainer}>
             <Animated.View style={[styles.orbitContainer, { transform: [{ rotate: spin }] }]}>
-                <View style={[styles.orbitNode, { top: 0, left: '50%', marginLeft: -15 }]}>
+                <Animated.View style={[styles.orbitNode, { top: 0, left: '50%', marginLeft: -15, transform: [{ rotate: counterSpin }] }]}>
                     <Database size={30} color={SECONDARY_COLOR} opacity={0.6} />
-                </View>
-                <View style={[styles.orbitNode, { bottom: 0, left: '50%', marginLeft: -15 }]}>
+                </Animated.View>
+                <Animated.View style={[styles.orbitNode, { bottom: 0, left: '50%', marginLeft: -15, transform: [{ rotate: counterSpin }] }]}>
                     <Cpu size={30} color={SECONDARY_COLOR} opacity={0.6} />
-                </View>
-                <View style={[styles.orbitNode, { left: 0, top: '50%', marginTop: -15 }]}>
+                </Animated.View>
+                <Animated.View style={[styles.orbitNode, { left: 0, top: '50%', marginTop: -15, transform: [{ rotate: counterSpin }] }]}>
                     <Globe size={30} color={SECONDARY_COLOR} opacity={0.6} />
-                </View>
-                <View style={[styles.orbitNode, { right: 0, top: '50%', marginTop: -15 }]}>
+                </Animated.View>
+                <Animated.View style={[styles.orbitNode, { right: 0, top: '50%', marginTop: -15, transform: [{ rotate: counterSpin }] }]}>
                     <Shield size={30} color={SECONDARY_COLOR} opacity={0.6} />
-                </View>
+                </Animated.View>
             </Animated.View>
             <Animated.View style={[styles.glowRing, { opacity: opacityAnim, transform: [{ scale: Animated.multiply(scaleAnim, 1.2) }] }]} />
-            <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+            <Animated.View style={{ transform: [{ scale: scaleAnim }, { translateY }] }}>
                 <Brain size={ICON_SIZE} color={ACCENT_COLOR} fill="rgba(75, 196, 30, 0.2)" />
             </Animated.View>
         </View>
@@ -94,6 +114,7 @@ const Scene2 = () => {
     const blip2Scale = useRef(new Animated.Value(0)).current;
     const blip2Opacity = useRef(new Animated.Value(0)).current;
     const gridOpacity = useRef(new Animated.Value(0.3)).current;
+    const floatAnim = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
         Animated.loop(
@@ -129,11 +150,23 @@ const Scene2 = () => {
 
         pulseBlip(blip1Scale, blip1Opacity, 500).start();
         pulseBlip(blip2Scale, blip2Opacity, 2000).start();
+
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(floatAnim, { toValue: 1, duration: 2500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+                Animated.timing(floatAnim, { toValue: 0, duration: 2500, easing: Easing.inOut(Easing.ease), useNativeDriver: true })
+            ])
+        ).start();
     }, []);
 
     const spin = scanRotation.interpolate({
         inputRange: [0, 1],
         outputRange: ['0deg', '360deg']
+    });
+
+    const translateY = floatAnim.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, -8]
     });
 
     return (
@@ -144,9 +177,9 @@ const Scene2 = () => {
             <View style={[styles.orbitContainer, { width: 180, height: 180, borderRadius: 90, borderColor: 'rgba(75, 196, 30, 0.3)', borderWidth: 1 }]} />
             <View style={[styles.orbitContainer, { width: 100, height: 100, borderRadius: 50, borderColor: 'rgba(75, 196, 30, 0.5)', borderWidth: 1 }]} />
             <View style={{ width: 4, height: 4, borderRadius: 2, backgroundColor: ACCENT_COLOR, position: 'absolute' }} />
-            <View style={{ backgroundColor: 'rgba(7, 26, 18, 0.8)', padding: 10, borderRadius: 20, borderWidth: 1, borderColor: ACCENT_COLOR }}>
+            <Animated.View style={[{ backgroundColor: 'rgba(7, 26, 18, 0.8)', padding: 10, borderRadius: 20, borderWidth: 1, borderColor: ACCENT_COLOR, transform: [{ translateY }] }]}>
                 <Database size={32} color={ACCENT_COLOR} />
-            </View>
+            </Animated.View>
             <Animated.View style={[
                 styles.radarContainer,
                 {
@@ -190,6 +223,7 @@ const Scene3 = () => {
     const notifOpacity = useRef(new Animated.Value(0)).current;
     const wonScale = useRef(new Animated.Value(0)).current;
     const wonOpacity = useRef(new Animated.Value(0)).current;
+    const floatAnim = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
         const fluctuate = (anim: Animated.Value, min: number, max: number, duration: number) => {
@@ -230,16 +264,28 @@ const Scene3 = () => {
             ]).start(() => playSequence());
         };
         playSequence();
+
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(floatAnim, { toValue: 1, duration: 2200, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+                Animated.timing(floatAnim, { toValue: 0, duration: 2200, easing: Easing.inOut(Easing.ease), useNativeDriver: true })
+            ])
+        ).start();
     }, []);
+
+    const translateY = floatAnim.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, -12]
+    });
 
     return (
         <View style={styles.sceneContainer}>
-            <View style={{ flexDirection: 'row', alignItems: 'flex-end', height: 120, gap: 12, marginBottom: 20 }}>
+            <Animated.View style={{ flexDirection: 'row', alignItems: 'flex-end', height: 120, gap: 12, marginBottom: 20, transform: [{ translateY }] }}>
                 <Animated.View style={{ width: 16, backgroundColor: 'rgba(75, 196, 30, 0.4)', borderRadius: 4, height: bar1Height }} />
                 <Animated.View style={{ width: 16, backgroundColor: 'rgba(75, 196, 30, 0.6)', borderRadius: 4, height: bar2Height }} />
                 <Animated.View style={{ width: 16, backgroundColor: 'rgba(75, 196, 30, 0.8)', borderRadius: 4, height: bar3Height }} />
                 <Animated.View style={{ width: 16, backgroundColor: ACCENT_COLOR, borderRadius: 4, height: bar4Height }} />
-            </View>
+            </Animated.View>
             <Animated.View style={[styles.notifCard, { transform: [{ translateY: notifY }], opacity: notifOpacity }]}>
                 <Bot size={20} color={ACCENT_COLOR} />
                 <View style={{ marginLeft: 10 }}>
@@ -250,7 +296,7 @@ const Scene3 = () => {
                     <Text style={{ color: ACCENT_COLOR, fontSize: 10, fontWeight: 'bold' }}>LIVE</Text>
                 </View>
             </Animated.View>
-            <Animated.View style={[styles.wonBadge, { transform: [{ scale: wonScale }, { rotate: '-10deg' }], opacity: wonOpacity }]}>
+            <Animated.View style={[styles.wonBadge, { transform: [{ scale: wonScale }, { rotate: wonScale.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '-10deg'] }) }], opacity: wonOpacity }]}>
                 <Text style={styles.wonText}>WON</Text>
             </Animated.View>
         </View>
@@ -262,15 +308,11 @@ const Scene3 = () => {
 // ============================================================================
 const Scene4 = () => {
     const ringRotation = useRef(new Animated.Value(0)).current;
-
-    // Core Pulse
     const coreScale = useRef(new Animated.Value(1)).current;
-
-    // Connection Lines Pulse
     const lineOpacity = useRef(new Animated.Value(0.3)).current;
+    const breathAnim = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
-        // Slow rotation of the community ring
         Animated.loop(
             Animated.timing(ringRotation, {
                 toValue: 1,
@@ -280,7 +322,6 @@ const Scene4 = () => {
             })
         ).start();
 
-        // Logo Pulse
         Animated.loop(
             Animated.sequence([
                 Animated.timing(coreScale, { toValue: 1.1, duration: 1500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
@@ -288,7 +329,6 @@ const Scene4 = () => {
             ])
         ).start();
 
-        // Data Flow Pulse on lines
         Animated.loop(
             Animated.sequence([
                 Animated.timing(lineOpacity, { toValue: 0.8, duration: 1000, useNativeDriver: true }),
@@ -296,6 +336,12 @@ const Scene4 = () => {
             ])
         ).start();
 
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(breathAnim, { toValue: 1, duration: 2000, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+                Animated.timing(breathAnim, { toValue: 0, duration: 2000, easing: Easing.inOut(Easing.ease), useNativeDriver: true })
+            ])
+        ).start();
     }, []);
 
     const spin = ringRotation.interpolate({
@@ -306,6 +352,11 @@ const Scene4 = () => {
     const counterSpin = ringRotation.interpolate({
         inputRange: [0, 1],
         outputRange: ['0deg', '-360deg']
+    });
+
+    const bubbleScale = breathAnim.interpolate({
+        inputRange: [0, 1],
+        outputRange: [1, 1.15]
     });
 
     const FACES = [
@@ -323,10 +374,7 @@ const Scene4 = () => {
 
     return (
         <View style={styles.sceneContainer}>
-            {/* Background Network Ring */}
             <View style={{ position: 'absolute', width: RADIUS * 2, height: RADIUS * 2, borderRadius: RADIUS, borderWidth: 1, borderColor: 'rgba(75,196,30,0.1)' }} />
-
-            {/* Central GoalGPT Logo */}
             <Animated.View style={{
                 width: 100, height: 100,
                 borderRadius: 50,
@@ -348,19 +396,14 @@ const Scene4 = () => {
                     />
                 </View>
             </Animated.View>
-
-            {/* Orbiting Layer with Connections */}
             <Animated.View style={[
                 { position: 'absolute', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' },
                 { transform: [{ rotate: spin }] }
             ]}>
                 {FACES.map((face, index) => {
-                    const angle = (index / FACES.length) * 2 * Math.PI;
                     const deg = (index / FACES.length) * 360;
-
                     return (
                         <View key={index} style={{ position: 'absolute', alignItems: 'center', justifyContent: 'center' }}>
-                            {/* DYNAMIC CONNECTION LINE */}
                             <Animated.View style={{
                                 position: 'absolute',
                                 height: 1,
@@ -372,8 +415,6 @@ const Scene4 = () => {
                                     { translateX: RADIUS / 2 }
                                 ]
                             }} />
-
-                            {/* THE AVATAR BUBBLE */}
                             <Animated.View
                                 style={[
                                     styles.stickerBubble,
@@ -382,7 +423,8 @@ const Scene4 = () => {
                                             { rotate: `${deg}deg` },
                                             { translateX: RADIUS },
                                             { rotate: `${-deg}deg` },
-                                            { rotate: counterSpin }
+                                            { rotate: counterSpin },
+                                            { scale: bubbleScale }
                                         ]
                                     }
                                 ]}
@@ -393,95 +435,129 @@ const Scene4 = () => {
                     );
                 })}
             </Animated.View>
-
         </View>
     );
 };
 
 
 // ============================================================================
-// SCENE 5: VIP ACCESS - PREMIUM 3D CROWN
-// Platinum Silver + Emerald Green Theme
-// Centerpiece: A floating 3D Majestic Crown
-// Tech Rings and Sparkles
+// SCENE 5: VIP ACCESS - PREMIUM COMPOSITE ICON
+// Redesign using layered Lucide icons for a high-end, native feel.
+// Centerpiece: A multi-layered Crown with custom shadows and emerald accents.
+// Tech surroundings with subtle green energy particles.
+// ============================================================================
+// ============================================================================
+// SCENE 5: VIP ACCESS - ROYAL DATA
+// New Premium Design: Golden Crown Centerpiece with Rotating Rays
 // ============================================================================
 const Scene5 = () => {
-    const itemScale = useRef(new Animated.Value(0.9)).current;
-    const ringRotate1 = useRef(new Animated.Value(0)).current;
-    const ringRotate2 = useRef(new Animated.Value(0)).current;
+    const sunRotate = useRef(new Animated.Value(0)).current;
+    const crownScale = useRef(new Animated.Value(0.72)).current;
+    const glowOpacity = useRef(new Animated.Value(0.5)).current;
+
+    const crownTilt = useRef(new Animated.Value(0)).current;
+
+    // Gold Colors
+    const GOLD_LIGHT = '#FFE55C'; // Bright Gold
+    const GOLD_DARK = '#FFAA00';  // Deep Gold
+    const ACCENT = '#4BC41E';      // App Brand Green (for subtle tech tie-in)
 
     useEffect(() => {
-        // Floating/Pulse effect
+        // 1. Rotating Sunburst
+        Animated.loop(
+            Animated.timing(sunRotate, {
+                toValue: 1,
+                duration: 20000,
+                easing: Easing.linear,
+                useNativeDriver: true
+            })
+        ).start();
+
+        // 2. Crown Breathing/Pulse (Scale Reduced by 20% -> 0.72 to 0.8)
         Animated.loop(
             Animated.sequence([
-                Animated.timing(itemScale, { toValue: 1.05, duration: 2500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-                Animated.timing(itemScale, { toValue: 0.9, duration: 2500, easing: Easing.inOut(Easing.ease), useNativeDriver: true })
+                Animated.timing(crownScale, { toValue: 0.8, duration: 2000, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+                Animated.timing(crownScale, { toValue: 0.72, duration: 2000, easing: Easing.inOut(Easing.ease), useNativeDriver: true })
             ])
         ).start();
 
-        // Counter-rotating tech rings
+        // 3. Glow Pulsing
         Animated.loop(
-            Animated.timing(ringRotate1, { toValue: 1, duration: 15000, easing: Easing.linear, useNativeDriver: true })
+            Animated.sequence([
+                Animated.timing(glowOpacity, { toValue: 0.8, duration: 1500, useNativeDriver: true }),
+                Animated.timing(glowOpacity, { toValue: 0.4, duration: 1500, useNativeDriver: true })
+            ])
         ).start();
+
+        // 4. Crown Tilt/Rocking (10% rotation)
         Animated.loop(
-            Animated.timing(ringRotate2, { toValue: 1, duration: 20000, easing: Easing.linear, useNativeDriver: true })
+            Animated.sequence([
+                Animated.timing(crownTilt, { toValue: 1, duration: 1500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+                Animated.timing(crownTilt, { toValue: -1, duration: 1500, easing: Easing.inOut(Easing.ease), useNativeDriver: true })
+            ])
         ).start();
     }, []);
 
-    const spin1 = ringRotate1.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
-    const spin2 = ringRotate2.interpolate({ inputRange: [0, 1], outputRange: ['360deg', '0deg'] });
+    const spin = sunRotate.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
+    const spinReverse = sunRotate.interpolate({ inputRange: [0, 1], outputRange: ['360deg', '0deg'] });
 
-    const PRIMARY_ACCENT = '#4BC41E';
+    // Tilt interpolation: -10deg to 10deg (approx 10%)
+    const tilt = crownTilt.interpolate({
+        inputRange: [-1, 1],
+        outputRange: ['-10deg', '10deg']
+    });
 
     return (
         <View style={styles.sceneContainer}>
-            {/* Tech Rings */}
+            {/* Background: Rotating Gold Rays (Simulated with dashed rings) */}
             <Animated.View style={{
-                position: 'absolute', width: 230, height: 230,
-                borderRadius: 115, borderWidth: 1, borderColor: 'rgba(75, 196, 30, 0.4)', borderStyle: 'dashed',
-                transform: [{ rotate: spin1 }]
+                position: 'absolute', width: 280, height: 280,
+                borderRadius: 140, borderWidth: 2, borderColor: 'rgba(255, 215, 0, 0.1)', borderStyle: 'dashed',
+                transform: [{ rotate: spin }]
             }} />
             <Animated.View style={{
-                position: 'absolute', width: 190, height: 190,
-                borderRadius: 95, borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.1)',
-                transform: [{ rotate: spin2 }]
+                position: 'absolute', width: 220, height: 220,
+                borderRadius: 110, borderWidth: 10, borderColor: 'rgba(255, 215, 0, 0.05)',
+                transform: [{ rotate: spinReverse }]
             }} />
 
-            {/* Central Glow */}
+            {/* Central Halo Glow */}
             <Animated.View style={{
                 position: 'absolute',
-                width: 140, height: 140, borderRadius: 70,
-                backgroundColor: PRIMARY_ACCENT,
+                width: 160, height: 160, borderRadius: 80,
+                backgroundColor: GOLD_LIGHT,
                 opacity: 0.15,
-                transform: [{ scale: itemScale }],
-                shadowColor: PRIMARY_ACCENT, shadowRadius: 40, shadowOpacity: 0.5
+                transform: [{ scale: crownScale }],
+                shadowColor: GOLD_DARK, shadowRadius: 40, shadowOpacity: 0.5
             }} />
 
-            {/* The 3D Crown Artifact */}
-            <Animated.View style={{ transform: [{ scale: itemScale }], width: 160, height: 160, alignItems: 'center', justifyContent: 'center' }}>
-                <Image
-                    source={require('../../../assets/images/vip-crown-3d.png')}
-                    style={{ width: '100%', height: '100%' }}
-                    resizeMode="contain"
-                />
+            {/* THE CROWN (Centerpiece) */}
+            <Animated.View style={{ transform: [{ scale: crownScale }, { rotate: tilt }], alignItems: 'center', justifyContent: 'center' }}>
+                <View style={{ shadowColor: GOLD_DARK, shadowRadius: 20, shadowOpacity: 0.8, shadowOffset: { width: 0, height: 0 } }}>
+                    <Crown size={140} color={GOLD_LIGHT} fill="rgba(255, 170, 0, 0.1)" strokeWidth={1.5} />
+                </View>
 
-                {/* Extra Sparkles for highlights */}
-                <Animated.View style={{ position: 'absolute', top: 20, right: 20, transform: [{ scale: itemScale }] }}>
-                    <Sparkles size={24} color={PRIMARY_ACCENT} />
+                {/* Floating Particles */}
+                <Animated.View style={{ position: 'absolute', top: -20, right: -10, opacity: glowOpacity }}>
+                    <Sparkles size={34} color="#FFF" fill={GOLD_LIGHT} />
+                </Animated.View>
+                <Animated.View style={{ position: 'absolute', bottom: 10, left: -20, opacity: glowOpacity }}>
+                    <Star size={24} color={GOLD_LIGHT} fill={GOLD_LIGHT} />
                 </Animated.View>
             </Animated.View>
 
-            {/* VIP Label (Platinum & Green) */}
-            <View style={{
-                position: 'absolute', bottom: 35,
-                backgroundColor: 'rgba(7, 26, 18, 0.9)',
-                paddingHorizontal: 24, paddingVertical: 10,
-                borderRadius: 30,
-                borderWidth: 1.5, borderColor: PRIMARY_ACCENT,
-                shadowColor: PRIMARY_ACCENT, shadowOpacity: 0.4, shadowRadius: 15
+            {/* VIP ACCESS TEXT (Floating below) */}
+            <Animated.View style={{
+                position: 'absolute', bottom: -20,
+                backgroundColor: 'rgba(0,0,0,0.8)',
+                paddingHorizontal: 20, paddingVertical: 8,
+                borderRadius: 12,
+                borderWidth: 1, borderColor: GOLD_DARK,
+                shadowColor: GOLD_DARK, shadowOpacity: 0.5, shadowRadius: 10,
+                transform: [{ translateY: crownScale.interpolate({ inputRange: [0.9, 1], outputRange: [0, 5] }) }]
             }}>
-                <Text style={{ color: '#FFF', fontSize: 14, fontWeight: '900', letterSpacing: 4 }}>VIP ACCESS</Text>
-            </View>
+                <Text style={{ color: GOLD_LIGHT, fontSize: 18, fontWeight: '900', letterSpacing: 4 }}>VIP ACCESS</Text>
+            </Animated.View>
         </View>
     );
 };
@@ -533,20 +609,7 @@ const styles = StyleSheet.create({
         borderRadius: 70,
         backgroundColor: 'rgba(75, 196, 30, 0.15)',
     },
-    overlay: {
-        position: 'absolute',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    lockBadge: {
-        position: 'absolute',
-        bottom: 80,
-        backgroundColor: ACCENT_COLOR,
-        padding: 4,
-        borderRadius: 20,
-    },
     radarContainer: {},
-    radarBeam: {},
     blip: {
         position: 'absolute',
         alignItems: 'center',

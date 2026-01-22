@@ -17,15 +17,9 @@ import {
 import apiClient, { TokenStorage } from '../api/client';
 import { API_ENDPOINTS } from '../constants/api';
 import { cacheManager } from '../utils/cacheManager';
-import { setUser as setSentryUser, clearUser as clearSentryUser } from '../config/sentry.config';
-import {
-  trackLogin,
-  trackSignUp,
-  setAnalyticsUserId,
-  setUserLevel,
-  setUserSubscriptionStatus,
-} from '../services/analytics.service';
+import { completeUserSetup, refreshUserContext, clearUserContext } from './auth/authHelpers';
 import { logger } from '../utils/logger';
+
 
 // ============================================================================
 // TYPES
@@ -66,7 +60,7 @@ export interface AuthState {
 export interface AuthContextValue extends AuthState {
   // Auth methods
   signInWithEmail: (email: string, password: string) => Promise<void>;
-  signUpWithEmail: (email: string, password: string, name?: string) => Promise<void>;
+  signUpWithEmail: (email: string, password: string, name?: string, referralCode?: string) => Promise<void>;
   signInWithGoogle: (idToken: string) => Promise<void>;
   signInWithApple: () => Promise<void>;
   signInWithPhone: (phone: string) => Promise<void>;
@@ -124,7 +118,24 @@ export function AuthProvider({ children }: AuthProviderProps): React.ReactElemen
    * Initialize authentication on app start
    */
   async function initializeAuth(): Promise<void> {
+    let safetyTimeout: NodeJS.Timeout;
+
     try {
+      // Safety timeout: Ensure loading state is cleared after 5 seconds max
+      safetyTimeout = setTimeout(() => {
+        setState((prev) => {
+          if (prev.isLoading) {
+            logger.warn('Auth initialization timed out, forcing load completion');
+            return {
+              ...prev,
+              isLoading: false,
+              isAuthenticated: false, // Default to unauthenticated on timeout
+            };
+          }
+          return prev;
+        });
+      }, 5000);
+
       // Initialize Firebase (wrap in try-catch to prevent crashes)
       try {
         initializeFirebase();
@@ -154,26 +165,13 @@ export function AuthProvider({ children }: AuthProviderProps): React.ReactElemen
       // Set Sentry user context if user exists (wrap in try-catch)
       if (cachedUser) {
         try {
-          setSentryUser({
-            id: cachedUser.id,
-            email: cachedUser.email || undefined,
-            username: cachedUser.username || undefined,
-          });
-
-          // Set analytics user ID and properties (wrap in try-catch)
-          setAnalyticsUserId(cachedUser.id);
-          if (cachedUser.xp?.level) {
-            setUserLevel(cachedUser.xp.level);
-          }
-          if (cachedUser.subscription?.status) {
-            setUserSubscriptionStatus(
-              cachedUser.subscription.status === 'active' ? 'premium' : 'free'
-            );
-          }
+          refreshUserContext(cachedUser);
         } catch (analyticsError) {
           logger.warn('Analytics setup failed (non-fatal)', analyticsError);
         }
       }
+
+      clearTimeout(safetyTimeout);
 
       setState((prev) => ({
         ...prev,
@@ -188,7 +186,7 @@ export function AuthProvider({ children }: AuthProviderProps): React.ReactElemen
         refreshUserSilently();
       }
     } catch (error: any) {
-      logger.error('Auth initialization error', error);
+      clearTimeout(safetyTimeout);
       setState((prev) => ({
         ...prev,
         isLoading: false,
@@ -227,26 +225,8 @@ export function AuthProvider({ children }: AuthProviderProps): React.ReactElemen
       // Cache user data
       await saveUserToCache(response.data.user);
 
-      // Set Sentry user context
-      setSentryUser({
-        id: response.data.user.id,
-        email: response.data.user.email || undefined,
-        username: response.data.user.username || undefined,
-      });
-
-      // Track analytics event
-      trackLogin('email');
-
-      // Set analytics user ID and properties
-      setAnalyticsUserId(response.data.user.id);
-      if (response.data.user.xp?.level) {
-        setUserLevel(response.data.user.xp.level);
-      }
-      if (response.data.user.subscription?.status) {
-        setUserSubscriptionStatus(
-          response.data.user.subscription.status === 'active' ? 'premium' : 'free'
-        );
-      }
+      // ✅ REFACTORED: Single call replaces 15+ lines of duplicated code
+      completeUserSetup(response.data.user, 'email', false);
 
       setState((prev) => ({
         ...prev,
@@ -257,7 +237,7 @@ export function AuthProvider({ children }: AuthProviderProps): React.ReactElemen
         error: null,
       }));
 
-      logger.info('Email sign in successful', response.data.user.email);
+      logger.info('Email sign in successful', { email: response.data.user.email });
     } catch (error: any) {
       logger.error('Email sign in error', error);
       const errorMessage = error.response?.data?.message || error.message || 'Giriş yapılamadı';
@@ -273,7 +253,7 @@ export function AuthProvider({ children }: AuthProviderProps): React.ReactElemen
   /**
    * Email/Password Sign Up
    */
-  async function handleEmailSignUp(email: string, password: string, name?: string): Promise<void> {
+  async function handleEmailSignUp(email: string, password: string, name?: string, referralCode?: string): Promise<void> {
     try {
       setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
@@ -284,6 +264,7 @@ export function AuthProvider({ children }: AuthProviderProps): React.ReactElemen
         email,
         password,
         name,
+        referralCode,
         deviceInfo,
       });
 
@@ -296,26 +277,8 @@ export function AuthProvider({ children }: AuthProviderProps): React.ReactElemen
       // Cache user data
       await saveUserToCache(response.data.user);
 
-      // Set Sentry user context
-      setSentryUser({
-        id: response.data.user.id,
-        email: response.data.user.email || undefined,
-        username: response.data.user.username || undefined,
-      });
-
-      // Track analytics event (new user)
-      trackSignUp('email');
-
-      // Set analytics user ID and properties
-      setAnalyticsUserId(response.data.user.id);
-      if (response.data.user.xp?.level) {
-        setUserLevel(response.data.user.xp.level);
-      }
-      if (response.data.user.subscription?.status) {
-        setUserSubscriptionStatus(
-          response.data.user.subscription.status === 'active' ? 'premium' : 'free'
-        );
-      }
+      // Setup user analytics, Sentry context, and track signup
+      completeUserSetup(response.data.user, 'email', true);
 
       setState((prev) => ({
         ...prev,
@@ -353,33 +316,11 @@ export function AuthProvider({ children }: AuthProviderProps): React.ReactElemen
       // Cache user data
       await saveUserToCache(result.user);
 
-      // Set Sentry user context
-      setSentryUser({
-        id: result.user.id,
-        email: result.user.email || undefined,
-        username: result.user.username || undefined,
-      });
-
       // Check if new user (needs onboarding)
       const isNewUser = result.user.isNewUser === true;
 
-      // Track analytics event
-      if (isNewUser) {
-        trackSignUp('google');
-      } else {
-        trackLogin('google');
-      }
-
-      // Set analytics user ID and properties
-      setAnalyticsUserId(result.user.id);
-      if (result.user.xp?.level) {
-        setUserLevel(result.user.xp.level);
-      }
-      if (result.user.subscription?.status) {
-        setUserSubscriptionStatus(
-          result.user.subscription.status === 'active' ? 'premium' : 'free'
-        );
-      }
+      // Setup user analytics, Sentry context, and track login/signup
+      completeUserSetup(result.user, 'google', isNewUser);
 
       setState((prev) => ({
         ...prev,
@@ -415,33 +356,11 @@ export function AuthProvider({ children }: AuthProviderProps): React.ReactElemen
       // Cache user data
       await saveUserToCache(result.user);
 
-      // Set Sentry user context
-      setSentryUser({
-        id: result.user.id,
-        email: result.user.email || undefined,
-        username: result.user.username || undefined,
-      });
-
       // Check if new user (needs onboarding)
       const isNewUser = result.user.isNewUser === true;
 
-      // Track analytics event
-      if (isNewUser) {
-        trackSignUp('apple');
-      } else {
-        trackLogin('apple');
-      }
-
-      // Set analytics user ID and properties
-      setAnalyticsUserId(result.user.id);
-      if (result.user.xp?.level) {
-        setUserLevel(result.user.xp.level);
-      }
-      if (result.user.subscription?.status) {
-        setUserSubscriptionStatus(
-          result.user.subscription.status === 'active' ? 'premium' : 'free'
-        );
-      }
+      // Setup user analytics, Sentry context, and track login/signup
+      completeUserSetup(result.user, 'apple', isNewUser);
 
       setState((prev) => ({
         ...prev,
@@ -489,34 +408,12 @@ export function AuthProvider({ children }: AuthProviderProps): React.ReactElemen
       // Cache user data
       await saveUserToCache(response.data.user);
 
-      // Set Sentry user context
-      setSentryUser({
-        id: response.data.user.id,
-        email: response.data.user.email || undefined,
-        username: response.data.user.username || undefined,
-      });
-
-      // Existing phone users have already onboarded
+      // Check if new user (needs onboarding)
       const hasOnboarded = !response.data.user.isNewUser;
       const isNewUser = response.data.user.isNewUser === true;
 
-      // Track analytics event
-      if (isNewUser) {
-        trackSignUp('phone');
-      } else {
-        trackLogin('phone');
-      }
-
-      // Set analytics user ID and properties
-      setAnalyticsUserId(response.data.user.id);
-      if (response.data.user.xp?.level) {
-        setUserLevel(response.data.user.xp.level);
-      }
-      if (response.data.user.subscription?.status) {
-        setUserSubscriptionStatus(
-          response.data.user.subscription.status === 'active' ? 'premium' : 'free'
-        );
-      }
+      // Setup user analytics, Sentry context, and track login/signup
+      completeUserSetup(response.data.user, 'phone', isNewUser);
 
       setState((prev) => ({
         ...prev,
@@ -560,7 +457,7 @@ export function AuthProvider({ children }: AuthProviderProps): React.ReactElemen
       await cacheManager.clearUserCache();
 
       // Clear Sentry user context
-      clearSentryUser();
+      clearUserContext();
 
       setState({
         user: null,
@@ -599,21 +496,8 @@ export function AuthProvider({ children }: AuthProviderProps): React.ReactElemen
       // Cache updated user data
       await saveUserToCache(user);
 
-      // Set Sentry user context
-      setSentryUser({
-        id: user.id,
-        email: user.email || undefined,
-        username: user.username || undefined,
-      });
-
-      // Set analytics user ID and properties
-      setAnalyticsUserId(user.id);
-      if (user.xp?.level) {
-        setUserLevel(user.xp.level);
-      }
-      if (user.subscription?.status) {
-        setUserSubscriptionStatus(user.subscription.status === 'active' ? 'premium' : 'free');
-      }
+      // Refresh user analytics and Sentry context (no auth event tracking)
+      refreshUserContext(user);
 
       setState((prev) => ({
         ...prev,
@@ -645,21 +529,8 @@ export function AuthProvider({ children }: AuthProviderProps): React.ReactElemen
       // Cache updated user data
       await saveUserToCache(user);
 
-      // Set Sentry user context
-      setSentryUser({
-        id: user.id,
-        email: user.email || undefined,
-        username: user.username || undefined,
-      });
-
-      // Set analytics user ID and properties
-      setAnalyticsUserId(user.id);
-      if (user.xp?.level) {
-        setUserLevel(user.xp.level);
-      }
-      if (user.subscription?.status) {
-        setUserSubscriptionStatus(user.subscription.status === 'active' ? 'premium' : 'free');
-      }
+      // Refresh user analytics and Sentry context (no auth event tracking)
+      refreshUserContext(user);
 
       setState((prev) => ({
         ...prev,

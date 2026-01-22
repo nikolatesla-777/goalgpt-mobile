@@ -11,6 +11,7 @@ import apiClient from '../api/client';
 import { API_ENDPOINTS } from '../constants/api';
 import { addBreadcrumb } from '../config/sentry.config';
 import { trackEvent } from './analytics.service';
+import logger from '../utils/logger';
 
 // ============================================================================
 // TYPES
@@ -86,7 +87,7 @@ export async function requestPermissions(): Promise<boolean> {
 
     // Log result
     if (isDev) {
-      console.log('📱 Notification permissions:', finalStatus);
+      logger.debug('📱 Notification permissions:', finalStatus);
     }
 
     // Track analytics
@@ -103,7 +104,7 @@ export async function requestPermissions(): Promise<boolean> {
 
     return granted;
   } catch (error) {
-    console.error('❌ Failed to request notification permissions:', error);
+    logger.error('❌ Failed to request notification permissions:', error);
     return false;
   }
 }
@@ -116,7 +117,7 @@ export async function checkPermissions(): Promise<boolean> {
     const { status } = await Notifications.getPermissionsAsync();
     return status === 'granted';
   } catch (error) {
-    console.error('❌ Failed to check notification permissions:', error);
+    logger.error('❌ Failed to check notification permissions:', error);
     return false;
   }
 }
@@ -133,7 +134,7 @@ export async function getExpoPushToken(): Promise<string | null> {
     // Check permissions first
     const hasPermission = await checkPermissions();
     if (!hasPermission) {
-      console.log('⚠️ No notification permissions, skipping token generation');
+      logger.debug('⚠️ No notification permissions, skipping token generation');
       return null;
     }
 
@@ -145,7 +146,7 @@ export async function getExpoPushToken(): Promise<string | null> {
     const token = tokenData.data;
 
     if (isDev) {
-      console.log('📱 Expo Push Token:', token);
+      logger.debug('📱 Expo Push Token:', token);
     }
 
     // Track analytics
@@ -155,7 +156,7 @@ export async function getExpoPushToken(): Promise<string | null> {
 
     return token;
   } catch (error) {
-    console.error('❌ Failed to get Expo push token:', error);
+    logger.error('❌ Failed to get Expo push token:', error);
     return null;
   }
 }
@@ -171,12 +172,12 @@ export async function getDevicePushToken(): Promise<string | null> {
     const token = tokenData.data;
 
     if (isDev) {
-      console.log('📱 Device Push Token:', token);
+      logger.debug('📱 Device Push Token:', token);
     }
 
     return token;
   } catch (error) {
-    console.error('❌ Failed to get device push token:', error);
+    logger.error('❌ Failed to get device push token:', error);
     return null;
   }
 }
@@ -189,7 +190,7 @@ export async function registerPushToken(): Promise<boolean> {
     // Get Expo push token
     const expoPushToken = await getExpoPushToken();
     if (!expoPushToken) {
-      console.log('⚠️ No push token to register');
+      logger.debug('⚠️ No push token to register');
       return false;
     }
 
@@ -208,7 +209,7 @@ export async function registerPushToken(): Promise<boolean> {
     });
 
     if (isDev) {
-      console.log('✅ Push token registered with backend');
+      logger.debug('✅ Push token registered with backend');
     }
 
     // Add breadcrumb
@@ -221,7 +222,7 @@ export async function registerPushToken(): Promise<boolean> {
 
     return true;
   } catch (error) {
-    console.error('❌ Failed to register push token:', error);
+    logger.error('❌ Failed to register push token:', error);
     return false;
   }
 }
@@ -241,7 +242,7 @@ export async function unregisterPushToken(): Promise<boolean> {
     });
 
     if (isDev) {
-      console.log('✅ Push token unregistered from backend');
+      logger.debug('✅ Push token unregistered from backend');
     }
 
     // Add breadcrumb
@@ -249,7 +250,7 @@ export async function unregisterPushToken(): Promise<boolean> {
 
     return true;
   } catch (error) {
-    console.error('❌ Failed to unregister push token:', error);
+    logger.error('❌ Failed to unregister push token:', error);
     return false;
   }
 }
@@ -278,7 +279,7 @@ export async function showLocalNotification(
     });
 
     if (isDev) {
-      console.log('📱 Local notification shown:', notificationId);
+      logger.debug('📱 Local notification shown:', notificationId);
     }
 
     // Track analytics
@@ -288,7 +289,7 @@ export async function showLocalNotification(
 
     return notificationId;
   } catch (error) {
-    console.error('❌ Failed to show local notification:', error);
+    logger.error('❌ Failed to show local notification:', error);
     return null;
   }
 }
@@ -331,7 +332,7 @@ export async function scheduleLocalNotification(
     });
 
     if (isDev) {
-      console.log('📱 Notification scheduled:', notificationId);
+      logger.debug('📱 Notification scheduled:', notificationId);
     }
 
     // Track analytics
@@ -342,7 +343,7 @@ export async function scheduleLocalNotification(
 
     return notificationId;
   } catch (error) {
-    console.error('❌ Failed to schedule notification:', error);
+    logger.error('❌ Failed to schedule notification:', error);
     return null;
   }
 }
@@ -355,10 +356,10 @@ export async function cancelNotification(notificationId: string): Promise<void> 
     await Notifications.cancelScheduledNotificationAsync(notificationId);
 
     if (isDev) {
-      console.log('📱 Notification cancelled:', notificationId);
+      logger.debug('📱 Notification cancelled:', notificationId);
     }
   } catch (error) {
-    console.error('❌ Failed to cancel notification:', error);
+    logger.error('❌ Failed to cancel notification:', error);
   }
 }
 
@@ -370,10 +371,10 @@ export async function cancelAllNotifications(): Promise<void> {
     await Notifications.cancelAllScheduledNotificationsAsync();
 
     if (isDev) {
-      console.log('📱 All notifications cancelled');
+      logger.debug('📱 All notifications cancelled');
     }
   } catch (error) {
-    console.error('❌ Failed to cancel all notifications:', error);
+    logger.error('❌ Failed to cancel all notifications:', error);
   }
 }
 
@@ -389,10 +390,10 @@ export async function setBadgeCount(count: number): Promise<void> {
     await Notifications.setBadgeCountAsync(count);
 
     if (isDev) {
-      console.log('📱 Badge count set:', count);
+      logger.debug('📱 Badge count set:', count);
     }
   } catch (error) {
-    console.error('❌ Failed to set badge count:', error);
+    logger.error('❌ Failed to set badge count:', error);
   }
 }
 
@@ -404,7 +405,7 @@ export async function getBadgeCount(): Promise<number> {
     const count = await Notifications.getBadgeCountAsync();
     return count;
   } catch (error) {
-    console.error('❌ Failed to get badge count:', error);
+    logger.error('❌ Failed to get badge count:', error);
     return 0;
   }
 }
@@ -449,10 +450,10 @@ export async function setupNotificationCategories(): Promise<void> {
     ]);
 
     if (isDev) {
-      console.log('📱 Notification categories set up');
+      logger.debug('📱 Notification categories set up');
     }
   } catch (error) {
-    console.error('❌ Failed to setup notification categories:', error);
+    logger.error('❌ Failed to setup notification categories:', error);
   }
 }
 
