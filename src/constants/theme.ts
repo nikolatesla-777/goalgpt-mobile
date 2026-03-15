@@ -223,7 +223,7 @@ export const lightTheme = {
     tertiary: '#808080', // Low emphasis
     disabled: '#B3B3B3', // Disabled
     inverse: '#FFFFFF', // On colored backgrounds
-    brand: '#4BC41E', // Brand text
+    brand: '#2E7D1F', // Brand text (darker for WCAG AA compliance)
   },
 
   // Border Colors
