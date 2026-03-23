@@ -456,7 +456,10 @@ No response        → 'network'
 | Legal dokuman URL'leri eksik | - | App Store rejection |
 | AdMob placeholder ID | app.json | Crash on launch |
 | Screenshots eksik | - | Store submission blocked |
-| Firebase project mismatch | google-services.json | Wrong analytics |
+
+> **Firebase Notu:** `santibet-715ef` projesi INTENTIONAL.
+> Mevcut kullanici auth surekliligi icin korunuyor.
+> google-services.json ve GoogleService-Info.plist DEGISTIRILMEYECEK.
 
 ### ONEMLI (Yakin Zamanda)
 
@@ -465,7 +468,6 @@ No response        → 'network'
 | Profile navigation TODO | ProfileScreenContainer.tsx:118 | Navigate implement et |
 | Favorites persistence TODO | LiveScreen.tsx:41 | AsyncStorage kullan |
 | AdMob integration TODO | HomeScreen.tsx:275 | Rewarded video ekle |
-| LoginScreen_backup.tsx | src/screens/ | Sil (git history var) |
 
 ### TEKNIK BORC
 
@@ -701,6 +703,25 @@ onMessage: (event) => {
 
 ---
 
-**Son Guncelleme**: 2026-03-15
+## 21. SKILLS SİSTEMİ
+
+Claude Code bu projeyle çalışırken şu skill'leri kullanır:
+
+| Skill | Dosya | Ne Zaman Kullan |
+|-------|-------|-----------------|
+| Theme & UI | .claude/skills/theme-ui.md | Renk, spacing, dark/light mode işlerinde |
+| Component | .claude/skills/component.md | Yeni component yazarken |
+| Screen Creation | .claude/skills/screen-creation.md | Yeni ekran eklerken |
+| API Integration | .claude/skills/api-integration.md | Yeni endpoint bağlarken |
+| Debug & Fix | .claude/skills/debug-fix.md | Hata ayıklarken |
+| Figma to Code | .claude/skills/figma-to-code.md | Figma tasarımı kodlarken |
+| Deploy | .claude/skills/deploy.md | Backend/Mobile deploy, CI/CD, rollback |
+
+Her göreve başlamadan önce ilgili skill dosyasını oku.
+Birden fazla skill gerektiren görevlerde hepsini oku.
+
+---
+
+**Son Guncelleme**: 2026-03-23
 **Analiz Eden**: Claude (Multi-Role Analysis)
-**Versiyon**: 2.0
+**Versiyon**: 2.2
